@@ -1,0 +1,1 @@
+export { GeneratePanel } from './GeneratePanel';

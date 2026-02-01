@@ -1,0 +1,162 @@
+.share-button {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 3px;
+  color: #666;
+  font-size: 9px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.share-button:hover:not(:disabled) {
+  border-color: #ff5722;
+  color: #ff5722;
+}
+
+.share-button.shared {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+.share-button.shared:hover:not(:disabled) {
+  border-color: #66bb6a;
+  color: #66bb6a;
+}
+
+.share-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.share-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.share-modal {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.share-modal h3 {
+  margin: 0 0 0.75rem;
+  color: #fff;
+  font-size: 1.125rem;
+}
+
+.share-modal p {
+  margin: 0 0 1rem;
+  color: #888;
+  font-size: 0.875rem;
+}
+
+.share-link-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.share-link-container input {
+  flex: 1;
+  padding: 0.625rem 0.75rem;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.share-link-container input:focus {
+  outline: none;
+  border-color: #ff5722;
+}
+
+.share-link-container button {
+  padding: 0.625rem 1rem;
+  background: #ff5722;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.share-link-container button:hover {
+  background: #ff7043;
+}
+
+.share-modal-close {
+  width: 100%;
+  padding: 0.75rem;
+  background: #2a2a2a;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.share-modal-close:hover {
+  background: #333;
+}
+
+.share-modal-divider {
+  height: 1px;
+  background: #333;
+  margin: 1rem 0;
+}
+
+.share-modal-make-private-section {
+  text-align: center;
+}
+
+.share-modal-warning {
+  color: #888;
+  font-size: 0.75rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.share-modal-make-private {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #888;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.share-modal-make-private:hover:not(:disabled) {
+  border-color: #f44336;
+  color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.share-modal-make-private:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

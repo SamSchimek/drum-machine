@@ -1,0 +1,263 @@
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 16px;
+  background: #141414;
+  border-radius: 8px;
+  border: 1px solid #1e1e1e;
+  overflow-x: auto;
+}
+
+.step-indicators {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.track-label-spacer {
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.indicators {
+  display: flex;
+  gap: 3px;
+}
+
+.step-indicator {
+  width: 30px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: #444;
+  background: #1a1a1a;
+  border-radius: 3px;
+  transition: all 0.1s ease;
+}
+
+.step-indicator.active {
+  background: #ff5722;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+}
+
+.step-indicator.downbeat {
+  color: #666;
+  font-weight: 600;
+  background: #1e1e1e;
+}
+
+.step-indicator.beat-end {
+  margin-right: 6px;
+}
+
+.grid-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.track-label {
+  flex: 1;
+  padding: 6px 8px;
+  background: transparent;
+  border: 1px solid var(--track-color, #666);
+  border-radius: 4px;
+  color: var(--track-color, #fff);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-label:hover {
+  background: var(--track-color, #666);
+  color: #000;
+}
+
+.mute-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #444;
+  font-size: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mute-button:hover {
+  border-color: #ff5722;
+  color: #ff5722;
+}
+
+.mute-button.muted {
+  background: #ff5722;
+  border-color: #ff5722;
+  color: #000;
+}
+
+.grid-cells {
+  display: flex;
+  gap: 3px;
+}
+
+.grid-cell {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 4px;
+  background: var(--track-color-dim, #1e1e1e);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  position: relative;
+}
+
+.grid-cell:hover {
+  transform: scale(1.06);
+  filter: brightness(1.4);
+}
+
+.grid-cell.active {
+  background: var(--track-color, #ff5722);
+  box-shadow:
+    0 0 8px var(--track-color, #ff5722),
+    inset 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+.grid-cell.current {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: -2px;
+}
+
+.grid-cell.current:not(.active) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.grid-cell.current.active {
+  box-shadow:
+    0 0 12px var(--track-color, #ff5722),
+    0 0 24px rgba(255, 87, 34, 0.4);
+}
+
+.grid-cell.beat-end {
+  margin-right: 6px;
+}
+
+.grid-cell.downbeat:not(.active) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.grid-cell:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.grid-cell:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .grid-cell {
+    width: 26px;
+    height: 26px;
+  }
+
+  .step-indicator {
+    width: 26px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .track-controls {
+    width: 95px;
+  }
+
+  .track-label {
+    font-size: 8px;
+    padding: 5px 6px;
+  }
+
+  .track-label-spacer {
+    width: 95px;
+  }
+
+  .mute-button {
+    width: 22px;
+    height: 22px;
+    font-size: 8px;
+  }
+
+  .grid-cells {
+    gap: 2px;
+  }
+
+  .indicators {
+    gap: 2px;
+  }
+
+  .grid-cell.beat-end,
+  .step-indicator.beat-end {
+    margin-right: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    padding: 10px 12px;
+  }
+
+  .grid-cell {
+    width: 22px;
+    height: 22px;
+  }
+
+  .step-indicator {
+    width: 22px;
+    height: 18px;
+    font-size: 9px;
+  }
+
+  .track-controls {
+    width: 80px;
+  }
+
+  .track-label {
+    font-size: 7px;
+    padding: 4px 5px;
+  }
+
+  .track-label-spacer {
+    width: 80px;
+  }
+
+  .mute-button {
+    width: 20px;
+    height: 20px;
+    font-size: 7px;
+  }
+}

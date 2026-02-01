@@ -1,0 +1,10 @@
+export { Kick } from './Kick';
+export { Snare } from './Snare';
+export { ClosedHH } from './ClosedHH';
+export { OpenHH } from './OpenHH';
+export { Clap } from './Clap';
+export { TomLow, TomMid, TomHigh } from './Tom';
+export { Rimshot } from './Rimshot';
+export { Cowbell } from './Cowbell';
+export { Clave } from './Clave';
+export { Maracas } from './Maracas';

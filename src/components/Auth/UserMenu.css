@@ -1,0 +1,113 @@
+.user-menu {
+  position: relative;
+}
+
+.user-menu-loading {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.user-menu-signin-button {
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.user-menu-signin-button:hover {
+  background: #ff7043;
+}
+
+.user-menu-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.user-menu-button:hover {
+  transform: scale(1.05);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff5722 0%, #ff9800 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.user-menu-email {
+  padding: 0.75rem 1rem;
+  color: #ccc;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu-divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 0.25rem 0;
+}
+
+.user-menu-item {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.user-menu-item:hover {
+  background: #2a2a2a;
+}
+
+@media (max-width: 600px) {
+  .user-menu-signin-button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+
+  .user-menu-dropdown {
+    min-width: 180px;
+  }
+}

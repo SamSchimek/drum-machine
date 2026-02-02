@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import type { Pattern } from '../types';
-import type { SupabasePatternStorageInterface, SupabasePatternRow, SupabasePatternInput, SharedPatternWithCreator } from './types';
+import type { SupabasePatternStorageInterface, SupabasePatternRow, SupabasePatternInput } from './types';
 
 // Generate a random share slug
 function generateShareSlug(): string {
@@ -237,13 +237,10 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
 
 // Static methods for shared pattern operations (don't require authentication)
 export async function getSharedPatternWithCreator(slug: string): Promise<PatternWithCreator | null> {
-  // Fetch pattern with creator profile
+  // Fetch pattern
   const { data: patternData, error: patternError } = await supabase
     .from('patterns')
-    .select(`
-      *,
-      profiles:user_id (display_name)
-    `)
+    .select('*')
     .eq('share_slug', slug)
     .maybeSingle();
 
@@ -256,6 +253,21 @@ export async function getSharedPatternWithCreator(slug: string): Promise<Pattern
     return null;
   }
 
+  const row = patternData as SupabasePatternRow;
+  const pattern = toPattern(row);
+
+  // Fetch creator profile separately if pattern has a user_id
+  let creatorDisplayName: string | null = null;
+  if (row.user_id) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', row.user_id)
+      .maybeSingle();
+
+    creatorDisplayName = profileData?.display_name ?? null;
+  }
+
   // Get upvote count
   const { count, error: countError } = await supabase
     .from('pattern_upvotes')
@@ -266,12 +278,9 @@ export async function getSharedPatternWithCreator(slug: string): Promise<Pattern
     console.error('Error getting upvote count:', countError.message);
   }
 
-  const row = patternData as SharedPatternWithCreator;
-  const pattern = toPattern(row);
-
   return {
     ...pattern,
-    creatorDisplayName: row.profiles?.display_name ?? null,
+    creatorDisplayName,
     upvoteCount: count ?? 0,
   };
 }

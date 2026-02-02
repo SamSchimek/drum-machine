@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { AuthModal } from './AuthModal';
+import { ProfileSettingsModal } from './ProfileSettingsModal';
 import './UserMenu.css';
 
 export function UserMenu() {
   const { user, loading, signOut } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -26,6 +28,11 @@ export function UserMenu() {
   const handleSignOut = async () => {
     await signOut();
     setShowDropdown(false);
+  };
+
+  const handleSettingsClick = () => {
+    setShowDropdown(false);
+    setShowSettingsModal(true);
   };
 
   if (loading) {
@@ -73,12 +80,23 @@ export function UserMenu() {
           <hr className="user-menu-divider" />
           <button
             className="user-menu-item"
+            onClick={handleSettingsClick}
+          >
+            Settings
+          </button>
+          <button
+            className="user-menu-item"
             onClick={handleSignOut}
           >
             Sign Out
           </button>
         </div>
       )}
+
+      <ProfileSettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+      />
     </div>
   );
 }

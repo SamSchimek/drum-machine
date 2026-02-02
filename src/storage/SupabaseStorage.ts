@@ -373,3 +373,42 @@ export async function removeUpvote(
 
   return true;
 }
+
+export async function updateProfile(
+  userId: string,
+  updates: { display_name?: string }
+): Promise<boolean> {
+  const displayName = updates.display_name?.trim() || null;
+
+  const { error } = await supabase
+    .from('profiles')
+    .upsert({
+      id: userId,
+      display_name: displayName,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'id' });
+
+  if (error) {
+    console.error('Error updating profile:', error.message);
+    return false;
+  }
+
+  return true;
+}
+
+export async function getProfile(
+  userId: string
+): Promise<{ display_name: string | null } | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('display_name')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching profile:', error.message);
+    return null;
+  }
+
+  return data;
+}

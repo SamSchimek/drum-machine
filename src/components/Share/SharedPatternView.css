@@ -60,11 +60,11 @@
   font-size: 1.75rem;
 }
 
-.shared-pattern-creator {
+.shared-pattern-byline {
   color: #888;
-  margin: 0 0 0.25rem;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-style: italic;
+  margin-left: 0.5rem;
 }
 
 .shared-pattern-tempo {
@@ -170,6 +170,7 @@
   flex-direction: column;
   gap: 4px;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .shared-grid-row {
@@ -179,21 +180,21 @@
 }
 
 .shared-track-label {
-  width: 80px;
+  width: 100px;
   flex-shrink: 0;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #666;
   text-transform: capitalize;
 }
 
 .shared-grid-cells {
   display: flex;
-  gap: 2px;
+  gap: 3px;
 }
 
 .shared-grid-cell {
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   background: #252525;
   border-radius: 3px;
   transition: all 0.15s ease;
@@ -259,13 +260,13 @@
 
 @media (max-width: 900px) {
   .shared-grid-cell {
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
   }
 
   .shared-track-label {
-    width: 65px;
-    font-size: 0.65rem;
+    width: 80px;
+    font-size: 0.75rem;
   }
 }
 
@@ -280,13 +281,13 @@
   }
 
   .shared-track-label {
-    width: 50px;
-    font-size: 0.55rem;
+    width: 60px;
+    font-size: 0.65rem;
   }
 
   .shared-grid-cell {
-    width: 10px;
-    height: 10px;
+    width: 14px;
+    height: 14px;
   }
 
   .shared-grid-cell.bar-end {

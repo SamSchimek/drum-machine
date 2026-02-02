@@ -166,10 +166,10 @@ export function SharedPatternView() {
     <div className="shared-pattern-view">
       <div className="shared-pattern-container">
         <header className="shared-pattern-header">
-          <h1>"{pattern.name}"</h1>
-          {creatorDisplay && (
-            <p className="shared-pattern-creator">by {creatorDisplay}</p>
-          )}
+          <h1>
+            "{pattern.name}"
+            {creatorDisplay && <span className="shared-pattern-byline">by {creatorDisplay}</span>}
+          </h1>
           <p className="shared-pattern-tempo">{pattern.tempo} BPM</p>
           <div className="shared-pattern-actions">
             <button className="shared-play-button" onClick={handlePlayClick}>

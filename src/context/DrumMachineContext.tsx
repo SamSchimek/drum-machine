@@ -204,6 +204,12 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger play/pause when typing in input fields
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
       if (e.code === 'Space' && !e.repeat) {
         e.preventDefault();
         if (state.isPlaying) {

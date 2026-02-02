@@ -1,7 +1,7 @@
 .grid-container {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   padding: 14px 16px;
   background: #141414;
   border-radius: 8px;
@@ -16,22 +16,22 @@
 }
 
 .track-label-spacer {
-  width: 110px;
+  width: 130px;
   flex-shrink: 0;
 }
 
 .indicators {
   display: flex;
-  gap: 3px;
+  gap: 4px;
 }
 
 .step-indicator {
-  width: 20px;
-  height: 22px;
+  width: 36px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   color: #444;
   background: #1a1a1a;
@@ -52,11 +52,11 @@
 }
 
 .step-indicator.beat-end {
-  margin-right: 6px;
+  margin-right: 8px;
 }
 
 .step-indicator.bar-end {
-  margin-right: 10px;
+  margin-right: 14px;
 }
 
 .step-indicator.bar-start {
@@ -74,18 +74,18 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  width: 110px;
+  width: 130px;
   flex-shrink: 0;
 }
 
 .track-label {
   flex: 1;
-  padding: 6px 8px;
+  padding: 8px 10px;
   background: transparent;
   border: 1px solid var(--track-color, #666);
   border-radius: 4px;
   color: var(--track-color, #fff);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -132,12 +132,12 @@
 
 .grid-cells {
   display: flex;
-  gap: 3px;
+  gap: 4px;
 }
 
 .grid-cell {
-  width: 20px;
-  height: 20px;
+  width: 36px;
+  height: 36px;
   border: none;
   border-radius: 4px;
   background: var(--track-color-dim, #1e1e1e);
@@ -174,11 +174,11 @@
 }
 
 .grid-cell.beat-end {
-  margin-right: 6px;
+  margin-right: 8px;
 }
 
 .grid-cell.bar-end {
-  margin-right: 10px;
+  margin-right: 14px;
 }
 
 .grid-cell.bar-start {
@@ -200,31 +200,31 @@
 
 @media (max-width: 1200px) {
   .grid-cell {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
   }
 
   .step-indicator {
-    width: 18px;
-    height: 20px;
+    width: 28px;
+    height: 30px;
     font-size: 9px;
   }
 }
 
 @media (max-width: 900px) {
   .grid-cell {
-    width: 16px;
-    height: 16px;
+    width: 22px;
+    height: 22px;
   }
 
   .step-indicator {
-    width: 16px;
-    height: 18px;
+    width: 22px;
+    height: 24px;
     font-size: 8px;
   }
 
   .track-controls {
-    width: 95px;
+    width: 110px;
   }
 
   .track-label {
@@ -233,7 +233,7 @@
   }
 
   .track-label-spacer {
-    width: 95px;
+    width: 110px;
   }
 
   .mute-button {
@@ -267,13 +267,13 @@
   }
 
   .grid-cell {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
   }
 
   .step-indicator {
-    width: 12px;
-    height: 16px;
+    width: 16px;
+    height: 20px;
     font-size: 7px;
   }
 
@@ -283,7 +283,7 @@
   }
 
   .track-controls {
-    width: 80px;
+    width: 90px;
   }
 
   .track-label {
@@ -292,7 +292,7 @@
   }
 
   .track-label-spacer {
-    width: 80px;
+    width: 90px;
   }
 
   .mute-button {

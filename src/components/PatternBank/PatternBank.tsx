@@ -153,36 +153,38 @@ export function PatternBank() {
           patterns.map((pattern) => (
             <div key={pattern.id} className="pattern-item">
               <div className="pattern-info" onClick={() => editingId !== pattern.id && handleLoad(pattern.id)}>
-                {editingId === pattern.id ? (
-                  <input
-                    type="text"
-                    className="pattern-name-input"
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                    onKeyDown={handleRenameKeyDown}
-                    onBlur={handleRename}
-                    autoFocus
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  <span className="pattern-name">{pattern.name}</span>
-                )}
+                <div className="pattern-name-row">
+                  {editingId === pattern.id ? (
+                    <input
+                      type="text"
+                      className="pattern-name-input"
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      onKeyDown={handleRenameKeyDown}
+                      onBlur={handleRename}
+                      autoFocus
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <>
+                      <span className="pattern-name">{pattern.name}</span>
+                      <button
+                        className="rename-button"
+                        onClick={(e) => { e.stopPropagation(); handleStartRename(pattern); }}
+                        aria-label={`Rename ${pattern.name}`}
+                        title="Rename"
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                      </button>
+                    </>
+                  )}
+                </div>
                 <span className="pattern-tempo">{pattern.tempo} BPM</span>
                 <PatternPreview grid={pattern.grid} />
               </div>
               <div className="pattern-actions">
-                {editingId !== pattern.id && (
-                  <button
-                    className="rename-button"
-                    onClick={() => handleStartRename(pattern)}
-                    aria-label={`Rename ${pattern.name}`}
-                    title="Rename"
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                    </svg>
-                  </button>
-                )}
                 {user && <ShareButton pattern={pattern} />}
                 <button
                   className="delete-button"

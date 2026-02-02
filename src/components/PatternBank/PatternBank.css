@@ -162,6 +162,12 @@
   gap: 3px;
 }
 
+.pattern-name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .pattern-name {
   font-size: 12px;
   font-weight: 500;
@@ -239,29 +245,28 @@
 }
 
 .rename-button {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
+  padding: 2px;
   background: transparent;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 3px;
-  color: #333;
+  color: #444;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
   opacity: 0;
+  flex-shrink: 0;
 }
 
 .pattern-item:hover .rename-button {
   opacity: 1;
-  color: #555;
 }
 
 .rename-button:hover {
-  border-color: #ff5722;
-  color: #ff5722 !important;
-  opacity: 1;
+  color: #ff5722;
 }
 
 .pattern-name-input {

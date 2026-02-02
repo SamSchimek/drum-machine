@@ -61,10 +61,11 @@
 }
 
 .shared-pattern-byline {
-  color: #888;
-  font-size: 1.1rem;
+  color: #ccc;
+  font-size: 1.2rem;
   font-style: italic;
   margin-left: 0.5rem;
+  font-weight: 500;
 }
 
 .shared-pattern-tempo {

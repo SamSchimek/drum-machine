@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import type { Pattern } from '../types';
-import type { SupabasePatternStorageInterface, SupabasePatternRow, SupabasePatternInput } from './types';
+import type { SupabasePatternStorageInterface, SupabasePatternRow, SupabasePatternInput, SharedPatternWithCreator } from './types';
 
 // Generate a random share slug
 function generateShareSlug(): string {
@@ -13,18 +13,34 @@ function generateShareSlug(): string {
 }
 
 // Convert Supabase row (snake_case) to Pattern (camelCase)
+// Also truncates grid to 16 steps for backwards compatibility with old 32-step patterns
 function toPattern(row: SupabasePatternRow): Pattern {
+  // Truncate each track to 16 steps for backwards compatibility
+  const grid = row.grid;
+  for (const track of Object.keys(grid) as (keyof typeof grid)[]) {
+    if (grid[track].length > 16) {
+      grid[track] = grid[track].slice(0, 16);
+    }
+  }
+
   return {
     id: row.id,
     name: row.name,
-    grid: row.grid,
+    grid: grid,
     tempo: row.tempo,
     createdAt: new Date(row.created_at).getTime(),
     updatedAt: new Date(row.updated_at).getTime(),
     userId: row.user_id,
     isPublic: row.is_public,
     shareSlug: row.share_slug,
+    showCreatorName: row.show_creator_name,
   };
+}
+
+// Extended pattern with creator info
+export interface PatternWithCreator extends Pattern {
+  creatorDisplayName: string | null;
+  upvoteCount: number;
 }
 
 export class SupabaseStorage implements SupabasePatternStorageInterface {
@@ -42,6 +58,7 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
       tempo: patternData.tempo,
       is_public: patternData.isPublic ?? false,
       share_slug: patternData.shareSlug ?? null,
+      show_creator_name: patternData.showCreatorName ?? true,
     };
 
     const { data, error } = await supabase
@@ -117,6 +134,7 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
     if (updates.tempo !== undefined) supabaseUpdates.tempo = updates.tempo;
     if (updates.isPublic !== undefined) supabaseUpdates.is_public = updates.isPublic;
     if (updates.shareSlug !== undefined) supabaseUpdates.share_slug = updates.shareSlug;
+    if (updates.showCreatorName !== undefined) supabaseUpdates.show_creator_name = updates.showCreatorName;
 
     const { data, error } = await supabase
       .from('patterns')
@@ -144,6 +162,7 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
           share_slug: shareSlug,
         })
         .eq('id', id)
+        .eq('user_id', this.userId)
         .select()
         .single();
 
@@ -171,7 +190,8 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
         is_public: false,
         share_slug: null,
       })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', this.userId);
 
     if (error) {
       console.error('Error making pattern private:', error.message);
@@ -199,4 +219,148 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
 
     return toPattern(data as SupabasePatternRow);
   }
+
+  async updateShowCreatorName(id: string, showCreatorName: boolean): Promise<boolean> {
+    const { error } = await supabase
+      .from('patterns')
+      .update({ show_creator_name: showCreatorName })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating show_creator_name:', error.message);
+      return false;
+    }
+
+    return true;
+  }
+}
+
+// Static methods for shared pattern operations (don't require authentication)
+export async function getSharedPatternWithCreator(slug: string): Promise<PatternWithCreator | null> {
+  // Fetch pattern with creator profile
+  const { data: patternData, error: patternError } = await supabase
+    .from('patterns')
+    .select(`
+      *,
+      profiles:user_id (display_name)
+    `)
+    .eq('share_slug', slug)
+    .maybeSingle();
+
+  if (patternError) {
+    console.error('Error loading shared pattern:', patternError.message);
+    return null;
+  }
+
+  if (!patternData) {
+    return null;
+  }
+
+  // Get upvote count
+  const { count, error: countError } = await supabase
+    .from('pattern_upvotes')
+    .select('*', { count: 'exact', head: true })
+    .eq('pattern_id', patternData.id);
+
+  if (countError) {
+    console.error('Error getting upvote count:', countError.message);
+  }
+
+  const row = patternData as SharedPatternWithCreator;
+  const pattern = toPattern(row);
+
+  return {
+    ...pattern,
+    creatorDisplayName: row.profiles?.display_name ?? null,
+    upvoteCount: count ?? 0,
+  };
+}
+
+export async function hasUpvoted(
+  patternId: string,
+  userId: string | null,
+  anonymousId: string | null
+): Promise<boolean> {
+  if (userId) {
+    const { data, error } = await supabase
+      .from('pattern_upvotes')
+      .select('id')
+      .eq('pattern_id', patternId)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error checking upvote:', error.message);
+      return false;
+    }
+
+    return data !== null;
+  }
+
+  if (anonymousId) {
+    const { data, error } = await supabase
+      .from('pattern_upvotes')
+      .select('id')
+      .eq('pattern_id', patternId)
+      .eq('anonymous_id', anonymousId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error checking upvote:', error.message);
+      return false;
+    }
+
+    return data !== null;
+  }
+
+  return false;
+}
+
+export async function addUpvote(
+  patternId: string,
+  userId: string | null,
+  anonymousId: string | null
+): Promise<boolean> {
+  const { error } = await supabase
+    .from('pattern_upvotes')
+    .insert({
+      pattern_id: patternId,
+      user_id: userId,
+      anonymous_id: userId ? null : anonymousId,
+    });
+
+  if (error) {
+    // Unique constraint violation means already upvoted
+    if (error.code === '23505') {
+      return true;
+    }
+    console.error('Error adding upvote:', error.message);
+    return false;
+  }
+
+  return true;
+}
+
+export async function removeUpvote(
+  patternId: string,
+  userId: string | null
+): Promise<boolean> {
+  // Only authenticated users can remove upvotes
+  if (!userId) {
+    console.error('Anonymous users cannot remove upvotes');
+    return false;
+  }
+
+  const { error } = await supabase
+    .from('pattern_upvotes')
+    .delete()
+    .eq('pattern_id', patternId)
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error removing upvote:', error.message);
+    return false;
+  }
+
+  return true;
 }

@@ -25,8 +25,33 @@ export interface SupabasePatternRow {
   tempo: number;
   is_public: boolean;
   share_slug: string | null;
+  show_creator_name: boolean;
   created_at: string; // ISO string from Supabase
   updated_at: string; // ISO string from Supabase
+}
+
+// Profile row type
+export interface ProfileRow {
+  id: string;
+  display_name: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Pattern upvote row type
+export interface PatternUpvoteRow {
+  id: string;
+  pattern_id: string;
+  user_id: string | null;
+  anonymous_id: string | null;
+  ip_hash: string | null;
+  created_at: string;
+}
+
+// Extended pattern with creator info and upvote count
+export interface SharedPatternWithCreator extends SupabasePatternRow {
+  profiles: ProfileRow | null;
+  upvote_count: number;
 }
 
 // Input for creating a pattern in Supabase
@@ -37,6 +62,7 @@ export interface SupabasePatternInput {
   tempo: number;
   is_public?: boolean;
   share_slug?: string | null;
+  show_creator_name?: boolean;
 }
 
 // Migration result type

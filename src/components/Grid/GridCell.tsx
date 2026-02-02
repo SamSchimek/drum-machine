@@ -14,13 +14,17 @@ export function GridCell({ trackId, step, active, isCurrentStep, onClick }: Grid
   const color = TRACK_COLORS[trackId];
   const isDownbeat = step % 4 === 0;
   const isBeatEnd = step % 4 === 3;
+  const isBarEnd = step === 15;
+  const isBarStart = false;
 
   const classNames = [
     'grid-cell',
     active && 'active',
     isCurrentStep && 'current',
     isDownbeat && 'downbeat',
-    isBeatEnd && 'beat-end',
+    isBeatEnd && !isBarEnd && 'beat-end',
+    isBarEnd && 'bar-end',
+    isBarStart && 'bar-start',
   ].filter(Boolean).join(' ');
 
   return (

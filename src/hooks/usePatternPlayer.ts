@@ -74,10 +74,13 @@ export function usePatternPlayer({ grid, tempo }: UsePatternPlayerOptions): UseP
   const play = useCallback(async () => {
     if (isPlayingRef.current) return;
 
-    // Initialize audio engine on first play (handles user gesture requirement)
+    // Initialize audio engine on first play
     if (!audioEngineRef.current) {
       audioEngineRef.current = new AudioEngine();
     }
+
+    // Unlock audio synchronously (required for mobile - must happen before any await)
+    audioEngineRef.current.unlock();
 
     await audioEngineRef.current.initialize();
 

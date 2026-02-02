@@ -19,17 +19,51 @@ export class AudioEngine {
   synths: Map<TrackId, DrumSynth> = new Map();
   private masterGain: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
+  private unlocked = false;
+
+  /**
+   * Unlock audio for mobile browsers. Must be called synchronously
+   * from a user gesture (click/touch) handler.
+   */
+  unlock(): void {
+    if (this.unlocked) return;
+
+    // Create context if needed (must happen in user gesture)
+    if (!this.context) {
+      this.context = new AudioContext();
+    }
+
+    // Resume if suspended
+    if (this.context.state === 'suspended') {
+      this.context.resume();
+    }
+
+    // Play silent buffer to unlock iOS audio
+    const buffer = this.context.createBuffer(1, 1, 22050);
+    const source = this.context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(this.context.destination);
+    source.start(0);
+
+    this.unlocked = true;
+  }
 
   async initialize(): Promise<void> {
-    if (this.context) {
+    // Unlock first (idempotent if already called)
+    this.unlock();
+
+    if (this.masterGain) {
+      // Already fully initialized
       return;
     }
 
-    this.context = new AudioContext();
-
-    // Resume context if suspended (browser autoplay policy)
-    if (this.context.state === 'suspended') {
+    // Ensure context is resumed
+    if (this.context && this.context.state === 'suspended') {
       await this.context.resume();
+    }
+
+    if (!this.context) {
+      this.context = new AudioContext();
     }
 
     // Create master chain: synths -> compressor -> masterGain -> destination

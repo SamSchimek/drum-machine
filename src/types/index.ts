@@ -68,6 +68,7 @@ export interface Pattern {
   userId?: string;
   isPublic?: boolean;
   shareSlug?: string | null;
+  showCreatorName?: boolean;
 }
 
 // Sequencer state

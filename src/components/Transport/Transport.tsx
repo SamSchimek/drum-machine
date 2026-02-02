@@ -4,7 +4,7 @@ import { MIN_TEMPO, MAX_TEMPO } from '../../constants';
 import './Transport.css';
 
 export function Transport() {
-  const { isPlaying, tempo, volume, play, stop, setTempo, setVolume, clearGrid } = useDrumMachine();
+  const { isPlaying, tempo, volume, play, stop, setTempo, setVolume, clearGrid, loadStarterBeat } = useDrumMachine();
   const [isEditingTempo, setIsEditingTempo] = useState(false);
   const [tempoInput, setTempoInput] = useState(String(tempo));
 
@@ -112,6 +112,15 @@ export function Transport() {
         />
         <span className="volume-value">{Math.round(volume * 100)}%</span>
       </div>
+
+      <button
+        className="starter-beat-button"
+        onClick={loadStarterBeat}
+        aria-label="Load starter beat"
+        title="Load a random starter pattern"
+      >
+        Starter Beat
+      </button>
 
       <button className="clear-button" onClick={clearGrid} aria-label="Clear pattern">
         Clear

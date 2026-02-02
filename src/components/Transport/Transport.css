@@ -218,6 +218,31 @@
   font-variant-numeric: tabular-nums;
 }
 
+.starter-beat-button {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #ff5722;
+  border-radius: 4px;
+  color: #ff5722;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: auto;
+}
+
+.starter-beat-button:hover {
+  background: rgba(255, 87, 34, 0.15);
+  color: #ff7043;
+}
+
+.starter-beat-button:focus-visible {
+  outline: 2px solid #ff5722;
+  outline-offset: 2px;
+}
+
 .clear-button {
   padding: 8px 16px;
   background: transparent;
@@ -230,7 +255,6 @@
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.15s ease;
-  margin-left: auto;
 }
 
 .clear-button:hover {
@@ -249,7 +273,7 @@
     display: none;
   }
 
-  .clear-button {
+  .starter-beat-button {
     margin-left: 0;
   }
 }
@@ -282,6 +306,7 @@
     min-width: 90px;
   }
 
+  .starter-beat-button,
   .clear-button {
     padding: 6px 12px;
     font-size: 10px;

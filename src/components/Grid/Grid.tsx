@@ -23,13 +23,17 @@ export function Grid() {
           {Array.from({ length: STEPS_PER_PATTERN }, (_, step) => {
             const isDownbeat = step % 4 === 0;
             const isBeatEnd = step % 4 === 3;
+            const isBarEnd = step === 15;
+            const isBarStart = false;
             const isActive = isPlaying && currentStep === step;
 
             const classNames = [
               'step-indicator',
               isActive && 'active',
               isDownbeat && 'downbeat',
-              isBeatEnd && 'beat-end',
+              isBeatEnd && !isBarEnd && 'beat-end',
+              isBarEnd && 'bar-end',
+              isBarStart && 'bar-start',
             ].filter(Boolean).join(' ');
 
             return (

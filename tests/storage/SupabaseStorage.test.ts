@@ -7,11 +7,11 @@ import type { SupabasePatternRow } from '../../src/storage/types';
 // Get the mocked supabase
 const mockSupabase = vi.mocked(supabase);
 
-// Helper to create a mock grid
+// Helper to create a mock grid (16 steps)
 function createMockGrid(): GridState {
   return {
-    kick: [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false],
-    snare: [false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false],
+    kick: new Array(16).fill(false).map((_, i) => i % 8 === 0),
+    snare: new Array(16).fill(false).map((_, i) => i === 4 || i === 12),
     closedHH: new Array(16).fill(false),
     openHH: new Array(16).fill(false),
     clap: new Array(16).fill(false),
@@ -35,6 +35,7 @@ function createMockSupabaseRow(overrides: Partial<SupabasePatternRow> = {}): Sup
     tempo: 120,
     is_public: false,
     share_slug: null,
+    show_creator_name: true,
     created_at: '2024-01-15T10:30:00.000Z',
     updated_at: '2024-01-15T10:30:00.000Z',
     ...overrides,
@@ -295,10 +296,12 @@ describe('SupabaseStorage', () => {
       mockSupabase.from.mockReturnValueOnce({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockRow,
-                error: null,
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: mockRow,
+                  error: null,
+                }),
               }),
             }),
           }),
@@ -320,10 +323,12 @@ describe('SupabaseStorage', () => {
       mockSupabase.from.mockReturnValueOnce({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: null,
-                error: { code: '23505', message: 'duplicate key' },
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: null,
+                  error: { code: '23505', message: 'duplicate key' },
+                }),
               }),
             }),
           }),
@@ -334,10 +339,12 @@ describe('SupabaseStorage', () => {
       mockSupabase.from.mockReturnValueOnce({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: mockRow,
-                error: null,
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: mockRow,
+                  error: null,
+                }),
               }),
             }),
           }),
@@ -354,10 +361,12 @@ describe('SupabaseStorage', () => {
       mockSupabase.from.mockReturnValueOnce({
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
-            select: vi.fn().mockReturnValue({
-              single: vi.fn().mockResolvedValue({
-                data: null,
-                error: { message: 'Some other error' },
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'Some other error' },
+                }),
               }),
             }),
           }),
@@ -374,8 +383,10 @@ describe('SupabaseStorage', () => {
     it('clears share_slug and sets is_public to false', async () => {
       mockSupabase.from.mockReturnValueOnce({
         update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({
-            error: null,
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({
+              error: null,
+            }),
           }),
         }),
       } as never);
@@ -388,8 +399,10 @@ describe('SupabaseStorage', () => {
     it('returns false on error', async () => {
       mockSupabase.from.mockReturnValueOnce({
         update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({
-            error: { message: 'Update failed' },
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({
+              error: { message: 'Update failed' },
+            }),
           }),
         }),
       } as never);

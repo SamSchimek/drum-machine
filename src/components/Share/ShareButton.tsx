@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { useDrumMachine } from '../../context/DrumMachineContext';
+import { supabase } from '../../lib/supabase';
 import type { Pattern } from '../../types';
 import './ShareButton.css';
 
@@ -15,6 +16,12 @@ export function ShareButton({ pattern }: ShareButtonProps) {
   const [showShareModal, setShowShareModal] = useState(false);
   const [currentShareSlug, setCurrentShareSlug] = useState<string | null>(pattern.shareSlug ?? null);
   const [copied, setCopied] = useState(false);
+  const [showCreatorName, setShowCreatorName] = useState(pattern.showCreatorName ?? true);
+
+  // Sync with pattern prop when it changes
+  useEffect(() => {
+    setShowCreatorName(pattern.showCreatorName ?? true);
+  }, [pattern.showCreatorName]);
 
   if (!user) {
     return null;
@@ -60,6 +67,27 @@ export function ShareButton({ pattern }: ShareButtonProps) {
 
   const shareUrl = currentShareSlug ? `${window.location.origin}/p/${currentShareSlug}` : null;
 
+  const handleToggleShowCreatorName = async () => {
+    const newValue = !showCreatorName;
+    setShowCreatorName(newValue);
+
+    try {
+      const { error } = await supabase
+        .from('patterns')
+        .update({ show_creator_name: newValue })
+        .eq('id', pattern.id);
+
+      if (error) {
+        console.error('Error updating show_creator_name:', error);
+        // Revert on error
+        setShowCreatorName(!newValue);
+      }
+    } catch (err) {
+      console.error('Error updating show_creator_name:', err);
+      setShowCreatorName(!newValue);
+    }
+  };
+
   const handleCopyLink = async () => {
     if (shareUrl) {
       try {
@@ -99,6 +127,15 @@ export function ShareButton({ pattern }: ShareButtonProps) {
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
+            <label className="share-creator-toggle">
+              <input
+                type="checkbox"
+                checked={showCreatorName}
+                onChange={handleToggleShowCreatorName}
+              />
+              <span>Show my name on shared pattern</span>
+            </label>
+
             <button className="share-modal-close" onClick={() => setShowShareModal(false)}>
               Done
             </button>

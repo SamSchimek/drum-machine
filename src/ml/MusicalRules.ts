@@ -40,7 +40,7 @@ export class MusicalRules {
     if (step === 0) {
       return { allowed: true, probability: 0.1, reason: 'Snare on beat 1 discouraged' };
     }
-    // Boost snare on backbeats (steps 4 and 12, i.e., beats 2 and 4)
+    // Boost snare on backbeats (steps 4 and 12, i.e., beats 2 and 4 in 16-step grid)
     if (step === 4 || step === 12) {
       return { allowed: true, probability: 1.2, reason: 'Snare on backbeat encouraged' };
     }
@@ -74,7 +74,7 @@ export class MusicalRules {
 
   // Kick on beats 1 and 3 encouraged
   private kickBackbeat(step: number): RuleResult {
-    // Beats 1 and 3 are steps 0 and 8
+    // Beats 1 and 3 are steps 0 and 8 in 16-step grid
     if (step === 0 || step === 8) {
       return { allowed: true, probability: 1.3, reason: 'Kick on downbeat encouraged' };
     }

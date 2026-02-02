@@ -10,6 +10,7 @@ import { StorageAdapter } from '../storage/StorageAdapter';
 import { patternGenerator } from '../ml/PatternGenerator';
 import { useAuth } from '../auth/AuthContext';
 import type { MigrationResult } from '../storage/types';
+import { getRandomStarterBeat } from '../presets/starterBeats';
 
 type MutedTracks = Record<TrackId, boolean>;
 
@@ -31,6 +32,7 @@ interface DrumMachineState {
   mutedTracks: MutedTracks;
   patternsLoading: boolean;
   patternError: string | null;
+  lastStarterBeat: string | null;
 }
 
 type Action =
@@ -45,7 +47,8 @@ type Action =
   | { type: 'SET_CAN_GENERATE'; canGenerate: boolean }
   | { type: 'TOGGLE_MUTE'; trackId: TrackId }
   | { type: 'SET_PATTERNS_LOADING'; loading: boolean }
-  | { type: 'SET_PATTERN_ERROR'; error: string | null };
+  | { type: 'SET_PATTERN_ERROR'; error: string | null }
+  | { type: 'LOAD_STARTER_BEAT'; grid: GridState; beatName: string };
 
 const initialState: DrumMachineState = {
   grid: createEmptyGrid(),
@@ -58,6 +61,7 @@ const initialState: DrumMachineState = {
   mutedTracks: createInitialMutedTracks(),
   patternsLoading: true,
   patternError: null,
+  lastStarterBeat: null,
 };
 
 function reducer(state: DrumMachineState, action: Action): DrumMachineState {
@@ -93,6 +97,8 @@ function reducer(state: DrumMachineState, action: Action): DrumMachineState {
       return { ...state, patternsLoading: action.loading };
     case 'SET_PATTERN_ERROR':
       return { ...state, patternError: action.error };
+    case 'LOAD_STARTER_BEAT':
+      return { ...state, grid: action.grid, lastStarterBeat: action.beatName };
     default:
       return state;
   }
@@ -116,6 +122,7 @@ interface DrumMachineContextValue extends DrumMachineState {
   makePatternPublic: (id: string) => Promise<string | null>;
   makePatternPrivate: (id: string) => Promise<boolean>;
   refreshPatterns: () => Promise<void>;
+  loadStarterBeat: () => void;
 }
 
 const DrumMachineContext = createContext<DrumMachineContextValue | null>(null);
@@ -310,6 +317,8 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
   }, []);
 
   const triggerSound = useCallback(async (trackId: TrackId) => {
+    // Unlock audio synchronously (required for mobile - must happen before any await)
+    audioEngine.unlock();
     await audioEngine.initialize();
     audioEngine.triggerSound(trackId);
   }, []);
@@ -389,6 +398,11 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     await loadPatterns();
   }, [loadPatterns]);
 
+  const loadStarterBeat = useCallback(() => {
+    const beat = getRandomStarterBeat(state.lastStarterBeat);
+    dispatch({ type: 'LOAD_STARTER_BEAT', grid: beat.grid, beatName: beat.name });
+  }, [state.lastStarterBeat]);
+
   const value: DrumMachineContextValue = {
     ...state,
     toggleCell,
@@ -408,6 +422,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     makePatternPublic,
     makePatternPrivate,
     refreshPatterns,
+    loadStarterBeat,
   };
 
   return (

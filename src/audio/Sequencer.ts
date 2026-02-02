@@ -54,6 +54,8 @@ export class Sequencer {
   async start(): Promise<void> {
     if (this.isPlaying) return;
 
+    // Unlock audio synchronously (required for mobile - must happen before any await)
+    audioEngine.unlock();
     await audioEngine.initialize();
 
     this.isPlaying = true;

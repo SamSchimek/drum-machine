@@ -14,7 +14,7 @@ function createTestPattern(overrides: Partial<GridState> = {}): Pattern {
   grid.snare[12] = true;
 
   // Some hi-hats
-  for (let i = 0; i < 16; i += 2) {
+  for (let i = 0; i < STEPS_PER_PATTERN; i += 2) {
     grid.closedHH[i] = true;
   }
 
@@ -45,14 +45,14 @@ function createTrainingPatterns(count: number): Pattern[] {
     grid.snare[4] = true;
     grid.snare[12] = true;
 
-    for (let i = 0; i < 16; i += 2) {
+    for (let i = 0; i < STEPS_PER_PATTERN; i += 2) {
       if (Math.random() > 0.3) {
         grid.closedHH[i] = true;
       }
     }
 
     // Sometimes add open hi-hat, but never when closed is active
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < STEPS_PER_PATTERN; i++) {
       if (!grid.closedHH[i] && Math.random() > 0.85) {
         grid.openHH[i] = true;
       }
@@ -106,9 +106,9 @@ describe('PatternGenerator', () => {
       const pattern = generator.generate();
 
       expect(pattern).toBeDefined();
-      expect(pattern.kick).toHaveLength(16);
-      expect(pattern.snare).toHaveLength(16);
-      expect(pattern.closedHH).toHaveLength(16);
+      expect(pattern.kick).toHaveLength(STEPS_PER_PATTERN);
+      expect(pattern.snare).toHaveLength(STEPS_PER_PATTERN);
+      expect(pattern.closedHH).toHaveLength(STEPS_PER_PATTERN);
     });
 
     it('enforces hi-hat mutual exclusion', () => {
@@ -145,7 +145,7 @@ describe('PatternGenerator', () => {
     it('generates a pattern using best-of-N selection', () => {
       const pattern = generator.generateBest(5);
       expect(pattern).toBeDefined();
-      expect(pattern.kick).toHaveLength(16);
+      expect(pattern.kick).toHaveLength(STEPS_PER_PATTERN);
     });
 
     it('enforces rules in best pattern', () => {

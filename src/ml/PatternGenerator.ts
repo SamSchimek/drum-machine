@@ -114,21 +114,21 @@ export class PatternGenerator {
     const kickHits = pattern.kick.filter(Boolean).length;
     const snareHits = pattern.snare.filter(Boolean).length;
 
-    // Prefer patterns with some kick and snare
-    if (kickHits >= 2 && kickHits <= 6) score += 10;
-    if (snareHits >= 1 && snareHits <= 4) score += 10;
+    // Prefer patterns with some kick and snare (scaled for 32 steps)
+    if (kickHits >= 4 && kickHits <= 12) score += 10;
+    if (snareHits >= 2 && snareHits <= 8) score += 10;
 
-    // Prefer snare on backbeats
+    // Prefer snare on backbeats (steps 4 and 12 for 16-step grid)
     if (pattern.snare[4]) score += 5;
     if (pattern.snare[12]) score += 5;
 
-    // Prefer kick on downbeats
+    // Prefer kick on downbeats (steps 0 and 8 for 16-step grid)
     if (pattern.kick[0]) score += 5;
     if (pattern.kick[8]) score += 3;
 
-    // Score hi-hat consistency
+    // Score hi-hat consistency (scaled for 32 steps)
     const closedHHHits = pattern.closedHH.filter(Boolean).length;
-    if (closedHHHits >= 4 && closedHHHits <= 12) score += 5;
+    if (closedHHHits >= 8 && closedHHHits <= 24) score += 5;
 
     // Penalize too sparse or too dense overall
     const totalHits = TRACK_IDS.reduce(

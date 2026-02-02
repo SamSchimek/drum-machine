@@ -26,11 +26,13 @@ function PatternPreview({ grid }: { grid: Pattern['grid'] }) {
 }
 
 export function PatternBank() {
-  const { patterns, savePattern, loadPattern, deletePattern, patternsLoading, patternError } = useDrumMachine();
+  const { patterns, savePattern, loadPattern, deletePattern, renamePattern, patternsLoading, patternError } = useDrumMachine();
   const { user } = useAuth();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [patternName, setPatternName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
 
   const handleSave = async () => {
     if (patternName.trim() && !isSaving) {
@@ -70,6 +72,32 @@ export function PatternBank() {
       await deletePattern(id);
     } catch (error) {
       console.error('Failed to delete pattern:', error);
+    }
+  };
+
+  const handleStartRename = (pattern: Pattern) => {
+    setEditingId(pattern.id);
+    setEditingName(pattern.name);
+  };
+
+  const handleRename = async () => {
+    if (editingId && editingName.trim()) {
+      try {
+        await renamePattern(editingId, editingName.trim());
+      } catch (error) {
+        console.error('Failed to rename pattern:', error);
+      }
+    }
+    setEditingId(null);
+    setEditingName('');
+  };
+
+  const handleRenameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleRename();
+    } else if (e.key === 'Escape') {
+      setEditingId(null);
+      setEditingName('');
     }
   };
 
@@ -124,12 +152,37 @@ export function PatternBank() {
         ) : (
           patterns.map((pattern) => (
             <div key={pattern.id} className="pattern-item">
-              <div className="pattern-info" onClick={() => handleLoad(pattern.id)}>
-                <span className="pattern-name">{pattern.name}</span>
+              <div className="pattern-info" onClick={() => editingId !== pattern.id && handleLoad(pattern.id)}>
+                {editingId === pattern.id ? (
+                  <input
+                    type="text"
+                    className="pattern-name-input"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    onKeyDown={handleRenameKeyDown}
+                    onBlur={handleRename}
+                    autoFocus
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <span className="pattern-name">{pattern.name}</span>
+                )}
                 <span className="pattern-tempo">{pattern.tempo} BPM</span>
                 <PatternPreview grid={pattern.grid} />
               </div>
               <div className="pattern-actions">
+                {editingId !== pattern.id && (
+                  <button
+                    className="rename-button"
+                    onClick={() => handleStartRename(pattern)}
+                    aria-label={`Rename ${pattern.name}`}
+                    title="Rename"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                  </button>
+                )}
                 {user && <ShareButton pattern={pattern} />}
                 <button
                   className="delete-button"

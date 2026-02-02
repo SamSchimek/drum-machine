@@ -114,6 +114,7 @@ interface DrumMachineContextValue extends DrumMachineState {
   savePattern: (name: string) => Promise<Pattern>;
   loadPattern: (id: string) => Promise<void>;
   deletePattern: (id: string) => Promise<void>;
+  renamePattern: (id: string, newName: string) => Promise<void>;
   generatePattern: () => void;
   triggerSound: (trackId: TrackId) => void;
   toggleMute: (trackId: TrackId) => void;
@@ -315,6 +316,19 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
+  const renamePattern = useCallback(async (id: string, newName: string): Promise<void> => {
+    dispatch({ type: 'SET_PATTERN_ERROR', error: null });
+
+    try {
+      await storageAdapter.updatePattern(id, { name: newName.trim() });
+      const patterns = await storageAdapter.getAllPatterns();
+      dispatch({ type: 'LOAD_PATTERNS', patterns });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to rename pattern';
+      dispatch({ type: 'SET_PATTERN_ERROR', error: errorMessage });
+    }
+  }, []);
+
   const generatePattern = useCallback(() => {
     if (patternGenerator.canGenerate()) {
       const grid = patternGenerator.generateBest();
@@ -420,6 +434,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     savePattern,
     loadPattern: loadPatternById,
     deletePattern,
+    renamePattern,
     generatePattern,
     triggerSound,
     toggleMute,

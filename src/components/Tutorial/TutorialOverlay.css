@@ -1,0 +1,47 @@
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.tutorial-overlay:focus {
+  outline: none;
+}
+
+.tutorial-spotlight {
+  position: fixed;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+  z-index: 1000;
+}
+
+.tutorial-tooltip-wrapper {
+  pointer-events: auto;
+  z-index: 1001;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-spotlight {
+    transition: none;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .tutorial-tooltip-wrapper {
+    left: 16px !important;
+    right: 16px;
+    width: calc(100vw - 32px);
+  }
+
+  .tutorial-tooltip-wrapper .tutorial-tooltip {
+    max-width: 100%;
+  }
+}

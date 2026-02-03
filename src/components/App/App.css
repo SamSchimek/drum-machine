@@ -22,6 +22,37 @@
 .header-right {
   display: flex;
   align-items: center;
+  gap: 12px;
+}
+
+.help-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.help-button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: #444;
+}
+
+.help-button:focus-visible {
+  outline: 2px solid #ff5722;
+  outline-offset: 2px;
+}
+
+.help-button svg {
+  display: block;
 }
 
 .app-header h1 {

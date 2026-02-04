@@ -1,5 +1,6 @@
 import type { TrackId } from '../../types';
 import { TRACK_COLORS } from '../../constants';
+import { useTutorial } from '../../context/TutorialContext';
 import './Grid.css';
 
 interface GridCellProps {
@@ -11,11 +12,14 @@ interface GridCellProps {
 }
 
 export function GridCell({ trackId, step, active, isCurrentStep, onClick }: GridCellProps) {
+  const { isActive: tutorialActive, isCellRequired, onCellToggle } = useTutorial();
+
   const color = TRACK_COLORS[trackId];
   const isDownbeat = step % 4 === 0;
   const isBeatEnd = step % 4 === 3;
   const isBarEnd = step === 15;
   const isBarStart = false;
+  const isTarget = tutorialActive && isCellRequired(trackId, step);
 
   const classNames = [
     'grid-cell',
@@ -25,7 +29,14 @@ export function GridCell({ trackId, step, active, isCurrentStep, onClick }: Grid
     isBeatEnd && !isBarEnd && 'beat-end',
     isBarEnd && 'bar-end',
     isBarStart && 'bar-start',
+    isTarget && 'tutorial-target',
   ].filter(Boolean).join(' ');
+
+  const handleClick = () => {
+    const willBeActive = !active;
+    onClick();
+    onCellToggle(trackId, step, willBeActive);
+  };
 
   return (
     <button
@@ -34,7 +45,7 @@ export function GridCell({ trackId, step, active, isCurrentStep, onClick }: Grid
         '--track-color': color,
         '--track-color-dim': `${color}40`,
       } as React.CSSProperties}
-      onClick={onClick}
+      onClick={handleClick}
       data-testid={`cell-${trackId}-${step}`}
       aria-label={`${trackId} step ${step + 1} ${active ? 'active' : 'inactive'}`}
       aria-pressed={active}

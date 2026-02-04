@@ -1,16 +1,22 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { AuthProvider } from '../src/auth/AuthContext';
 import { DrumMachineProvider } from '../src/context/DrumMachineContext';
+import { TutorialProvider } from '../src/context/TutorialContext';
 import { Grid } from '../src/components/Grid';
 
 function renderGrid() {
   return render(
-    <AuthProvider>
-      <DrumMachineProvider>
-        <Grid />
-      </DrumMachineProvider>
-    </AuthProvider>
+    <MemoryRouter>
+      <AuthProvider>
+        <DrumMachineProvider>
+          <TutorialProvider>
+            <Grid />
+          </TutorialProvider>
+        </DrumMachineProvider>
+      </AuthProvider>
+    </MemoryRouter>
   );
 }
 

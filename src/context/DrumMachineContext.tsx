@@ -110,6 +110,7 @@ interface DrumMachineContextValue extends DrumMachineState {
   stop: () => void;
   setTempo: (tempo: number) => void;
   setVolume: (volume: number) => void;
+  setGrid: (grid: GridState) => void;
   clearGrid: () => void;
   savePattern: (name: string) => Promise<Pattern>;
   loadPattern: (id: string) => Promise<void>;
@@ -250,6 +251,10 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
 
   const setVolume = useCallback((volume: number) => {
     dispatch({ type: 'SET_VOLUME', volume });
+  }, []);
+
+  const setGrid = useCallback((grid: GridState) => {
+    dispatch({ type: 'SET_GRID', grid });
   }, []);
 
   const clearGrid = useCallback(() => {
@@ -430,6 +435,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     stop,
     setTempo,
     setVolume,
+    setGrid,
     clearGrid,
     savePattern,
     loadPattern: loadPatternById,

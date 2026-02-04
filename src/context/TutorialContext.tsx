@@ -12,7 +12,19 @@ import {
   clearTutorialState,
 } from './tutorialPersistence';
 import { useDrumMachine } from './DrumMachineContext';
+import { DEFAULT_TEMPO } from '../constants';
 import type { TrackId, GridState } from '../types';
+
+// Step indices for special behavior
+const BPM_STEP_INDEX = 8;
+const STARTER_BEAT_STEP_INDEX = 9;
+
+// Deep copy helper to prevent mutations affecting saved state
+function deepCopyGrid(grid: GridState): GridState {
+  return Object.fromEntries(
+    Object.entries(grid).map(([key, value]) => [key, [...value]])
+  ) as GridState;
+}
 
 export interface TutorialStep {
   target: string;
@@ -140,7 +152,10 @@ const AUTO_START_DELAY = 1500;
 export function TutorialProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isMainRoute = location.pathname === '/';
-  const { grid, clearGrid, triggerSound } = useDrumMachine();
+  const { grid, clearGrid, triggerSound, setTempo, setGrid } = useDrumMachine();
+
+  // Ref to save grid state before starter beat step
+  const savedGridBeforeStarterStep = useRef<GridState | null>(null);
 
   // Initialize state from localStorage
   const [currentStep, setCurrentStep] = useState(() => loadTutorialStep());
@@ -226,6 +241,18 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
 
     setIsContinuing(false);
 
+    // Save grid when ENTERING starter beat step (leaving BPM step)
+    if (currentStep === BPM_STEP_INDEX) {
+      savedGridBeforeStarterStep.current = deepCopyGrid(grid);
+      // Reset tempo to default when leaving BPM step
+      setTempo(DEFAULT_TEMPO);
+    }
+
+    // Restore grid when LEAVING starter beat step
+    if (currentStep === STARTER_BEAT_STEP_INDEX && savedGridBeforeStarterStep.current) {
+      setGrid(deepCopyGrid(savedGridBeforeStarterStep.current));
+    }
+
     if (currentStep >= TUTORIAL_STEPS.length - 1) {
       // Complete tutorial
       setIsActive(false);
@@ -238,17 +265,22 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
       setCurrentStep(newStep);
       saveTutorialStep(newStep);
     }
-  }, [currentStep, isInteractiveStep, checkInteractiveStepComplete, grid]);
+  }, [currentStep, isInteractiveStep, checkInteractiveStepComplete, grid, setTempo, setGrid]);
 
   const previousStep = useCallback(() => {
     setIsContinuing(false);
+
+    // Restore grid when leaving step 9 backward
+    if (currentStep === STARTER_BEAT_STEP_INDEX && savedGridBeforeStarterStep.current) {
+      setGrid(deepCopyGrid(savedGridBeforeStarterStep.current));
+    }
 
     if (currentStep > 0) {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
       saveTutorialStep(newStep);
     }
-  }, [currentStep]);
+  }, [currentStep, setGrid]);
 
   const skipTutorial = useCallback(() => {
     setIsActive(false);
@@ -265,6 +297,8 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     setIsCompleted(false);
     setIsSkipped(false);
     setIsContinuing(false);
+    // Clear saved grid state
+    savedGridBeforeStarterStep.current = null;
     // Save new active state
     saveTutorialActive(true);
   }, [clearGrid]);

@@ -1,6 +1,7 @@
 import { TRACK_IDS } from '../../types';
 import { STEPS_PER_PATTERN } from '../../constants';
 import { useDrumMachine } from '../../context/DrumMachineContext';
+import { useTutorial } from '../../context/TutorialContext';
 import { GridRow } from './GridRow';
 import './Grid.css';
 
@@ -15,8 +16,15 @@ export function Grid() {
     toggleMute,
   } = useDrumMachine();
 
+  const { isInteractiveStep } = useTutorial();
+
+  const containerClasses = [
+    'grid-container',
+    isInteractiveStep && 'tutorial-interactive',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className="grid-container" data-testid="grid">
+    <div className={containerClasses} data-testid="grid">
       <div className="step-indicators">
         <div className="track-label-spacer" />
         <div className="indicators">

@@ -198,6 +198,23 @@
   outline: none;
 }
 
+/* Tutorial target cells */
+.grid-cell.tutorial-target {
+  animation: tutorial-pulse 1.2s ease-in-out infinite;
+  position: relative;
+  z-index: 1001;
+}
+
+@keyframes tutorial-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.8); }
+  50% { box-shadow: 0 0 15px 5px rgba(255, 87, 34, 0.5); }
+}
+
+/* Dim non-target cells during interactive tutorial step */
+.tutorial-interactive .grid-cell:not(.tutorial-target):not(.active) {
+  opacity: 0.4;
+}
+
 @media (max-width: 1200px) {
   .grid-cell {
     width: 28px;

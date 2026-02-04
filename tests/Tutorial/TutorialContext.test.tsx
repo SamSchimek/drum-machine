@@ -6,7 +6,7 @@ import {
   useTutorial,
   TUTORIAL_STEPS,
 } from '../../src/context/TutorialContext';
-import { DrumMachineProvider } from '../../src/context/DrumMachineContext';
+import { DrumMachineProvider, useDrumMachine } from '../../src/context/DrumMachineContext';
 import { AuthProvider } from '../../src/auth/AuthContext';
 import {
   saveTutorialCompleted,
@@ -21,6 +21,8 @@ import {
 // Test component to access context
 function TestConsumer() {
   const ctx = useTutorial();
+  const { tempo, grid, setTempo, loadStarterBeat } = useDrumMachine();
+
   return (
     <div>
       <span data-testid="step">{ctx.currentStep}</span>
@@ -33,6 +35,9 @@ function TestConsumer() {
       <span data-testid="isStepComplete">{ctx.isStepComplete.toString()}</span>
       <span data-testid="isCellRequired-kick-0">{ctx.isCellRequired('kick', 0).toString()}</span>
       <span data-testid="isCellRequired-kick-1">{ctx.isCellRequired('kick', 1).toString()}</span>
+      <span data-testid="tempo">{tempo}</span>
+      <span data-testid="grid-kick-0">{grid.kick[0].toString()}</span>
+      <span data-testid="grid-kick-6">{grid.kick[6].toString()}</span>
       <button data-testid="next" onClick={ctx.nextStep}>Next</button>
       <button data-testid="prev" onClick={ctx.previousStep}>Previous</button>
       <button data-testid="skip" onClick={ctx.skipTutorial}>Skip</button>
@@ -40,6 +45,8 @@ function TestConsumer() {
       <button data-testid="start" onClick={ctx.startTutorial}>Start</button>
       <button data-testid="dismiss" onClick={ctx.dismissPrompt}>Dismiss</button>
       <button data-testid="onCellToggle-kick-0" onClick={() => ctx.onCellToggle('kick', 0, true)}>Toggle Kick 0</button>
+      <button data-testid="set-tempo-200" onClick={() => setTempo(200)}>Set Tempo 200</button>
+      <button data-testid="load-starter-beat" onClick={loadStarterBeat}>Load Starter Beat</button>
     </div>
   );
 }
@@ -584,6 +591,140 @@ describe('TutorialContext', () => {
           screen.getByTestId('onCellToggle-kick-0').click();
         });
       }).not.toThrow();
+    });
+  });
+
+  describe('tutorial step side effects', () => {
+    it('resets tempo to 120 when clicking Next on BPM step (step 8)', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      // Verify we're on step 8
+      expect(screen.getByTestId('step').textContent).toBe('8');
+      expect(screen.getByTestId('tempo').textContent).toBe('120');
+
+      // Change tempo
+      act(() => {
+        screen.getByTestId('set-tempo-200').click();
+      });
+      expect(screen.getByTestId('tempo').textContent).toBe('200');
+
+      // Click Next
+      act(() => {
+        screen.getByTestId('next').click();
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('9');
+      expect(screen.getByTestId('tempo').textContent).toBe('120');
+    });
+
+    it('saves grid when entering starter beat step and restores when leaving', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      // Verify we start with empty grid
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
+
+      // Go to step 9 (saves grid)
+      act(() => {
+        screen.getByTestId('next').click();
+      });
+      expect(screen.getByTestId('step').textContent).toBe('9');
+
+      // Load starter beat (changes grid)
+      act(() => {
+        screen.getByTestId('load-starter-beat').click();
+      });
+      // Starter beat should have changed the grid (kick at 0 is typically active)
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('true');
+
+      // Click Next (restores grid)
+      act(() => {
+        screen.getByTestId('next').click();
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('10');
+      // Grid should be restored to empty (what it was before entering step 9)
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
+    });
+
+    it('restores grid when navigating backward from starter beat step', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      // Verify we start with empty grid
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
+
+      // Go to step 9 (saves grid)
+      act(() => {
+        screen.getByTestId('next').click();
+      });
+      expect(screen.getByTestId('step').textContent).toBe('9');
+
+      // Load starter beat (changes grid)
+      act(() => {
+        screen.getByTestId('load-starter-beat').click();
+      });
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('true');
+
+      // Click Previous (restores grid)
+      act(() => {
+        screen.getByTestId('prev').click();
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('8');
+      // Grid should be restored to empty
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
+    });
+
+    it('does not reset tempo when navigating backward from BPM step', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      // Change tempo
+      act(() => {
+        screen.getByTestId('set-tempo-200').click();
+      });
+      expect(screen.getByTestId('tempo').textContent).toBe('200');
+
+      // Click Previous
+      act(() => {
+        screen.getByTestId('prev').click();
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('7');
+      // Tempo should remain unchanged
+      expect(screen.getByTestId('tempo').textContent).toBe('200');
+    });
+
+    it('resetTutorial clears saved grid state', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      // Go to step 9 (saves grid)
+      act(() => {
+        screen.getByTestId('next').click();
+      });
+
+      // Load starter beat
+      act(() => {
+        screen.getByTestId('load-starter-beat').click();
+      });
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('true');
+
+      // Reset tutorial
+      act(() => {
+        screen.getByTestId('reset').click();
+      });
+
+      // Grid should be cleared (from resetTutorial's clearGrid call)
+      expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
+      expect(screen.getByTestId('step').textContent).toBe('0');
     });
   });
 });

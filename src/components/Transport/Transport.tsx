@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useDrumMachine } from '../../context/DrumMachineContext';
-import { MIN_TEMPO, MAX_TEMPO } from '../../constants';
+import { MIN_TEMPO, MAX_TEMPO, MIN_SWING, MAX_SWING } from '../../constants';
 import './Transport.css';
 
 export function Transport() {
-  const { isPlaying, tempo, volume, play, stop, setTempo, setVolume, clearGrid, loadStarterBeat } = useDrumMachine();
+  const { isPlaying, tempo, volume, swing, play, stop, setTempo, setVolume, setSwing, resetTempo, clearGrid, loadStarterBeat } = useDrumMachine();
   const [isEditingTempo, setIsEditingTempo] = useState(false);
   const [tempoInput, setTempoInput] = useState(String(tempo));
 
@@ -14,6 +14,14 @@ export function Transport() {
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value));
+  };
+
+  const handleSwingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSwing(Number(e.target.value));
+  };
+
+  const handlePlayDoubleClick = () => {
+    resetTempo();
   };
 
   const handleTempoClick = () => {
@@ -46,8 +54,9 @@ export function Transport() {
       <button
         className={`play-button ${isPlaying ? 'playing' : ''}`}
         onClick={isPlaying ? stop : play}
+        onDoubleClick={handlePlayDoubleClick}
         aria-label={isPlaying ? 'Stop' : 'Play'}
-        title="Space to play/stop"
+        title="Space to play/stop. Double-click to reset tempo"
       >
         {isPlaying ? (
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -92,6 +101,21 @@ export function Transport() {
           onChange={handleTempoSliderChange}
           className="tempo-slider"
         />
+      </div>
+
+      <div className="swing-control">
+        <label htmlFor="swing">Swing</label>
+        <input
+          id="swing"
+          type="range"
+          min={MIN_SWING}
+          max={MAX_SWING}
+          value={swing}
+          onChange={handleSwingChange}
+          className="swing-slider"
+          aria-label="Swing"
+        />
+        <span className="swing-value">{swing}%</span>
       </div>
 
       <div className="volume-control">

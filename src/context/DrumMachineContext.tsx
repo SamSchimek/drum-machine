@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import type { GridState, TrackId, Pattern } from '../types';
 import { createEmptyGrid, TRACK_IDS } from '../types';
-import { DEFAULT_TEMPO } from '../constants';
+import { DEFAULT_TEMPO, DEFAULT_SWING } from '../constants';
 import { sequencer } from '../audio/Sequencer';
 import { audioEngine } from '../audio/AudioEngine';
 import { patternStorage as localPatternStorage } from '../storage/PatternStorage';
@@ -27,6 +27,7 @@ interface DrumMachineState {
   currentStep: number;
   tempo: number;
   volume: number;
+  swing: number;
   patterns: Pattern[];
   canGenerate: boolean;
   mutedTracks: MutedTracks;
@@ -41,6 +42,7 @@ type Action =
   | { type: 'SET_STEP'; step: number }
   | { type: 'SET_TEMPO'; tempo: number }
   | { type: 'SET_VOLUME'; volume: number }
+  | { type: 'SET_SWING'; swing: number }
   | { type: 'SET_GRID'; grid: GridState }
   | { type: 'CLEAR_GRID' }
   | { type: 'LOAD_PATTERNS'; patterns: Pattern[] }
@@ -56,6 +58,7 @@ const initialState: DrumMachineState = {
   currentStep: 0,
   tempo: DEFAULT_TEMPO,
   volume: 0.8,
+  swing: DEFAULT_SWING,
   patterns: [],
   canGenerate: false,
   mutedTracks: createInitialMutedTracks(),
@@ -80,6 +83,8 @@ function reducer(state: DrumMachineState, action: Action): DrumMachineState {
       return { ...state, tempo: action.tempo };
     case 'SET_VOLUME':
       return { ...state, volume: action.volume };
+    case 'SET_SWING':
+      return { ...state, swing: action.swing };
     case 'SET_GRID':
       return { ...state, grid: action.grid };
     case 'CLEAR_GRID':
@@ -110,6 +115,8 @@ interface DrumMachineContextValue extends DrumMachineState {
   stop: () => void;
   setTempo: (tempo: number) => void;
   setVolume: (volume: number) => void;
+  setSwing: (swing: number) => void;
+  resetTempo: () => void;
   setGrid: (grid: GridState) => void;
   clearGrid: () => void;
   savePattern: (name: string) => Promise<Pattern>;
@@ -203,6 +210,11 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     sequencer.setTempo(state.tempo);
   }, [state.tempo]);
 
+  // Sync swing with sequencer
+  useEffect(() => {
+    sequencer.setSwing(state.swing);
+  }, [state.swing]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -253,6 +265,14 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     dispatch({ type: 'SET_VOLUME', volume });
   }, []);
 
+  const setSwing = useCallback((swing: number) => {
+    dispatch({ type: 'SET_SWING', swing });
+  }, []);
+
+  const resetTempo = useCallback(() => {
+    dispatch({ type: 'SET_TEMPO', tempo: DEFAULT_TEMPO });
+  }, []);
+
   const setGrid = useCallback((grid: GridState) => {
     dispatch({ type: 'SET_GRID', grid });
   }, []);
@@ -270,6 +290,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
         name,
         grid: gridRef.current,
         tempo: state.tempo,
+        swing: state.swing,
       });
       const patterns = await storageAdapter.getAllPatterns();
       dispatch({ type: 'LOAD_PATTERNS', patterns });
@@ -283,7 +304,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     } finally {
       dispatch({ type: 'SET_PATTERNS_LOADING', loading: false });
     }
-  }, [state.tempo]);
+  }, [state.tempo, state.swing]);
 
   const loadPatternById = useCallback(async (id: string): Promise<void> => {
     dispatch({ type: 'SET_PATTERNS_LOADING', loading: true });
@@ -294,6 +315,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
       if (pattern) {
         dispatch({ type: 'SET_GRID', grid: pattern.grid });
         dispatch({ type: 'SET_TEMPO', tempo: pattern.tempo });
+        dispatch({ type: 'SET_SWING', swing: pattern.swing ?? DEFAULT_SWING });
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load pattern';
@@ -435,6 +457,8 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     stop,
     setTempo,
     setVolume,
+    setSwing,
+    resetTempo,
     setGrid,
     clearGrid,
     savePattern,

@@ -17,7 +17,7 @@ export class PatternStorage implements PatternStorageInterface {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(patterns));
   }
 
-  savePattern(patternData: { name: string; grid: GridState; tempo: number }): Pattern {
+  savePattern(patternData: { name: string; grid: GridState; tempo: number; swing?: number }): Pattern {
     const patterns = this.getPatterns();
     const now = Date.now();
 
@@ -26,6 +26,7 @@ export class PatternStorage implements PatternStorageInterface {
       name: patternData.name,
       grid: patternData.grid,
       tempo: patternData.tempo,
+      swing: patternData.swing,
       createdAt: now,
       updatedAt: now,
     };

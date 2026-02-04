@@ -13,6 +13,11 @@ export const MAX_TEMPO = 300;
 export const LOOKAHEAD_TIME = 0.1; // How far ahead to schedule audio (seconds)
 export const SCHEDULE_INTERVAL = 25; // How often to call scheduling function (ms)
 
+// Swing
+export const DEFAULT_SWING = 0;
+export const MIN_SWING = 0;
+export const MAX_SWING = 100;
+
 // ML Generation
 export const MIN_PATTERNS_FOR_GENERATION = 5;
 export const MARKOV_WEIGHT = 0.6;

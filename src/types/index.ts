@@ -62,6 +62,7 @@ export interface Pattern {
   name: string;
   grid: GridState;
   tempo: number;
+  swing?: number;
   createdAt: number;
   updatedAt: number;
   // Optional cloud fields (present when synced to Supabase)

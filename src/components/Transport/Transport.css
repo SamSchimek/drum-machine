@@ -158,6 +158,61 @@
   border: none;
 }
 
+.swing-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 70px;
+}
+
+.swing-control label {
+  font-size: 9px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.swing-slider {
+  width: 70px;
+  height: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #2a2a2a;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.swing-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #666;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.swing-slider::-webkit-slider-thumb:hover {
+  background: #ff5722;
+  transform: scale(1.15);
+}
+
+.swing-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #666;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.swing-value {
+  font-size: 10px;
+  color: #555;
+  font-variant-numeric: tabular-nums;
+}
+
 .volume-control {
   display: flex;
   align-items: center;
@@ -300,6 +355,14 @@
 
   .tempo-value {
     font-size: 22px;
+  }
+
+  .swing-control {
+    min-width: 60px;
+  }
+
+  .swing-slider {
+    width: 60px;
   }
 
   .volume-control {

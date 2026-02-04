@@ -23,6 +23,7 @@ export interface SupabasePatternRow {
   name: string;
   grid: GridState;
   tempo: number;
+  swing?: number;
   is_public: boolean;
   share_slug: string | null;
   show_creator_name: boolean;
@@ -60,6 +61,7 @@ export interface SupabasePatternInput {
   name: string;
   grid: GridState;
   tempo: number;
+  swing?: number;
   is_public?: boolean;
   share_slug?: string | null;
   show_creator_name?: boolean;

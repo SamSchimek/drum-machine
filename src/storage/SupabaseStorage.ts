@@ -28,6 +28,7 @@ function toPattern(row: SupabasePatternRow): Pattern {
     name: row.name,
     grid: grid,
     tempo: row.tempo,
+    swing: row.swing,
     createdAt: new Date(row.created_at).getTime(),
     updatedAt: new Date(row.updated_at).getTime(),
     userId: row.user_id,
@@ -56,6 +57,7 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
       name: patternData.name,
       grid: patternData.grid,
       tempo: patternData.tempo,
+      swing: patternData.swing,
       is_public: patternData.isPublic ?? false,
       share_slug: patternData.shareSlug ?? null,
       show_creator_name: patternData.showCreatorName ?? true,
@@ -132,6 +134,7 @@ export class SupabaseStorage implements SupabasePatternStorageInterface {
     if (updates.name !== undefined) supabaseUpdates.name = updates.name;
     if (updates.grid !== undefined) supabaseUpdates.grid = updates.grid;
     if (updates.tempo !== undefined) supabaseUpdates.tempo = updates.tempo;
+    if (updates.swing !== undefined) supabaseUpdates.swing = updates.swing;
     if (updates.isPublic !== undefined) supabaseUpdates.is_public = updates.isPublic;
     if (updates.shareSlug !== undefined) supabaseUpdates.share_slug = updates.shareSlug;
     if (updates.showCreatorName !== undefined) supabaseUpdates.show_creator_name = updates.showCreatorName;

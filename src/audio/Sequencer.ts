@@ -15,6 +15,7 @@ export class Sequencer {
   private grid: GridState | null = null;
   private mutedTracks: MutedTracks | null = null;
   private stepCallbacks: Set<StepCallback> = new Set();
+  private swing: number = 0;
 
   setGrid(grid: GridState): void {
     this.grid = grid;
@@ -30,6 +31,22 @@ export class Sequencer {
 
   getTempo(): number {
     return this.tempo;
+  }
+
+  setSwing(value: number): void {
+    this.swing = Math.max(0, Math.min(100, value));
+  }
+
+  getSwing(): number {
+    return this.swing;
+  }
+
+  getSwingOffset(step: number): number {
+    // Off-beats are odd steps: 1, 3, 5, 7, 9, 11, 13, 15
+    if (step % 2 === 0) return 0;
+    const secondsPerBeat = 60 / this.tempo;
+    const secondsPerStep = secondsPerBeat / 4; // 16th notes
+    return (this.swing / 100) * secondsPerStep * 0.5;
   }
 
   getCurrentStep(): number {
@@ -95,11 +112,15 @@ export class Sequencer {
   private scheduleStep(step: number, time: number): void {
     if (!this.grid) return;
 
+    // Apply swing offset for off-beat steps
+    const swingOffset = this.getSwingOffset(step);
+    const adjustedTime = time + swingOffset;
+
     // Schedule all active sounds for this step (unless muted)
     for (const trackId of TRACK_IDS) {
       const isMuted = this.mutedTracks?.[trackId] ?? false;
       if (this.grid[trackId][step] && !isMuted) {
-        audioEngine.triggerSound(trackId, time);
+        audioEngine.triggerSound(trackId, adjustedTime);
       }
     }
 

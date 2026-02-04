@@ -46,7 +46,8 @@ export class Sequencer {
     if (step % 2 === 0) return 0;
     const secondsPerBeat = 60 / this.tempo;
     const secondsPerStep = secondsPerBeat / 4; // 16th notes
-    return (this.swing / 100) * secondsPerStep * 0.5;
+    // At 100% swing, delay off-beats by ~75% of a step (triplet feel at ~66%)
+    return (this.swing / 100) * secondsPerStep * 0.75;
   }
 
   getCurrentStep(): number {

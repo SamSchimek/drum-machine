@@ -160,6 +160,8 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
 
   // Ref to save grid state before starter beat step
   const savedGridBeforeStarterStep = useRef<GridState | null>(null);
+  // Ref to skip auto-advance when navigating backward
+  const skipAutoAdvance = useRef(false);
 
   // Initialize state from localStorage
   const [currentStep, setCurrentStep] = useState(() => loadTutorialStep());
@@ -220,6 +222,12 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     if (!isActive) return;
     const stepData = TUTORIAL_STEPS[currentStep];
     if (!stepData?.requiredCells) return;
+
+    // Skip auto-advance if user just navigated backward
+    if (skipAutoAdvance.current) {
+      skipAutoAdvance.current = false;
+      return;
+    }
 
     if (checkInteractiveStepComplete(grid)) {
       // Small delay before advancing to show completion
@@ -285,6 +293,8 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
 
   const previousStep = useCallback(() => {
     setIsContinuing(false);
+    // Prevent auto-advance when navigating backward to completed interactive steps
+    skipAutoAdvance.current = true;
 
     // Restore grid when leaving step 9 backward
     if (currentStep === STARTER_BEAT_STEP_INDEX && savedGridBeforeStarterStep.current) {

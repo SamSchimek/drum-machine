@@ -3,7 +3,24 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { TutorialPrompt } from '../../src/components/Tutorial/TutorialPrompt';
 import { TutorialProvider } from '../../src/context/TutorialContext';
+import { DrumMachineProvider } from '../../src/context/DrumMachineContext';
+import { AuthProvider } from '../../src/auth/AuthContext';
 import { loadTutorialSkipped } from '../../src/context/tutorialPersistence';
+
+// Helper to render with all required providers
+function renderWithProviders(ui: React.ReactElement, initialPath = '/') {
+  return render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <AuthProvider>
+        <DrumMachineProvider>
+          <TutorialProvider>
+            {ui}
+          </TutorialProvider>
+        </DrumMachineProvider>
+      </AuthProvider>
+    </MemoryRouter>
+  );
+}
 
 describe('TutorialPrompt', () => {
   beforeEach(() => {
@@ -16,13 +33,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('renders after delay on main route', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
@@ -35,13 +46,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('dismisses on Escape key', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     act(() => {
       vi.advanceTimersByTime(1500);
@@ -53,13 +58,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('dismisses on backdrop click and sets skipped', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     act(() => {
       vi.advanceTimersByTime(1500);
@@ -72,13 +71,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('does not dismiss when clicking dialog content', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     act(() => {
       vi.advanceTimersByTime(1500);
@@ -90,13 +83,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('focuses start button on open', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     act(() => {
       vi.advanceTimersByTime(1500);
@@ -106,13 +93,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('handles double dismiss gracefully', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     act(() => {
       vi.advanceTimersByTime(1500);
@@ -126,13 +107,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('has correct aria attributes', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     act(() => {
       vi.advanceTimersByTime(1500);
@@ -145,13 +120,7 @@ describe('TutorialPrompt', () => {
   });
 
   it('does not render when showPrompt is false', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <TutorialProvider>
-          <TutorialPrompt />
-        </TutorialProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<TutorialPrompt />);
 
     // Before the delay
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

@@ -9,6 +9,8 @@ export interface TooltipProps {
   onPrevious: () => void;
   onSkip: () => void;
   isContinuing?: boolean;
+  isInteractiveStep?: boolean;
+  isStepComplete?: boolean;
 }
 
 export function Tooltip({
@@ -20,9 +22,12 @@ export function Tooltip({
   onPrevious,
   onSkip,
   isContinuing = false,
+  isInteractiveStep = false,
+  isStepComplete = true,
 }: TooltipProps) {
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
+  const isNextDisabled = isInteractiveStep && !isStepComplete;
 
   return (
     <div className={`tutorial-tooltip tutorial-tooltip-${position}`}>
@@ -64,7 +69,9 @@ export function Tooltip({
             type="button"
             className="tutorial-nav-button tutorial-nav-button-next"
             onClick={onNext}
+            disabled={isNextDisabled}
             aria-label={isLastStep ? 'Finish tutorial' : 'Next step'}
+            title={isNextDisabled ? 'Click the highlighted cells to continue' : undefined}
           >
             {isLastStep ? 'Finish' : 'Next'}
           </button>

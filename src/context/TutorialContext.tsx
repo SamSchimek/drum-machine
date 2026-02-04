@@ -11,31 +11,77 @@ import {
   loadTutorialSkipped,
   clearTutorialState,
 } from './tutorialPersistence';
+import { useDrumMachine } from './DrumMachineContext';
+import type { TrackId, GridState } from '../types';
 
 export interface TutorialStep {
   target: string;
   content: string;
   position: 'top' | 'bottom' | 'left' | 'right';
+  requiredCells?: Array<{ trackId: TrackId; step: number }>;
 }
 
 export const TUTORIAL_STEPS: TutorialStep[] = [
+  // Interactive beat-building (5 steps)
   {
-    target: '[data-testid="cell-kick-0"]',
-    content: 'Click cells to add drum hits',
-    position: 'bottom',
+    target: '.grid-row[data-track="kick"]',
+    content: "Let's build a beat! Click the highlighted KICK cells",
+    position: 'right',
+    requiredCells: [
+      { trackId: 'kick', step: 0 },
+      { trackId: 'kick', step: 6 },
+      { trackId: 'kick', step: 10 },
+    ],
   },
   {
+    target: '.grid-row[data-track="snare"]',
+    content: 'Now add some SNARE',
+    position: 'right',
+    requiredCells: [
+      { trackId: 'snare', step: 4 },
+      { trackId: 'snare', step: 12 },
+    ],
+  },
+  {
+    target: '.grid-row[data-track="closedHH"]',
+    content: 'Add HI-HAT for rhythm',
+    position: 'right',
+    requiredCells: [
+      { trackId: 'closedHH', step: 2 },
+      { trackId: 'closedHH', step: 8 },
+      { trackId: 'closedHH', step: 14 },
+    ],
+  },
+  {
+    target: '.grid-row[data-track="clap"]',
+    content: 'Drop in a CLAP',
+    position: 'right',
+    requiredCells: [
+      { trackId: 'clap', step: 12 },
+    ],
+  },
+  {
+    target: '.grid-row[data-track="maracas"]',
+    content: 'Finish with MARACAS',
+    position: 'right',
+    requiredCells: [
+      { trackId: 'maracas', step: 0 },
+      { trackId: 'maracas', step: 6 },
+    ],
+  },
+  // Informational steps
+  {
     target: '.play-button',
-    content: 'Press Space or click to start playback',
+    content: 'Press Space or click to hear your beat!',
     position: 'right',
   },
   {
-    target: '.grid-row:first-child .track-label',
+    target: '.grid-row[data-track="kick"] .track-label',
     content: 'Click any track name to hear a preview',
     position: 'right',
   },
   {
-    target: '.grid-row:first-child .mute-button',
+    target: '.grid-row[data-track="kick"] .mute-button',
     content: 'Mute tracks during playback',
     position: 'right',
   },
@@ -81,6 +127,10 @@ interface TutorialContextValue {
   resetTutorial: () => void;
   startTutorial: () => void;
   dismissPrompt: () => void;
+  isCellRequired: (trackId: string, step: number) => boolean;
+  onCellToggle: (trackId: string, step: number, isNowActive: boolean) => void;
+  isInteractiveStep: boolean;
+  isStepComplete: boolean;
 }
 
 const TutorialContext = createContext<TutorialContextValue | null>(null);
@@ -90,6 +140,7 @@ const AUTO_START_DELAY = 1500;
 export function TutorialProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isMainRoute = location.pathname === '/';
+  const { grid, clearGrid, triggerSound } = useDrumMachine();
 
   // Initialize state from localStorage
   const [currentStep, setCurrentStep] = useState(() => loadTutorialStep());
@@ -119,7 +170,60 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [isMainRoute, isCompleted, isSkipped, isActive]);
 
+  // Check if current step is an interactive step (has required cells)
+  const isInteractiveStep = isActive && currentStep < TUTORIAL_STEPS.length
+    ? !!TUTORIAL_STEPS[currentStep].requiredCells
+    : false;
+
+  // Check if all required cells for the current step are active in the grid
+  const checkInteractiveStepComplete = useCallback((gridState: GridState): boolean => {
+    const stepData = TUTORIAL_STEPS[currentStep];
+    if (!stepData?.requiredCells) return true; // Non-interactive step
+
+    // Check if all required cells are currently ON in the grid
+    return stepData.requiredCells.every(
+      cell => gridState[cell.trackId][cell.step] === true
+    );
+  }, [currentStep]);
+
+  // Check if the current step is complete (for UI feedback)
+  const isStepComplete = !isInteractiveStep || checkInteractiveStepComplete(grid);
+
+  // Auto-advance when all required cells are filled
+  useEffect(() => {
+    if (!isActive) return;
+    const stepData = TUTORIAL_STEPS[currentStep];
+    if (!stepData?.requiredCells) return;
+
+    if (checkInteractiveStepComplete(grid)) {
+      // Small delay before advancing to show completion
+      const timer = setTimeout(() => {
+        // Re-verify cells are still active (prevents race condition if user toggles off)
+        if (!checkInteractiveStepComplete(grid)) return;
+
+        setIsContinuing(false);
+        if (currentStep >= TUTORIAL_STEPS.length - 1) {
+          setIsActive(false);
+          setIsCompleted(true);
+          saveTutorialActive(false);
+          saveTutorialCompleted(true);
+          saveTutorialStep(0);
+        } else {
+          const newStep = currentStep + 1;
+          setCurrentStep(newStep);
+          saveTutorialStep(newStep);
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [grid, currentStep, isActive, checkInteractiveStepComplete]);
+
   const nextStep = useCallback(() => {
+    // Block navigation on interactive steps unless complete
+    if (isInteractiveStep && !checkInteractiveStepComplete(grid)) {
+      return;
+    }
+
     setIsContinuing(false);
 
     if (currentStep >= TUTORIAL_STEPS.length - 1) {
@@ -134,7 +238,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
       setCurrentStep(newStep);
       saveTutorialStep(newStep);
     }
-  }, [currentStep]);
+  }, [currentStep, isInteractiveStep, checkInteractiveStepComplete, grid]);
 
   const previousStep = useCallback(() => {
     setIsContinuing(false);
@@ -155,6 +259,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
 
   const resetTutorial = useCallback(() => {
     clearTutorialState();
+    clearGrid();
     setCurrentStep(0);
     setIsActive(true);
     setIsCompleted(false);
@@ -162,24 +267,46 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     setIsContinuing(false);
     // Save new active state
     saveTutorialActive(true);
-  }, []);
+  }, [clearGrid]);
 
   const startTutorial = useCallback(() => {
     setShowPrompt(false);
     clearTutorialState();
+    clearGrid();
     setCurrentStep(0);
     setIsActive(true);
     setIsCompleted(false);
     setIsSkipped(false);
     setIsContinuing(false);
     saveTutorialActive(true);
-  }, []);
+  }, [clearGrid]);
 
   const dismissPrompt = useCallback(() => {
     setShowPrompt(false);
     saveTutorialSkipped(true);
     setIsSkipped(true);
   }, []);
+
+  // Check if a specific cell is required for the current step
+  const isCellRequired = useCallback((trackId: string, step: number): boolean => {
+    if (!isActive) return false;
+    const stepData = TUTORIAL_STEPS[currentStep];
+    if (!stepData?.requiredCells) return false;
+
+    return stepData.requiredCells.some(
+      cell => cell.trackId === trackId && cell.step === step
+    );
+  }, [isActive, currentStep]);
+
+  // Handle cell toggle - trigger sound on correct cell click
+  const onCellToggle = useCallback((trackId: string, step: number, isNowActive: boolean) => {
+    if (!isActive) return;
+
+    // Play sound when activating a required cell
+    if (isNowActive && isCellRequired(trackId, step)) {
+      triggerSound(trackId as TrackId);
+    }
+  }, [isActive, isCellRequired, triggerSound]);
 
   const currentStepData = isActive && currentStep < TUTORIAL_STEPS.length
     ? TUTORIAL_STEPS[currentStep]
@@ -200,6 +327,10 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     resetTutorial,
     startTutorial,
     dismissPrompt,
+    isCellRequired,
+    onCellToggle,
+    isInteractiveStep,
+    isStepComplete,
   };
 
   return (

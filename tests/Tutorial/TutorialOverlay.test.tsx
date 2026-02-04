@@ -2,7 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { TutorialOverlay } from '../../src/components/Tutorial/TutorialOverlay';
-import { TutorialProvider } from '../../src/context/TutorialContext';
+import { TutorialProvider, TUTORIAL_STEPS } from '../../src/context/TutorialContext';
+import { DrumMachineProvider } from '../../src/context/DrumMachineContext';
+import { AuthProvider } from '../../src/auth/AuthContext';
 import {
   saveTutorialActive,
   saveTutorialStep,
@@ -10,18 +12,22 @@ import {
 
 // Helper to render with providers
 function renderWithProviders(initialPath = '/') {
-  // Create a target element for the tutorial to find
+  // Create a target element for the tutorial to find (matches step 0 selector: .grid-row[data-track="kick"])
   const targetElement = document.createElement('div');
-  targetElement.setAttribute('data-testid', 'cell-kick-0');
-  targetElement.className = 'grid-cell';
+  targetElement.className = 'grid-row';
+  targetElement.setAttribute('data-track', 'kick');
   targetElement.style.cssText = 'position: absolute; top: 100px; left: 100px; width: 50px; height: 50px;';
   document.body.appendChild(targetElement);
 
   const result = render(
     <MemoryRouter initialEntries={[initialPath]}>
-      <TutorialProvider>
-        <TutorialOverlay />
-      </TutorialProvider>
+      <AuthProvider>
+        <DrumMachineProvider>
+          <TutorialProvider>
+            <TutorialOverlay />
+          </TutorialProvider>
+        </DrumMachineProvider>
+      </AuthProvider>
     </MemoryRouter>
   );
 
@@ -129,9 +135,10 @@ describe('TutorialOverlay', () => {
       cleanup();
     });
 
-    it('ArrowRight advances to next step when overlay focused', () => {
+    it('ArrowRight advances to next step when overlay focused (informational step)', () => {
+      // Use step 5 (first informational step) since interactive steps block navigation
       saveTutorialActive(true);
-      saveTutorialStep(0);
+      saveTutorialStep(5);
 
       const { cleanup } = renderWithProviders();
 
@@ -142,14 +149,15 @@ describe('TutorialOverlay', () => {
         fireEvent.keyDown(overlay, { key: 'ArrowRight' });
       }
 
-      // Step should advance (we can check the step counter in the tooltip)
-      expect(screen.getByText('2 of 9')).toBeInTheDocument();
+      // Step should advance from 5 to 6 (display: "7 of 13")
+      expect(screen.getByText(`7 of ${TUTORIAL_STEPS.length}`)).toBeInTheDocument();
       cleanup();
     });
 
     it('ArrowLeft goes to previous step when overlay focused', () => {
+      // Use step 6 (informational step)
       saveTutorialActive(true);
-      saveTutorialStep(2);
+      saveTutorialStep(6);
 
       const { cleanup } = renderWithProviders();
 
@@ -159,7 +167,8 @@ describe('TutorialOverlay', () => {
         fireEvent.keyDown(overlay, { key: 'ArrowLeft' });
       }
 
-      expect(screen.getByText('2 of 9')).toBeInTheDocument();
+      // Step should go from 6 to 5 (display: "6 of 13")
+      expect(screen.getByText(`6 of ${TUTORIAL_STEPS.length}`)).toBeInTheDocument();
       cleanup();
     });
   });
@@ -169,12 +178,16 @@ describe('TutorialOverlay', () => {
       saveTutorialActive(true);
       saveTutorialStep(0);
 
-      // Don't add the target element
+      // Don't add the target element - render with all required providers
       render(
         <MemoryRouter initialEntries={['/']}>
-          <TutorialProvider>
-            <TutorialOverlay />
-          </TutorialProvider>
+          <AuthProvider>
+            <DrumMachineProvider>
+              <TutorialProvider>
+                <TutorialOverlay />
+              </TutorialProvider>
+            </DrumMachineProvider>
+          </AuthProvider>
         </MemoryRouter>
       );
 
@@ -216,7 +229,7 @@ describe('TutorialOverlay', () => {
 
       const { cleanup } = renderWithProviders();
 
-      expect(screen.getByText('Click cells to add drum hits')).toBeInTheDocument();
+      expect(screen.getByText("Let's build a beat! Click the highlighted KICK cells")).toBeInTheDocument();
       cleanup();
     });
 

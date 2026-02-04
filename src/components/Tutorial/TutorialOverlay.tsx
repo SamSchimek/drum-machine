@@ -28,6 +28,8 @@ export function TutorialOverlay() {
     previousStep,
     skipTutorial,
     isContinuing,
+    isInteractiveStep,
+    isStepComplete,
   } = useTutorial();
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -225,6 +227,8 @@ export function TutorialOverlay() {
           onPrevious={previousStep}
           onSkip={skipTutorial}
           isContinuing={isContinuing}
+          isInteractiveStep={isInteractiveStep}
+          isStepComplete={isStepComplete}
         />
       </div>
     </div>

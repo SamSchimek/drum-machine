@@ -42,7 +42,7 @@ export function GridRow({
   onMuteToggle,
 }: GridRowProps) {
   return (
-    <div className="grid-row">
+    <div className="grid-row" data-track={trackId}>
       <div className="track-controls">
         <button
           className="track-label"

@@ -16,6 +16,7 @@ import { DEFAULT_TEMPO } from '../constants';
 import type { TrackId, GridState } from '../types';
 
 // Step indices for special behavior
+const LAST_INTERACTIVE_STEP_INDEX = 4;
 const BPM_STEP_INDEX = 8;
 const STARTER_BEAT_STEP_INDEX = 9;
 const SAVE_STEP_INDEX = 10;
@@ -155,7 +156,7 @@ const AUTO_START_DELAY = 1500;
 export function TutorialProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isMainRoute = location.pathname === '/';
-  const { grid, clearGrid, triggerSound, setTempo, setGrid, play, isPlaying } = useDrumMachine();
+  const { grid, clearGrid, triggerSound, setTempo, setGrid, play, stop, isPlaying } = useDrumMachine();
 
   // Ref to save grid state before starter beat step
   const savedGridBeforeStarterStep = useRef<GridState | null>(null);
@@ -226,6 +227,11 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
         // Re-verify cells are still active (prevents race condition if user toggles off)
         if (!checkInteractiveStepComplete(grid)) return;
 
+        // Stop playback after last interactive step so "Press Space to play" makes sense
+        if (currentStep === LAST_INTERACTIVE_STEP_INDEX) {
+          stop();
+        }
+
         setIsContinuing(false);
         if (currentStep >= TUTORIAL_STEPS.length - 1) {
           setIsActive(false);
@@ -241,7 +247,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [grid, currentStep, isActive, checkInteractiveStepComplete]);
+  }, [grid, currentStep, isActive, checkInteractiveStepComplete, stop]);
 
   const nextStep = useCallback(() => {
     // Block navigation on interactive steps unless complete
@@ -342,15 +348,18 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     );
   }, [isActive, currentStep]);
 
-  // Handle cell toggle - trigger sound on correct cell click
+  // Handle cell toggle - trigger sound on correct cell click (only when not playing)
   const onCellToggle = useCallback((trackId: string, step: number, isNowActive: boolean) => {
     if (!isActive) return;
 
-    // Play sound when activating a required cell
+    // Don't trigger individual sounds during interactive steps - the playing beat handles it
+    if (isPlaying) return;
+
+    // Play sound when activating a required cell (fallback if not playing)
     if (isNowActive && isCellRequired(trackId, step)) {
       triggerSound(trackId as TrackId);
     }
-  }, [isActive, isCellRequired, triggerSound]);
+  }, [isActive, isPlaying, isCellRequired, triggerSound]);
 
   const currentStepData = isActive && currentStep < TUTORIAL_STEPS.length
     ? TUTORIAL_STEPS[currentStep]

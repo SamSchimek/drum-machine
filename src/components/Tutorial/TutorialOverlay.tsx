@@ -35,7 +35,10 @@ export function TutorialOverlay() {
   const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition>({ top: 0, left: 0 });
 
   const updateTargetPosition = useCallback(() => {
-    if (!currentStepData) return;
+    if (!currentStepData) {
+      setTargetRect(null);
+      return;
+    }
 
     const targetElement = document.querySelector(currentStepData.target);
     if (!targetElement) {
@@ -44,37 +47,44 @@ export function TutorialOverlay() {
       return;
     }
 
-    // Scroll element into view (if supported)
+    // Use instant scroll to avoid animation timing issues
     if (targetElement.scrollIntoView) {
-      targetElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center',
-      });
+      try {
+        targetElement.scrollIntoView({
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center',
+        });
+      } catch {
+        // Fallback for browsers that don't support options object
+        targetElement.scrollIntoView(true);
+      }
     }
 
-    // Use setTimeout to allow scroll to complete before measuring
-    setTimeout(() => {
-      const rect = targetElement.getBoundingClientRect();
-      const newTargetRect = {
-        top: rect.top - SPOTLIGHT_PADDING,
-        left: rect.left - SPOTLIGHT_PADDING,
-        width: rect.width + SPOTLIGHT_PADDING * 2,
-        height: rect.height + SPOTLIGHT_PADDING * 2,
-      };
-      setTargetRect(newTargetRect);
+    // Use double requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const rect = targetElement.getBoundingClientRect();
+        const newTargetRect = {
+          top: rect.top - SPOTLIGHT_PADDING,
+          left: rect.left - SPOTLIGHT_PADDING,
+          width: rect.width + SPOTLIGHT_PADDING * 2,
+          height: rect.height + SPOTLIGHT_PADDING * 2,
+        };
+        setTargetRect(newTargetRect);
 
-      // Calculate tooltip position based on the configured position
-      const position = calculateTooltipPosition(rect, currentStepData.position);
-      setTooltipPosition(position);
-    }, 100);
+        // Calculate tooltip position based on the configured position
+        const position = calculateTooltipPosition(rect, currentStepData.position);
+        setTooltipPosition(position);
+      });
+    });
   }, [currentStepData]);
 
   const calculateTooltipPosition = (
     rect: DOMRect,
     position: 'top' | 'bottom' | 'left' | 'right'
   ): TooltipPosition => {
-    const tooltipWidth = 280;
+    const tooltipWidth = 320;
     const tooltipHeight = 150; // Approximate
 
     let top = 0;

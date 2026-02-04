@@ -26,11 +26,13 @@ function TestConsumer() {
       <span data-testid="completed">{ctx.isCompleted.toString()}</span>
       <span data-testid="skipped">{ctx.isSkipped.toString()}</span>
       <span data-testid="continuing">{ctx.isContinuing.toString()}</span>
+      <span data-testid="showPrompt">{ctx.showPrompt.toString()}</span>
       <button data-testid="next" onClick={ctx.nextStep}>Next</button>
       <button data-testid="prev" onClick={ctx.previousStep}>Previous</button>
       <button data-testid="skip" onClick={ctx.skipTutorial}>Skip</button>
       <button data-testid="reset" onClick={ctx.resetTutorial}>Reset</button>
       <button data-testid="start" onClick={ctx.startTutorial}>Start</button>
+      <button data-testid="dismiss" onClick={ctx.dismissPrompt}>Dismiss</button>
     </div>
   );
 }
@@ -83,30 +85,32 @@ describe('TutorialContext', () => {
     });
   });
 
-  describe('auto-start behavior', () => {
-    it('auto-starts after 1.5s delay on main route', () => {
+  describe('prompt behavior', () => {
+    it('shows prompt after 1.5s delay on main route', () => {
       renderWithRouter('/');
 
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
       expect(screen.getByTestId('active').textContent).toBe('false');
 
       act(() => {
         vi.advanceTimersByTime(1500);
       });
 
-      expect(screen.getByTestId('active').textContent).toBe('true');
+      expect(screen.getByTestId('showPrompt').textContent).toBe('true');
+      expect(screen.getByTestId('active').textContent).toBe('false');
     });
 
-    it('does NOT auto-start on non-main routes', () => {
+    it('does NOT show prompt on non-main routes', () => {
       renderWithRouter('/p/some-slug');
 
       act(() => {
         vi.advanceTimersByTime(2000);
       });
 
-      expect(screen.getByTestId('active').textContent).toBe('false');
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
     });
 
-    it('does NOT auto-start if already completed', () => {
+    it('does NOT show prompt if already completed', () => {
       saveTutorialCompleted(true);
       renderWithRouter('/');
 
@@ -114,10 +118,10 @@ describe('TutorialContext', () => {
         vi.advanceTimersByTime(2000);
       });
 
-      expect(screen.getByTestId('active').textContent).toBe('false');
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
     });
 
-    it('does NOT auto-start if already skipped', () => {
+    it('does NOT show prompt if already skipped', () => {
       saveTutorialSkipped(true);
       renderWithRouter('/');
 
@@ -125,7 +129,56 @@ describe('TutorialContext', () => {
         vi.advanceTimersByTime(2000);
       });
 
-      expect(screen.getByTestId('active').textContent).toBe('false');
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
+    });
+
+    it('does NOT show prompt when resuming active tutorial', () => {
+      saveTutorialActive(true);
+      saveTutorialStep(2);
+      renderWithRouter('/');
+
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
+      expect(screen.getByTestId('active').textContent).toBe('true');
+    });
+
+    it('dismissPrompt sets skipped and hides prompt', () => {
+      renderWithRouter('/');
+
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+
+      expect(screen.getByTestId('showPrompt').textContent).toBe('true');
+
+      act(() => {
+        screen.getByTestId('dismiss').click();
+      });
+
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
+      expect(screen.getByTestId('skipped').textContent).toBe('true');
+      expect(loadTutorialSkipped()).toBe(true);
+    });
+
+    it('startTutorial closes prompt and starts tutorial', () => {
+      renderWithRouter('/');
+
+      act(() => {
+        vi.advanceTimersByTime(1500);
+      });
+
+      expect(screen.getByTestId('showPrompt').textContent).toBe('true');
+
+      act(() => {
+        screen.getByTestId('start').click();
+      });
+
+      expect(screen.getByTestId('showPrompt').textContent).toBe('false');
+      expect(screen.getByTestId('active').textContent).toBe('true');
+      expect(screen.getByTestId('step').textContent).toBe('0');
     });
   });
 
@@ -133,9 +186,9 @@ describe('TutorialContext', () => {
     it('nextStep increments current step', () => {
       renderWithRouter('/');
 
-      // Start tutorial
+      // Start tutorial via startTutorial
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -152,7 +205,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -178,7 +231,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -195,7 +248,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -224,7 +277,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -241,7 +294,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -295,7 +348,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');
@@ -314,7 +367,7 @@ describe('TutorialContext', () => {
       renderWithRouter('/');
 
       act(() => {
-        vi.advanceTimersByTime(1500);
+        screen.getByTestId('start').click();
       });
 
       expect(screen.getByTestId('active').textContent).toBe('true');

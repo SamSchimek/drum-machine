@@ -72,6 +72,7 @@ interface TutorialContextValue {
   isCompleted: boolean;
   isSkipped: boolean;
   isContinuing: boolean;
+  showPrompt: boolean;
   currentStepData: TutorialStep | null;
   totalSteps: number;
   nextStep: () => void;
@@ -79,6 +80,7 @@ interface TutorialContextValue {
   skipTutorial: () => void;
   resetTutorial: () => void;
   startTutorial: () => void;
+  dismissPrompt: () => void;
 }
 
 const TutorialContext = createContext<TutorialContextValue | null>(null);
@@ -98,10 +100,11 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     // isContinuing is true if we're resuming from a saved active state
     return loadTutorialActive() && loadTutorialStep() > 0;
   });
+  const [showPrompt, setShowPrompt] = useState(false);
 
   const hasAutoStarted = useRef(false);
 
-  // Auto-start tutorial after delay for first-time visitors on main route
+  // Show tutorial prompt after delay for first-time visitors on main route
   useEffect(() => {
     if (hasAutoStarted.current) return;
     if (!isMainRoute) return;
@@ -110,8 +113,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
 
     const timer = setTimeout(() => {
       hasAutoStarted.current = true;
-      setIsActive(true);
-      saveTutorialActive(true);
+      setShowPrompt(true);
     }, AUTO_START_DELAY);
 
     return () => clearTimeout(timer);
@@ -163,6 +165,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const startTutorial = useCallback(() => {
+    setShowPrompt(false);
     clearTutorialState();
     setCurrentStep(0);
     setIsActive(true);
@@ -170,6 +173,12 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     setIsSkipped(false);
     setIsContinuing(false);
     saveTutorialActive(true);
+  }, []);
+
+  const dismissPrompt = useCallback(() => {
+    setShowPrompt(false);
+    saveTutorialSkipped(true);
+    setIsSkipped(true);
   }, []);
 
   const currentStepData = isActive && currentStep < TUTORIAL_STEPS.length
@@ -182,6 +191,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     isCompleted,
     isSkipped,
     isContinuing,
+    showPrompt,
     currentStepData,
     totalSteps: TUTORIAL_STEPS.length,
     nextStep,
@@ -189,6 +199,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     skipTutorial,
     resetTutorial,
     startTutorial,
+    dismissPrompt,
   };
 
   return (

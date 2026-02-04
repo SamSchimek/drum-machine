@@ -1,0 +1,102 @@
+.tutorial-prompt-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+}
+
+.tutorial-prompt {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 360px;
+  text-align: center;
+}
+
+.tutorial-prompt h2 {
+  margin: 0 0 0.75rem;
+  color: #fff;
+  font-size: 1.25rem;
+}
+
+.tutorial-prompt p {
+  margin: 0 0 1.5rem;
+  color: #aaa;
+}
+
+.tutorial-prompt-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.tutorial-prompt-skip {
+  background: transparent;
+  border: 1px solid #444;
+  color: #888;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tutorial-prompt-skip:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.tutorial-prompt-skip:focus-visible {
+  outline: 2px solid #ff5722;
+  outline-offset: 2px;
+}
+
+.tutorial-prompt-start {
+  background: #ff5722;
+  border: none;
+  color: #fff;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.tutorial-prompt-start:hover {
+  background: #ff7043;
+}
+
+.tutorial-prompt-start:focus-visible {
+  outline: 2px solid #ff5722;
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-prompt-skip,
+  .tutorial-prompt-start {
+    transition: none;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .tutorial-prompt {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    padding: 1.5rem;
+  }
+
+  .tutorial-prompt-buttons {
+    flex-direction: column;
+  }
+
+  .tutorial-prompt-skip,
+  .tutorial-prompt-start {
+    min-height: 44px;
+    width: 100%;
+  }
+}

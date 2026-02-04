@@ -15,9 +15,12 @@
 .tutorial-spotlight {
   position: fixed;
   border-radius: 8px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+  box-shadow:
+    0 0 0 3px rgba(255, 87, 34, 0.8),
+    0 0 15px 5px rgba(255, 87, 34, 0.4),
+    0 0 0 9999px rgba(0, 0, 0, 0.5);
   pointer-events: none;
-  transition: all 0.3s ease-out;
+  transition: top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out;
   z-index: 1000;
 }
 

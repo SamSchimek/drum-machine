@@ -5,7 +5,7 @@ import { Transport } from '../Transport';
 import { PatternBank } from '../PatternBank';
 import { GeneratePanel } from '../GeneratePanel';
 import { UserMenu, MigrationBanner } from '../Auth';
-import { TutorialOverlay } from '../Tutorial';
+import { TutorialOverlay, TutorialPrompt } from '../Tutorial';
 import './App.css';
 
 function HelpButton() {
@@ -59,6 +59,7 @@ export function App() {
             </aside>
           </main>
         </div>
+        <TutorialPrompt />
         <TutorialOverlay />
       </TutorialProvider>
     </DrumMachineProvider>

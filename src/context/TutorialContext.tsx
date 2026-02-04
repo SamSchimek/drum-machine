@@ -60,6 +60,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     position: 'right',
     requiredCells: [
       { trackId: 'closedHH', step: 2 },
+      { trackId: 'closedHH', step: 3 },
       { trackId: 'closedHH', step: 8 },
       { trackId: 'closedHH', step: 14 },
     ],

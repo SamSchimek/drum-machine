@@ -236,6 +236,17 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isInteractiveStep, isPlaying, play]);
 
+  // Auto-skip signup step if user is already logged in (handles resume scenario)
+  useEffect(() => {
+    if (!isActive) return;
+    if (currentStep !== SIGNUP_STEP_INDEX) return;
+    if (!user) return;
+
+    // User is logged in at signup step - skip to share step
+    setCurrentStep(SHARE_STEP_INDEX);
+    saveTutorialStep(SHARE_STEP_INDEX);
+  }, [isActive, currentStep, user]);
+
   // Auto-advance play step when user starts playing
   useEffect(() => {
     if (!isActive) return;

@@ -185,3 +185,15 @@
 .share-creator-toggle:hover span {
   color: #fff;
 }
+
+/* Tutorial highlight for share button */
+.tutorial-share-target .share-button {
+  animation: share-button-pulse 1.2s ease-in-out infinite;
+  position: relative;
+  z-index: 1001;
+}
+
+@keyframes share-button-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.8); }
+  50% { box-shadow: 0 0 15px 5px rgba(255, 87, 34, 0.5); }
+}

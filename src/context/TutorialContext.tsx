@@ -23,6 +23,7 @@ const PREVIEW_STEP_INDEX = 6;
 const BPM_STEP_INDEX = 8;
 const STARTER_BEAT_STEP_INDEX = 9;
 const SAVE_STEP_INDEX = 10;
+const SHARE_STEP_INDEX = 11;
 
 // Deep copy helper to prevent mutations affecting saved state
 function deepCopyGrid(grid: GridState): GridState {
@@ -105,21 +106,21 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     target: '.tempo-control',
-    content: 'Adjust BPM from 40-300',
+    content: 'Adjust tempo from 40-300 BPM',
     position: 'bottom',
   },
   {
     target: '.starter-beat-button',
-    content: 'Load random patterns for inspiration',
+    content: 'Load simple patterns to help get started',
     position: 'bottom',
   },
   {
     target: '.save-button',
-    content: 'Save your first beat! Click Save to keep it',
+    content: 'Click Save Current to save your beat',
     position: 'left',
   },
   {
-    target: '.pattern-bank',
+    target: '.pattern-item:first-child .share-button',
     content: 'Share your beats with friends via unique links',
     position: 'left',
   },
@@ -148,9 +149,11 @@ interface TutorialContextValue {
   isCellRequired: (trackId: string, step: number) => boolean;
   onCellToggle: (trackId: string, step: number, isNowActive: boolean) => void;
   onTrackPreview: () => void;
+  onPatternSaved: () => void;
   isInteractiveStep: boolean;
   isStepComplete: boolean;
   isSaveStep: boolean;
+  isShareStep: boolean;
 }
 
 const TutorialContext = createContext<TutorialContextValue | null>(null);
@@ -401,11 +404,24 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     }, 500);
   }, [isActive, currentStep]);
 
+  // Handle pattern saved - auto-advance on save step
+  const onPatternSaved = useCallback(() => {
+    if (!isActive) return;
+    if (currentStep !== SAVE_STEP_INDEX) return;
+
+    // User saved a pattern - advance after brief delay
+    setTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      saveTutorialStep(currentStep + 1);
+    }, 300);
+  }, [isActive, currentStep]);
+
   const currentStepData = isActive && currentStep < TUTORIAL_STEPS.length
     ? TUTORIAL_STEPS[currentStep]
     : null;
 
   const isSaveStep = isActive && currentStep === SAVE_STEP_INDEX;
+  const isShareStep = isActive && currentStep === SHARE_STEP_INDEX;
 
   const value: TutorialContextValue = {
     currentStep,
@@ -425,9 +441,11 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     isCellRequired,
     onCellToggle,
     onTrackPreview,
+    onPatternSaved,
     isInteractiveStep,
     isStepComplete,
     isSaveStep,
+    isShareStep,
   };
 
   return (

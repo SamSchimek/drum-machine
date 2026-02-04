@@ -28,7 +28,7 @@ function PatternPreview({ grid }: { grid: Pattern['grid'] }) {
 
 export function PatternBank() {
   const { patterns, savePattern, loadPattern, deletePattern, renamePattern, patternsLoading, patternError } = useDrumMachine();
-  const { isSaveStep } = useTutorial();
+  const { isSaveStep, isShareStep, onPatternSaved } = useTutorial();
   const { user } = useAuth();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [patternName, setPatternName] = useState('');
@@ -36,13 +36,13 @@ export function PatternBank() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
 
-  // Auto-open save dialog with suggested name during tutorial save step
-  useEffect(() => {
-    if (isSaveStep && !showSaveDialog) {
+  // Pre-fill "My First Beat" when opening save dialog during tutorial
+  const handleOpenSaveDialog = () => {
+    if (isSaveStep) {
       setPatternName('My First Beat');
-      setShowSaveDialog(true);
     }
-  }, [isSaveStep, showSaveDialog]);
+    setShowSaveDialog(true);
+  };
 
   const handleSave = async () => {
     if (patternName.trim() && !isSaving) {
@@ -51,6 +51,8 @@ export function PatternBank() {
         await savePattern(patternName.trim());
         setPatternName('');
         setShowSaveDialog(false);
+        // Notify tutorial that pattern was saved
+        onPatternSaved();
       } catch (error) {
         // Error is handled by context
         console.error('Failed to save pattern:', error);
@@ -117,7 +119,7 @@ export function PatternBank() {
         <h3>Patterns ({patterns.length})</h3>
         <button
           className="save-button"
-          onClick={() => setShowSaveDialog(true)}
+          onClick={handleOpenSaveDialog}
           disabled={isSaving}
         >
           Save Current
@@ -160,8 +162,8 @@ export function PatternBank() {
             No saved patterns yet. Create and save some patterns to use the generator!
           </div>
         ) : (
-          patterns.map((pattern) => (
-            <div key={pattern.id} className="pattern-item">
+          patterns.map((pattern, index) => (
+            <div key={pattern.id} className={`pattern-item ${index === 0 && isShareStep ? 'tutorial-share-target' : ''}`}
               <div className="pattern-info" onClick={() => editingId !== pattern.id && handleLoad(pattern.id)}>
                 <div className="pattern-name-row">
                   {editingId === pattern.id ? (

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { useDrumMachine } from '../../context/DrumMachineContext';
+import { useTutorial } from '../../context/TutorialContext';
 import { supabase } from '../../lib/supabase';
 import type { Pattern } from '../../types';
 import './ShareButton.css';
@@ -12,16 +13,26 @@ interface ShareButtonProps {
 export function ShareButton({ pattern }: ShareButtonProps) {
   const { user } = useAuth();
   const { makePatternPublic, makePatternPrivate } = useDrumMachine();
+  const { isShareStep } = useTutorial();
   const [isLoading, setIsLoading] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [currentShareSlug, setCurrentShareSlug] = useState<string | null>(pattern.shareSlug ?? null);
   const [copied, setCopied] = useState(false);
   const [showCreatorName, setShowCreatorName] = useState(pattern.showCreatorName ?? true);
+  const wasShareStep = useRef(isShareStep);
 
   // Sync with pattern prop when it changes
   useEffect(() => {
     setShowCreatorName(pattern.showCreatorName ?? true);
   }, [pattern.showCreatorName]);
+
+  // Close modal when leaving share step (user clicked Next)
+  useEffect(() => {
+    if (wasShareStep.current && !isShareStep && showShareModal) {
+      setShowShareModal(false);
+    }
+    wasShareStep.current = isShareStep;
+  }, [isShareStep, showShareModal]);
 
   if (!user) {
     return null;

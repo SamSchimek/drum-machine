@@ -137,7 +137,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     target: '.pattern-item:first-child .share-button',
-    content: 'Share your beats with friends via unique links',
+    content: 'Share your beats with friends to earn upvotes',
     position: 'left',
   },
   {

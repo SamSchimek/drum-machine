@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 import {
   saveTutorialStep,
   loadTutorialStep,
@@ -14,6 +15,21 @@ import {
 import { useDrumMachine } from './DrumMachineContext';
 import { DEFAULT_TEMPO } from '../constants';
 import type { TrackId, GridState } from '../types';
+
+// Fire celebratory confetti
+function fireConfetti() {
+  // Fire from both sides
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { x: 0.1, y: 0.6 },
+  });
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { x: 0.9, y: 0.6 },
+  });
+}
 
 // Step indices for special behavior
 const LAST_INTERACTIVE_STEP_INDEX = 4;
@@ -268,6 +284,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
           saveTutorialActive(false);
           saveTutorialCompleted(true);
           saveTutorialStep(0);
+          fireConfetti();
         } else {
           const newStep = currentStep + 1;
           setCurrentStep(newStep);
@@ -305,6 +322,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
       saveTutorialActive(false);
       saveTutorialCompleted(true);
       saveTutorialStep(0);
+      fireConfetti();
     } else {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);

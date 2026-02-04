@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDrumMachine } from '../../context/DrumMachineContext';
 import { useTutorial } from '../../context/TutorialContext';
 import { useAuth } from '../../auth/AuthContext';
@@ -163,7 +163,7 @@ export function PatternBank() {
           </div>
         ) : (
           patterns.map((pattern, index) => (
-            <div key={pattern.id} className={`pattern-item ${index === 0 && isShareStep ? 'tutorial-share-target' : ''}`}
+            <div key={pattern.id} className={`pattern-item ${index === 0 && isShareStep ? 'tutorial-share-target' : ''}`}>
               <div className="pattern-info" onClick={() => editingId !== pattern.id && handleLoad(pattern.id)}>
                 <div className="pattern-name-row">
                   {editingId === pattern.id ? (

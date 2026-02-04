@@ -39,9 +39,9 @@ describe('Sequencer Swing', () => {
     sequencer.setTempo(120);
     sequencer.setSwing(66);
     // At 120 BPM: secondsPerBeat = 0.5s, secondsPerStep = 0.125s
-    // offset = (66/100) * 0.125 * 0.75 = 0.061875
+    // offset = (66/100) * 0.125 * 0.5 = 0.04125 (triplet feel)
     const offset = sequencer.getSwingOffset(1);
-    expect(offset).toBeCloseTo(0.061875, 4);
+    expect(offset).toBeCloseTo(0.04125, 4);
   });
 
   it('returns 0 offset when swing is 0', () => {

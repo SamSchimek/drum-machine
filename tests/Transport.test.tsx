@@ -80,19 +80,20 @@ describe('Swing Control', () => {
     expect(screen.getByRole('slider', { name: /swing/i })).toBeInTheDocument();
   });
 
-  it('displays swing value as percentage', () => {
+  it('renders swing preset labels', () => {
     renderTransport();
-    expect(screen.getByText('0%')).toBeInTheDocument();
+    expect(screen.getByText('Str')).toBeInTheDocument();
+    expect(screen.getByText('Trip')).toBeInTheDocument();
   });
 
   it('updates swing value when slider changes', async () => {
     renderTransport();
     const swingSlider = screen.getByRole('slider', { name: /swing/i }) as HTMLInputElement;
 
-    fireEvent.change(swingSlider, { target: { value: '50' } });
+    fireEvent.change(swingSlider, { target: { value: '66' } });
 
     await waitFor(() => {
-      expect(screen.getByText('50%')).toBeInTheDocument();
+      expect(swingSlider.value).toBe('66');
     });
   });
 });

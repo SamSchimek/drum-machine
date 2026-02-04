@@ -162,8 +162,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  min-width: 70px;
+  gap: 2px;
+  min-width: 100px;
 }
 
 .swing-control label {
@@ -173,44 +173,96 @@
   letter-spacing: 1px;
 }
 
+.swing-slider-container {
+  position: relative;
+  width: 100px;
+}
+
 .swing-slider {
-  width: 70px;
+  width: 100%;
   height: 3px;
   -webkit-appearance: none;
   appearance: none;
   background: #2a2a2a;
   border-radius: 2px;
   cursor: pointer;
+  margin: 0;
 }
 
 .swing-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  background: #666;
+  width: 14px;
+  height: 14px;
+  background: #ff5722;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.1s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .swing-slider::-webkit-slider-thumb:hover {
-  background: #ff5722;
   transform: scale(1.15);
 }
 
 .swing-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  background: #666;
+  width: 14px;
+  height: 14px;
+  background: #ff5722;
   border-radius: 50%;
   cursor: pointer;
   border: none;
 }
 
-.swing-value {
+.swing-notches {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  padding: 0 5px;
+}
+
+.swing-notch {
+  background: none;
+  border: none;
+  color: #444;
   font-size: 10px;
-  color: #555;
-  font-variant-numeric: tabular-nums;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  line-height: 1;
+  transition: color 0.1s ease;
+}
+
+.swing-notch:hover {
+  color: #ff5722;
+}
+
+.swing-notch.active {
+  color: #ff5722;
+}
+
+.swing-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 2px;
+  padding: 0 1px;
+}
+
+.swing-labels span {
+  font-size: 7px;
+  color: #444;
+  cursor: pointer;
+  transition: color 0.1s ease;
+  text-align: center;
+}
+
+.swing-labels span:hover {
+  color: #ff5722;
 }
 
 .volume-control {
@@ -358,11 +410,15 @@
   }
 
   .swing-control {
-    min-width: 60px;
+    min-width: 80px;
   }
 
-  .swing-slider {
-    width: 60px;
+  .swing-slider-container {
+    width: 80px;
+  }
+
+  .swing-labels {
+    display: none;
   }
 
   .volume-control {

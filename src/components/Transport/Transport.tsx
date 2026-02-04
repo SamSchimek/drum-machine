@@ -105,17 +105,30 @@ export function Transport() {
 
       <div className="swing-control">
         <label htmlFor="swing">Swing</label>
-        <input
-          id="swing"
-          type="range"
-          min={MIN_SWING}
-          max={MAX_SWING}
-          value={swing}
-          onChange={handleSwingChange}
-          className="swing-slider"
-          aria-label="Swing"
-        />
-        <span className="swing-value">{swing}%</span>
+        <div className="swing-slider-container">
+          <input
+            id="swing"
+            type="range"
+            min={MIN_SWING}
+            max={MAX_SWING}
+            value={swing}
+            onChange={handleSwingChange}
+            className="swing-slider"
+            aria-label="Swing"
+          />
+          <div className="swing-notches">
+            <button className={`swing-notch ${swing === 0 ? 'active' : ''}`} onClick={() => setSwing(0)} title="Straight">|</button>
+            <button className={`swing-notch ${swing === 50 ? 'active' : ''}`} onClick={() => setSwing(50)} title="Light shuffle">|</button>
+            <button className={`swing-notch ${swing === 66 ? 'active' : ''}`} onClick={() => setSwing(66)} title="Triplet">|</button>
+            <button className={`swing-notch ${swing === 100 ? 'active' : ''}`} onClick={() => setSwing(100)} title="Heavy">|</button>
+          </div>
+          <div className="swing-labels">
+            <span onClick={() => setSwing(0)}>Str</span>
+            <span onClick={() => setSwing(50)}>Light</span>
+            <span onClick={() => setSwing(66)}>Trip</span>
+            <span onClick={() => setSwing(100)}>Heavy</span>
+          </div>
+        </div>
       </div>
 
       <div className="volume-control">

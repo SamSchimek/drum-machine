@@ -116,12 +116,6 @@ export function Transport() {
             className="swing-slider"
             aria-label="Swing"
           />
-          <div className="swing-notches">
-            <button className={`swing-notch ${swing === 0 ? 'active' : ''}`} onClick={() => setSwing(0)} title="Straight">|</button>
-            <button className={`swing-notch ${swing === 50 ? 'active' : ''}`} onClick={() => setSwing(50)} title="Light shuffle">|</button>
-            <button className={`swing-notch ${swing === 66 ? 'active' : ''}`} onClick={() => setSwing(66)} title="Triplet">|</button>
-            <button className={`swing-notch ${swing === 100 ? 'active' : ''}`} onClick={() => setSwing(100)} title="Heavy">|</button>
-          </div>
           <div className="swing-labels">
             <span onClick={() => setSwing(0)}>Str</span>
             <span onClick={() => setSwing(50)}>Light</span>

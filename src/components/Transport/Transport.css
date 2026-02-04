@@ -214,52 +214,28 @@
   border: none;
 }
 
-.swing-notches {
-  position: absolute;
-  top: -2px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  pointer-events: none;
-  padding: 0 5px;
-}
-
-.swing-notch {
-  background: none;
-  border: none;
-  color: #444;
-  font-size: 10px;
-  padding: 0;
-  cursor: pointer;
-  pointer-events: auto;
-  line-height: 1;
-  transition: color 0.1s ease;
-}
-
-.swing-notch:hover {
-  color: #ff5722;
-}
-
-.swing-notch.active {
-  color: #ff5722;
-}
-
 .swing-labels {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
   width: 100%;
-  margin-top: 2px;
-  padding: 0 1px;
+  height: 12px;
+  margin-top: 4px;
 }
 
 .swing-labels span {
+  position: absolute;
   font-size: 7px;
   color: #444;
   cursor: pointer;
   transition: color 0.1s ease;
-  text-align: center;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
+
+/* Position labels at 0%, 50%, 66%, 100% of track */
+.swing-labels span:nth-child(1) { left: 7px; transform: translateX(0); }
+.swing-labels span:nth-child(2) { left: 50%; }
+.swing-labels span:nth-child(3) { left: 66%; }
+.swing-labels span:nth-child(4) { right: 7px; left: auto; transform: translateX(0); }
 
 .swing-labels span:hover {
   color: #ff5722;

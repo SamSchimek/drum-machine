@@ -17,6 +17,9 @@ import type { TrackId, GridState } from '../types';
 
 // Step indices for special behavior
 const LAST_INTERACTIVE_STEP_INDEX = 4;
+const PLAY_STEP_INDEX = 5;
+const PREVIEW_STEP_INDEX = 6;
+// Step 7 (mute) intentionally does NOT auto-advance - multi-click is appropriate
 const BPM_STEP_INDEX = 8;
 const STARTER_BEAT_STEP_INDEX = 9;
 const SAVE_STEP_INDEX = 10;
@@ -144,6 +147,7 @@ interface TutorialContextValue {
   dismissPrompt: () => void;
   isCellRequired: (trackId: string, step: number) => boolean;
   onCellToggle: (trackId: string, step: number, isNowActive: boolean) => void;
+  onTrackPreview: () => void;
   isInteractiveStep: boolean;
   isStepComplete: boolean;
   isSaveStep: boolean;
@@ -202,6 +206,20 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
       play();
     }
   }, [isInteractiveStep, isPlaying, play]);
+
+  // Auto-advance play step when user starts playing
+  useEffect(() => {
+    if (!isActive) return;
+    if (currentStep !== PLAY_STEP_INDEX) return;
+    if (!isPlaying) return;
+
+    // User started playing - advance after brief delay
+    const timer = setTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      saveTutorialStep(currentStep + 1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [isActive, currentStep, isPlaying]);
 
   // Check if all required cells for the current step are active in the grid
   const checkInteractiveStepComplete = useCallback((gridState: GridState): boolean => {
@@ -371,6 +389,18 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isActive, isPlaying, isCellRequired, triggerSound]);
 
+  // Handle track preview click - auto-advance on preview step
+  const onTrackPreview = useCallback(() => {
+    if (!isActive) return;
+    if (currentStep !== PREVIEW_STEP_INDEX) return;
+
+    // User previewed a track - advance after brief delay
+    setTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      saveTutorialStep(currentStep + 1);
+    }, 500);
+  }, [isActive, currentStep]);
+
   const currentStepData = isActive && currentStep < TUTORIAL_STEPS.length
     ? TUTORIAL_STEPS[currentStep]
     : null;
@@ -394,6 +424,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     dismissPrompt,
     isCellRequired,
     onCellToggle,
+    onTrackPreview,
     isInteractiveStep,
     isStepComplete,
     isSaveStep,

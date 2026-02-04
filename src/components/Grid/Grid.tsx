@@ -16,7 +16,7 @@ export function Grid() {
     toggleMute,
   } = useDrumMachine();
 
-  const { isInteractiveStep } = useTutorial();
+  const { isInteractiveStep, onTrackPreview } = useTutorial();
 
   const containerClasses = [
     'grid-container',
@@ -61,7 +61,7 @@ export function Grid() {
           isPlaying={isPlaying}
           isMuted={mutedTracks[trackId]}
           onToggle={(step) => toggleCell(trackId, step)}
-          onTrigger={() => triggerSound(trackId)}
+          onTrigger={() => { triggerSound(trackId); onTrackPreview(); }}
           onMuteToggle={() => toggleMute(trackId)}
         />
       ))}

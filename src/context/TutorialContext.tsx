@@ -155,7 +155,7 @@ const AUTO_START_DELAY = 1500;
 export function TutorialProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isMainRoute = location.pathname === '/';
-  const { grid, clearGrid, triggerSound, setTempo, setGrid } = useDrumMachine();
+  const { grid, clearGrid, triggerSound, setTempo, setGrid, play, isPlaying } = useDrumMachine();
 
   // Ref to save grid state before starter beat step
   const savedGridBeforeStarterStep = useRef<GridState | null>(null);
@@ -192,6 +192,13 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
   const isInteractiveStep = isActive && currentStep < TUTORIAL_STEPS.length
     ? !!TUTORIAL_STEPS[currentStep].requiredCells
     : false;
+
+  // Auto-play during interactive steps so users hear their beat building
+  useEffect(() => {
+    if (isInteractiveStep && !isPlaying) {
+      play();
+    }
+  }, [isInteractiveStep, isPlaying, play]);
 
   // Check if all required cells for the current step are active in the grid
   const checkInteractiveStepComplete = useCallback((gridState: GridState): boolean => {

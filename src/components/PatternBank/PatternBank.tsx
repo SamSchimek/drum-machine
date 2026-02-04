@@ -197,7 +197,7 @@ export function PatternBank() {
                 <PatternPreview grid={pattern.grid} />
               </div>
               <div className="pattern-actions">
-                {user && <ShareButton pattern={pattern} />}
+                {(user || isShareStep) && <ShareButton pattern={pattern} />}
                 <button
                   className="delete-button"
                   onClick={() => handleDelete(pattern.id)}

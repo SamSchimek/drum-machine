@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
+import { useTutorial } from '../../context/TutorialContext';
 import { AuthModal } from './AuthModal';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
 import './UserMenu.css';
 
 export function UserMenu() {
   const { user, loading, signOut } = useAuth();
+  const { isSignupStep, onAuthComplete } = useTutorial();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -47,14 +49,16 @@ export function UserMenu() {
     return (
       <div className="user-menu">
         <button
-          className="user-menu-signin-button"
+          className={`user-menu-signin-button ${isSignupStep ? 'tutorial-highlight' : ''}`}
           onClick={() => setShowAuthModal(true)}
         >
-          Sign In
+          {isSignupStep ? 'Sign Up' : 'Sign In'}
         </button>
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
+          initialMode={isSignupStep ? 'signup' : 'signin'}
+          onAuthSuccess={isSignupStep ? onAuthComplete : undefined}
         />
       </div>
     );

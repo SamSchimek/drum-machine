@@ -76,8 +76,8 @@ describe('TutorialContext', () => {
   });
 
   describe('TUTORIAL_STEPS', () => {
-    it('has 13 tutorial steps', () => {
-      expect(TUTORIAL_STEPS).toHaveLength(13);
+    it('has 14 tutorial steps', () => {
+      expect(TUTORIAL_STEPS).toHaveLength(14);
     });
 
     it('each step has required properties', () => {

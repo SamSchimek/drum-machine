@@ -32,6 +32,13 @@
   cursor: not-allowed;
 }
 
+.share-button.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #555;
+  color: #555;
+}
+
 .share-modal-backdrop {
   position: fixed;
   top: 0;

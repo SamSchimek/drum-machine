@@ -13,6 +13,7 @@ import {
   clearTutorialState,
 } from './tutorialPersistence';
 import { useDrumMachine } from './DrumMachineContext';
+import { useAuth } from '../auth/AuthContext';
 import { DEFAULT_TEMPO } from '../constants';
 import type { TrackId, GridState } from '../types';
 
@@ -39,7 +40,8 @@ const PREVIEW_STEP_INDEX = 6;
 const BPM_STEP_INDEX = 8;
 const STARTER_BEAT_STEP_INDEX = 9;
 const SAVE_STEP_INDEX = 10;
-const SHARE_STEP_INDEX = 11;
+const SIGNUP_STEP_INDEX = 11;
+const SHARE_STEP_INDEX = 12;
 
 // Deep copy helper to prevent mutations affecting saved state
 function deepCopyGrid(grid: GridState): GridState {
@@ -136,6 +138,11 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     position: 'left',
   },
   {
+    target: '.user-menu-signin-button',
+    content: 'Sign up to save your beats, unlock sharing mode, and earn upvotes from friends',
+    position: 'left',
+  },
+  {
     target: '.pattern-item:first-child .share-button',
     content: 'Share your beats with friends to earn upvotes',
     position: 'left',
@@ -166,9 +173,11 @@ interface TutorialContextValue {
   onCellToggle: (trackId: string, step: number, isNowActive: boolean) => void;
   onTrackPreview: () => void;
   onPatternSaved: () => void;
+  onAuthComplete: () => void;
   isInteractiveStep: boolean;
   isStepComplete: boolean;
   isSaveStep: boolean;
+  isSignupStep: boolean;
   isShareStep: boolean;
 }
 
@@ -180,6 +189,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isMainRoute = location.pathname === '/';
   const { grid, clearGrid, triggerSound, setTempo, setGrid, play, stop, isPlaying } = useDrumMachine();
+  const { user } = useAuth();
 
   // Ref to save grid state before starter beat step
   const savedGridBeforeStarterStep = useRef<GridState | null>(null);
@@ -324,11 +334,15 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
       saveTutorialStep(0);
       fireConfetti();
     } else {
-      const newStep = currentStep + 1;
+      let newStep = currentStep + 1;
+      // Auto-skip signup step if user is already logged in
+      if (newStep === SIGNUP_STEP_INDEX && user) {
+        newStep = SHARE_STEP_INDEX;
+      }
       setCurrentStep(newStep);
       saveTutorialStep(newStep);
     }
-  }, [currentStep, isInteractiveStep, checkInteractiveStepComplete, grid, setTempo, setGrid]);
+  }, [currentStep, isInteractiveStep, checkInteractiveStepComplete, grid, setTempo, setGrid, user]);
 
   const previousStep = useCallback(() => {
     setIsContinuing(false);
@@ -423,14 +437,29 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
   }, [isActive, currentStep]);
 
   // Handle pattern saved - auto-advance on save step
+  // If user is logged in, skip signup step and go to share step
   const onPatternSaved = useCallback(() => {
     if (!isActive) return;
     if (currentStep !== SAVE_STEP_INDEX) return;
 
     // User saved a pattern - advance after brief delay
     setTimeout(() => {
-      setCurrentStep(currentStep + 1);
-      saveTutorialStep(currentStep + 1);
+      // If user is logged in, skip signup step (11) and go to share step (12)
+      const nextStepIndex = user ? SHARE_STEP_INDEX : currentStep + 1;
+      setCurrentStep(nextStepIndex);
+      saveTutorialStep(nextStepIndex);
+    }, 300);
+  }, [isActive, currentStep, user]);
+
+  // Handle auth complete - called when user signs up during signup step
+  const onAuthComplete = useCallback(() => {
+    if (!isActive) return;
+    if (currentStep !== SIGNUP_STEP_INDEX) return;
+
+    // User completed signup - advance to share step
+    setTimeout(() => {
+      setCurrentStep(SHARE_STEP_INDEX);
+      saveTutorialStep(SHARE_STEP_INDEX);
     }, 300);
   }, [isActive, currentStep]);
 
@@ -439,6 +468,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     : null;
 
   const isSaveStep = isActive && currentStep === SAVE_STEP_INDEX;
+  const isSignupStep = isActive && currentStep === SIGNUP_STEP_INDEX && !user;
   const isShareStep = isActive && currentStep === SHARE_STEP_INDEX;
 
   const value: TutorialContextValue = {
@@ -460,9 +490,11 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     onCellToggle,
     onTrackPreview,
     onPatternSaved,
+    onAuthComplete,
     isInteractiveStep,
     isStepComplete,
     isSaveStep,
+    isSignupStep,
     isShareStep,
   };
 

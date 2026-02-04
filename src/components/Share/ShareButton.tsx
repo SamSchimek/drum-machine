@@ -35,6 +35,18 @@ export function ShareButton({ pattern }: ShareButtonProps) {
   }, [isShareStep, showShareModal]);
 
   if (!user) {
+    // During share step, show locked button for non-logged-in users
+    if (isShareStep) {
+      return (
+        <button
+          className="share-button locked"
+          onClick={() => alert('Sign up to unlock sharing mode')}
+          title="Sign up to share"
+        >
+          Share
+        </button>
+      );
+    }
     return null;
   }
 

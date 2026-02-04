@@ -2,25 +2,41 @@ import { useState, FormEvent, useEffect, useRef } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import './AuthModal.css';
 
+type AuthMode = 'signin' | 'signup';
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialMode?: AuthMode;
+  onAuthSuccess?: () => void;
 }
 
-type AuthMode = 'signin' | 'signup';
-
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSuccess }: AuthModalProps) {
   const { signInWithEmail, signInWithGoogle, signUp, error, loading, clearError, user } = useAuth();
   const wasOpen = useRef(false);
+  const prevUser = useRef(user);
 
   // Close modal when user successfully authenticates
   useEffect(() => {
     if (isOpen && user && wasOpen.current) {
+      // Call onAuthSuccess if user just authenticated (was null, now logged in)
+      if (!prevUser.current && user && onAuthSuccess) {
+        onAuthSuccess();
+      }
       onClose();
     }
     wasOpen.current = isOpen;
-  }, [user, isOpen, onClose]);
-  const [mode, setMode] = useState<AuthMode>('signin');
+    prevUser.current = user;
+  }, [user, isOpen, onClose, onAuthSuccess]);
+
+  const [mode, setMode] = useState<AuthMode>(initialMode);
+
+  // Reset mode when modal opens with new initialMode
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+    }
+  }, [isOpen, initialMode]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

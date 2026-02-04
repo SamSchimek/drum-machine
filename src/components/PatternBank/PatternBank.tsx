@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDrumMachine } from '../../context/DrumMachineContext';
+import { useTutorial } from '../../context/TutorialContext';
 import { useAuth } from '../../auth/AuthContext';
 import { TRACK_IDS } from '../../types';
 import { TRACK_COLORS, STEPS_PER_PATTERN } from '../../constants';
@@ -27,12 +28,21 @@ function PatternPreview({ grid }: { grid: Pattern['grid'] }) {
 
 export function PatternBank() {
   const { patterns, savePattern, loadPattern, deletePattern, renamePattern, patternsLoading, patternError } = useDrumMachine();
+  const { isSaveStep } = useTutorial();
   const { user } = useAuth();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [patternName, setPatternName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+
+  // Auto-open save dialog with suggested name during tutorial save step
+  useEffect(() => {
+    if (isSaveStep && !showSaveDialog) {
+      setPatternName('My First Beat');
+      setShowSaveDialog(true);
+    }
+  }, [isSaveStep, showSaveDialog]);
 
   const handleSave = async () => {
     if (patternName.trim() && !isSaving) {
@@ -121,7 +131,7 @@ export function PatternBank() {
       )}
 
       {showSaveDialog && (
-        <div className="save-dialog">
+        <div className={`save-dialog ${isSaveStep ? 'tutorial-highlight' : ''}`}>
           <input
             type="text"
             value={patternName}

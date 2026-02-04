@@ -18,6 +18,7 @@ import type { TrackId, GridState } from '../types';
 // Step indices for special behavior
 const BPM_STEP_INDEX = 8;
 const STARTER_BEAT_STEP_INDEX = 9;
+const SAVE_STEP_INDEX = 10;
 
 // Deep copy helper to prevent mutations affecting saved state
 function deepCopyGrid(grid: GridState): GridState {
@@ -110,7 +111,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     target: '.save-button',
-    content: 'Save your pattern for later',
+    content: 'Save your first beat! Click Save to keep it',
     position: 'left',
   },
   {
@@ -144,6 +145,7 @@ interface TutorialContextValue {
   onCellToggle: (trackId: string, step: number, isNowActive: boolean) => void;
   isInteractiveStep: boolean;
   isStepComplete: boolean;
+  isSaveStep: boolean;
 }
 
 const TutorialContext = createContext<TutorialContextValue | null>(null);
@@ -347,6 +349,8 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     ? TUTORIAL_STEPS[currentStep]
     : null;
 
+  const isSaveStep = isActive && currentStep === SAVE_STEP_INDEX;
+
   const value: TutorialContextValue = {
     currentStep,
     isActive,
@@ -366,6 +370,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     onCellToggle,
     isInteractiveStep,
     isStepComplete,
+    isSaveStep,
   };
 
   return (

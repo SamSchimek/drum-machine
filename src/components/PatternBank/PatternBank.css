@@ -50,6 +50,18 @@
   border: 1px solid #252525;
 }
 
+.save-dialog.tutorial-highlight {
+  animation: save-dialog-pulse 1.2s ease-in-out infinite;
+  border-color: #ff5722;
+  position: relative;
+  z-index: 1001;
+}
+
+@keyframes save-dialog-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.4); }
+  50% { box-shadow: 0 0 15px 5px rgba(255, 87, 34, 0.3); }
+}
+
 .save-dialog input {
   flex: 1;
   padding: 6px 10px;

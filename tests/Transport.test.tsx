@@ -80,10 +80,34 @@ describe('Swing Control', () => {
     expect(screen.getByRole('slider', { name: /swing/i })).toBeInTheDocument();
   });
 
-  it('renders swing preset labels', () => {
+  it('renders all four swing preset labels', () => {
     renderTransport();
     expect(screen.getByText('Str')).toBeInTheDocument();
+    expect(screen.getByText('Light')).toBeInTheDocument();
     expect(screen.getByText('Trip')).toBeInTheDocument();
+    expect(screen.getByText('Heavy')).toBeInTheDocument();
+  });
+
+  it('clicking Str label sets swing to 0', async () => {
+    renderTransport();
+    const swingSlider = screen.getByRole('slider', { name: /swing/i }) as HTMLInputElement;
+
+    fireEvent.click(screen.getByText('Str'));
+
+    await waitFor(() => {
+      expect(swingSlider.value).toBe('0');
+    });
+  });
+
+  it('clicking Trip label sets swing to 66', async () => {
+    renderTransport();
+    const swingSlider = screen.getByRole('slider', { name: /swing/i }) as HTMLInputElement;
+
+    fireEvent.click(screen.getByText('Trip'));
+
+    await waitFor(() => {
+      expect(swingSlider.value).toBe('66');
+    });
   });
 
   it('updates swing value when slider changes', async () => {

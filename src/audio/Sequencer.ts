@@ -35,7 +35,6 @@ export class Sequencer {
 
   setSwing(value: number): void {
     this.swing = Math.max(0, Math.min(100, value));
-    console.log('[Sequencer] setSwing called with:', value, '-> stored:', this.swing);
   }
 
   getSwing(): number {
@@ -48,11 +47,7 @@ export class Sequencer {
     const secondsPerBeat = 60 / this.tempo;
     const secondsPerStep = secondsPerBeat / 4; // 16th notes
     // At 100% swing, delay off-beats by ~75% of a step (triplet feel at ~66%)
-    const offset = (this.swing / 100) * secondsPerStep * 0.75;
-    if (this.swing > 0) {
-      console.log(`[Sequencer] getSwingOffset step=${step}, swing=${this.swing}, offset=${offset.toFixed(4)}s`);
-    }
-    return offset;
+    return (this.swing / 100) * secondsPerStep * 0.75;
   }
 
   getCurrentStep(): number {

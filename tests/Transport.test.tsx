@@ -46,7 +46,7 @@ describe('Transport Controls', () => {
   });
 });
 
-describe('Play Button', () => {
+describe('Tempo Slider', () => {
   beforeEach(() => localStorage.clear());
 
   it('resets tempo to 120 on double-click', async () => {
@@ -61,13 +61,33 @@ describe('Play Button', () => {
       expect(screen.getByText('150')).toBeInTheDocument();
     });
 
-    // Double-click play button
-    const playButton = screen.getByRole('button', { name: /play|stop/i });
-    fireEvent.doubleClick(playButton);
+    // Double-click tempo slider
+    fireEvent.doubleClick(tempoSlider);
 
     // Tempo should reset to 120
     await waitFor(() => {
       expect(screen.getByText('120')).toBeInTheDocument();
+    });
+  });
+
+  it('does not reset tempo on double-click of play button', async () => {
+    renderTransport();
+
+    // Change tempo
+    const tempoSlider = document.querySelector('.tempo-slider') as HTMLInputElement;
+    fireEvent.change(tempoSlider, { target: { value: '150' } });
+
+    await waitFor(() => {
+      expect(screen.getByText('150')).toBeInTheDocument();
+    });
+
+    // Double-click play button
+    const playButton = screen.getByRole('button', { name: /play|stop/i });
+    fireEvent.doubleClick(playButton);
+
+    // Tempo should NOT reset
+    await waitFor(() => {
+      expect(screen.getByText('150')).toBeInTheDocument();
     });
   });
 });

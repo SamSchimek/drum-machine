@@ -20,7 +20,7 @@ export function Transport() {
     setSwing(Number(e.target.value));
   };
 
-  const handlePlayDoubleClick = () => {
+  const handleTempoSliderDoubleClick = () => {
     resetTempo();
   };
 
@@ -54,9 +54,8 @@ export function Transport() {
       <button
         className={`play-button ${isPlaying ? 'playing' : ''}`}
         onClick={isPlaying ? stop : play}
-        onDoubleClick={handlePlayDoubleClick}
         aria-label={isPlaying ? 'Stop' : 'Play'}
-        title="Space to play/stop. Double-click to reset tempo"
+        title="Space to play/stop"
       >
         {isPlaying ? (
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -99,7 +98,9 @@ export function Transport() {
           max={MAX_TEMPO}
           value={tempo}
           onChange={handleTempoSliderChange}
+          onDoubleClick={handleTempoSliderDoubleClick}
           className="tempo-slider"
+          title="Double-click to reset to 120"
         />
       </div>
 

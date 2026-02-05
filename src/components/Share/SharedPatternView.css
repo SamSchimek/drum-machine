@@ -1,7 +1,7 @@
 .shared-pattern-view {
   min-height: 100vh;
-  background: #0a0a0a;
-  color: #fff;
+  background: var(--bg-deepest);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,12 +14,12 @@
 }
 
 .shared-pattern-error h2 {
-  color: #ff5722;
+  color: var(--accent-primary);
   margin-bottom: 0.5rem;
 }
 
 .shared-pattern-error p {
-  color: #888;
+  color: var(--text-secondary);
   margin-bottom: 1.5rem;
 }
 
@@ -27,8 +27,8 @@
 .shared-pattern-cta {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: #ff5722;
-  color: #fff;
+  background: var(--accent-primary);
+  color: #000;
   text-decoration: none;
   border-radius: 6px;
   font-weight: 600;
@@ -37,16 +37,16 @@
 
 .shared-pattern-home-link:hover,
 .shared-pattern-cta:hover {
-  background: #ff7043;
+  background: var(--accent-primary-hover);
 }
 
 .shared-pattern-container {
-  background: #141414;
+  background: var(--bg-surface);
   border-radius: 12px;
   padding: 2rem;
   max-width: 1000px;
   width: 100%;
-  border: 1px solid #1e1e1e;
+  border: 1px solid var(--border-subtle);
 }
 
 .shared-pattern-header {
@@ -55,13 +55,13 @@
 }
 
 .shared-pattern-header h1 {
-  color: #ff5722;
+  color: var(--accent-primary);
   margin: 0 0 0.5rem;
   font-size: 1.75rem;
 }
 
 .shared-pattern-byline {
-  color: #ccc;
+  color: var(--text-secondary);
   font-size: 1.2rem;
   font-style: italic;
   margin-left: 0.5rem;
@@ -69,7 +69,7 @@
 }
 
 .shared-pattern-tempo {
-  color: #666;
+  color: var(--text-tertiary);
   margin: 0 0 1rem;
   font-size: 0.875rem;
   text-transform: uppercase;
@@ -86,8 +86,8 @@
 .shared-play-button {
   display: inline-block;
   padding: 0.75rem 2rem;
-  background: #ff5722;
-  color: #fff;
+  background: var(--accent-primary);
+  color: #000;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -99,7 +99,7 @@
 }
 
 .shared-play-button:hover {
-  background: #ff7043;
+  background: var(--accent-primary-hover);
   transform: scale(1.02);
 }
 
@@ -113,13 +113,13 @@
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
   background: transparent;
-  border: 2px solid #444;
+  border: 2px solid var(--border-strong);
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .shared-upvote-button:hover:not(:disabled) {
@@ -185,7 +185,7 @@
   width: 100px;
   flex-shrink: 0;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-tertiary);
   text-transform: capitalize;
 }
 
@@ -197,7 +197,7 @@
 .shared-grid-cell {
   width: 28px;
   height: 28px;
-  background: #252525;
+  background: var(--bg-elevated);
   border-radius: 3px;
   transition: all 0.15s ease;
 }
@@ -207,7 +207,7 @@
 }
 
 .shared-grid-cell.bar-start {
-  border-left: 2px solid #444;
+  border-left: 2px solid var(--border-strong);
 }
 
 .shared-grid-cell.downbeat {
@@ -219,31 +219,31 @@
 }
 
 .shared-grid-cell.active {
-  background: var(--track-color, #ff5722);
-  box-shadow: 0 0 8px var(--track-color, #ff5722);
+  background: var(--track-color, var(--accent-primary));
+  box-shadow: 0 0 8px var(--track-color, var(--accent-primary));
 }
 
 .shared-grid-cell.current {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--text-primary);
   outline-offset: -2px;
 }
 
 .shared-grid-cell.current.active {
-  animation: pulse 0.15s ease-out;
+  animation: shared-pulse 0.15s ease-out;
 }
 
-@keyframes pulse {
+@keyframes shared-pulse {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 8px var(--track-color, #ff5722);
+    box-shadow: 0 0 8px var(--track-color, var(--accent-primary));
   }
   50% {
     transform: scale(1.1);
-    box-shadow: 0 0 16px var(--track-color, #ff5722);
+    box-shadow: 0 0 16px var(--track-color, var(--accent-primary));
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 0 8px var(--track-color, #ff5722);
+    box-shadow: 0 0 8px var(--track-color, var(--accent-primary));
   }
 }
 
@@ -251,11 +251,11 @@
   text-align: center;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #252525;
+  border-top: 1px solid var(--bg-elevated);
 }
 
 .shared-pattern-footer p {
-  color: #555;
+  color: var(--text-tertiary);
   margin: 0 0 1rem;
   font-size: 0.8125rem;
 }

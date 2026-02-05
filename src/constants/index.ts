@@ -23,20 +23,20 @@ export const MIN_PATTERNS_FOR_GENERATION = 5;
 export const MARKOV_WEIGHT = 0.6;
 export const RULES_WEIGHT = 0.4;
 
-// Track colors for the grid (808-inspired palette)
+// Track colors for the grid (muted Bloom palette)
 export const TRACK_COLORS: Record<TrackId, string> = {
-  kick: '#ff5722',     // Deep orange
-  snare: '#ffeb3b',    // Yellow
-  closedHH: '#4caf50', // Green
-  openHH: '#8bc34a',   // Light green
-  clap: '#e91e63',     // Pink
-  tomLow: '#9c27b0',   // Purple
-  tomMid: '#673ab7',   // Deep purple
-  tomHigh: '#3f51b5',  // Indigo
-  rimshot: '#00bcd4',  // Cyan
-  cowbell: '#ff9800',  // Orange
-  clave: '#795548',    // Brown
-  maracas: '#607d8b',  // Blue grey
+  kick: '#c9887a',     // Muted terracotta
+  snare: '#d4c78a',    // Muted gold
+  closedHH: '#68b89a', // Deeper sage green
+  openHH: '#a8cc7a',   // Lime sage
+  clap: '#c98aad',     // Dusty rose
+  tomLow: '#b07cd0',   // Brighter purple
+  tomMid: '#7a7cc8',   // Blue-purple
+  tomHigh: '#7a88b8',  // Steel blue
+  rimshot: '#7ab8c4',  // Muted teal
+  cowbell: '#d4a87a',  // Warm amber
+  clave: '#a08a7a',    // Warm taupe
+  maracas: '#8a9aaa',  // Cool gray-blue
 };
 
 // Track order for generation (dependencies)

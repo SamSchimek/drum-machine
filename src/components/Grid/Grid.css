@@ -3,9 +3,14 @@
   flex-direction: column;
   gap: 4px;
   padding: 14px 16px;
-  background: #141414;
+  background-color: var(--bg-surface);
+  background-image: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px
+  );
   border-radius: 8px;
-  border: 1px solid #1e1e1e;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--panel-shadow);
   overflow-x: auto;
 }
 
@@ -33,8 +38,8 @@
   justify-content: center;
   font-size: 12px;
   font-weight: 500;
-  color: #444;
-  background: #1a1a1a;
+  color: var(--text-muted);
+  background: var(--bg-raised);
   border-radius: 3px;
   transition: background-color 0.2s ease-out,
               color 0.15s ease-out,
@@ -42,15 +47,15 @@
 }
 
 .step-indicator.active {
-  background: #ff5722;
-  color: #fff;
-  box-shadow: 0 0 12px rgba(255, 87, 34, 0.5);
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: 0 0 12px var(--accent-primary-glow);
 }
 
 .step-indicator.downbeat {
-  color: #666;
+  color: var(--text-tertiary);
   font-weight: 600;
-  background: #1e1e1e;
+  background: var(--bg-elevated);
 }
 
 .step-indicator.beat-end {
@@ -62,7 +67,7 @@
 }
 
 .step-indicator.bar-start {
-  border-left: 2px solid #444;
+  border-left: 2px solid var(--border-strong);
   padding-left: 2px;
 }
 
@@ -84,9 +89,9 @@
   flex: 1;
   padding: 8px 10px;
   background: transparent;
-  border: 1px solid var(--track-color, #666);
+  border: 1px solid var(--track-color, var(--text-tertiary));
   border-radius: 4px;
-  color: var(--track-color, #fff);
+  color: var(--track-color, var(--text-primary));
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -100,7 +105,7 @@
 }
 
 .track-label:hover {
-  background: var(--track-color, #666);
+  background: var(--track-color, var(--text-tertiary));
   color: #000;
 }
 
@@ -109,9 +114,9 @@
   height: 24px;
   padding: 0;
   background: transparent;
-  border: 1px solid #333;
+  border: 1px solid var(--border-default);
   border-radius: 3px;
-  color: #444;
+  color: var(--text-muted);
   font-size: 9px;
   font-weight: 600;
   cursor: pointer;
@@ -122,13 +127,13 @@
 }
 
 .mute-button:hover {
-  border-color: #ff5722;
-  color: #ff5722;
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .mute-button.muted {
-  background: #ff5722;
-  border-color: #ff5722;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
   color: #000;
 }
 
@@ -140,12 +145,15 @@
 .grid-cell {
   width: 36px;
   height: 36px;
-  border: none;
-  border-radius: 4px;
-  background: var(--track-color-dim, #1e1e1e);
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+  background: var(--track-color-dim, var(--bg-raised));
   cursor: pointer;
   transition: all 0.1s ease;
   position: relative;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
+              inset 0 -1px 0 rgba(0,0,0,0.25),
+              0 1px 2px rgba(0,0,0,0.3);
 }
 
 .grid-cell:hover {
@@ -154,26 +162,29 @@
 }
 
 .grid-cell.active {
-  background: var(--track-color, #ff5722);
-  box-shadow:
-    0 0 8px var(--track-color, #ff5722),
-    inset 0 0 6px rgba(255, 255, 255, 0.25);
+  background: var(--track-color, var(--accent-primary));
+  box-shadow: 0 0 8px var(--track-color, var(--accent-primary)),
+              0 0 16px rgba(184,160,210,0.2),
+              inset 0 0 6px rgba(255,255,255,0.2),
+              inset 0 1px 0 rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .grid-cell.current {
-  outline: 2px solid rgba(255, 255, 255, 0.75);
+  outline: 2px solid rgba(232,224,240,0.65);
   outline-offset: -2px;
   transition: outline-color 0.2s ease-out, box-shadow 0.25s ease-out;
 }
 
 .grid-cell.current:not(.active) {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(232,224,240,0.08);
 }
 
 .grid-cell.current.active {
-  box-shadow:
-    0 0 12px var(--track-color, #ff5722),
-    0 0 24px rgba(255, 87, 34, 0.4);
+  box-shadow: 0 0 12px var(--track-color, var(--accent-primary)),
+              0 0 24px rgba(184,160,210,0.4),
+              inset 0 0 6px rgba(255,255,255,0.2),
+              inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .grid-cell.beat-end {
@@ -185,15 +196,15 @@
 }
 
 .grid-cell.bar-start {
-  border-left: 2px solid #444;
+  border-left: 2px solid var(--border-strong);
 }
 
 .grid-cell.downbeat:not(.active) {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(232,224,240,0.04);
 }
 
 .grid-cell:focus {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--text-primary);
   outline-offset: 2px;
 }
 
@@ -209,8 +220,8 @@
 }
 
 @keyframes tutorial-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.8); }
-  50% { box-shadow: 0 0 15px 5px rgba(255, 87, 34, 0.5); }
+  0%, 100% { box-shadow: 0 0 0 3px rgba(184, 160, 210, 0.8); }
+  50% { box-shadow: 0 0 15px 5px rgba(184, 160, 210, 0.5); }
 }
 
 /* Dim non-target cells during interactive tutorial step */

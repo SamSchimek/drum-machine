@@ -67,4 +67,24 @@ describe('Grid', () => {
     expect(kickCell0).not.toHaveClass('active');
     expect(snareCell4).toHaveClass('active');
   });
+
+  it('sets --track-color CSS custom property on cells', () => {
+    renderGrid();
+    const cell = screen.getByTestId('cell-kick-0');
+    expect(cell.style.getPropertyValue('--track-color')).toBeTruthy();
+  });
+
+  it('sets --track-color-dim CSS custom property on cells', () => {
+    renderGrid();
+    const cell = screen.getByTestId('cell-kick-0');
+    const dim = cell.style.getPropertyValue('--track-color-dim');
+    expect(dim).toBeTruthy();
+  });
+
+  it('--track-color-dim ends with 18 (dimmed inactive LEDs)', () => {
+    renderGrid();
+    const cell = screen.getByTestId('cell-kick-0');
+    const dim = cell.style.getPropertyValue('--track-color-dim');
+    expect(dim).toMatch(/18$/);
+  });
 });

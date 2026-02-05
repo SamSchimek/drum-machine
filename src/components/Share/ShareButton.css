@@ -1,9 +1,9 @@
 .share-button {
   padding: 4px 8px;
   background: transparent;
-  border: 1px solid #444;
+  border: 1px solid var(--border-strong);
   border-radius: 3px;
-  color: #666;
+  color: var(--text-tertiary);
   font-size: 9px;
   font-weight: 500;
   cursor: pointer;
@@ -13,18 +13,18 @@
 }
 
 .share-button:hover:not(:disabled) {
-  border-color: #ff5722;
-  color: #ff5722;
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .share-button.shared {
-  border-color: #4caf50;
-  color: #4caf50;
+  border-color: var(--accent-success);
+  color: var(--accent-success);
 }
 
 .share-button.shared:hover:not(:disabled) {
-  border-color: #66bb6a;
-  color: #66bb6a;
+  border-color: #9fd0b2;
+  color: #9fd0b2;
 }
 
 .share-button:disabled {
@@ -35,8 +35,8 @@
 .share-button.locked {
   opacity: 0.5;
   cursor: not-allowed;
-  border-color: #555;
-  color: #555;
+  border-color: var(--text-tertiary);
+  color: var(--text-tertiary);
 }
 
 .share-modal-backdrop {
@@ -201,6 +201,6 @@
 }
 
 @keyframes share-button-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.8); }
-  50% { box-shadow: 0 0 15px 5px rgba(255, 87, 34, 0.5); }
+  0%, 100% { box-shadow: 0 0 0 3px rgba(184, 160, 210, 0.8); }
+  50% { box-shadow: 0 0 15px 5px rgba(184, 160, 210, 0.5); }
 }

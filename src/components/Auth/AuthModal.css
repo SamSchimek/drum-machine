@@ -62,9 +62,9 @@
   width: 28px;
   height: 28px;
   background: linear-gradient(180deg,
-    rgba(50, 45, 55, 1) 0%,
-    rgba(38, 34, 42, 1) 40%,
-    rgba(28, 24, 32, 1) 100%);
+    var(--btn-secondary-top) 0%,
+    var(--btn-secondary-mid) 40%,
+    var(--btn-secondary-bot) 100%);
   border: 1px solid var(--border-default);
   border-top-color: rgba(255, 255, 255, 0.1);
   border-bottom-color: rgba(0, 0, 0, 0.4);

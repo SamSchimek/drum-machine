@@ -8,9 +8,9 @@
   gap: 8px;
   padding: 8px 12px;
   background: linear-gradient(180deg,
-    rgba(50, 45, 60, 1) 0%,
-    rgba(37, 32, 48, 1) 40%,
-    rgba(26, 21, 32, 1) 100%);
+    var(--btn-secondary-top) 0%,
+    var(--btn-secondary-mid) 40%,
+    var(--btn-secondary-bot) 100%);
   border: 1px solid var(--border-default);
   border-top-color: rgba(255, 255, 255, 0.1);
   border-bottom-color: rgba(0, 0, 0, 0.4);
@@ -121,7 +121,7 @@
 }
 
 .theme-option:hover:not(.locked) {
-  background: rgba(184, 160, 210, 0.1);
+  background: var(--menu-item-hover);
   border-color: var(--border-subtle);
 }
 

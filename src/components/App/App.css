@@ -83,7 +83,7 @@
   text-shadow:
     0 -1px 0 rgba(0, 0, 0, 0.5),
     0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 20px rgba(184, 160, 210, 0.3);
+    0 0 20px var(--header-text-glow);
   background: linear-gradient(
     180deg,
     var(--accent-primary-hover) 0%,

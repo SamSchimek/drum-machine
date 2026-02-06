@@ -15,6 +15,18 @@ export interface Theme {
     accentPrimaryGlow: string;
     accentSecondary: string;
     accentWarm: string;
+    bgDeepest: string;
+    bgDeep: string;
+    bgSurface: string;
+    bgRaised: string;
+    bgElevated: string;
+    borderSubtle: string;
+    borderDefault: string;
+    borderStrong: string;
+    textPrimary: string;
+    textSecondary: string;
+    textTertiary: string;
+    textMuted: string;
   };
 }
 
@@ -29,6 +41,18 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentPrimaryGlow: 'rgba(196,176,224,0.45)',
       accentSecondary: '#e0b0c8',
       accentWarm: '#e0c8a8',
+      bgDeepest: '#14101a',
+      bgDeep: '#1a1528',
+      bgSurface: '#241d35',
+      bgRaised: '#302542',
+      bgElevated: '#3d3055',
+      borderSubtle: '#3a3058',
+      borderDefault: '#4d4068',
+      borderStrong: '#5f5080',
+      textPrimary: '#f0e8f8',
+      textSecondary: '#b8a8c8',
+      textTertiary: '#8878a0',
+      textMuted: '#685888',
     },
   },
   sunset: {
@@ -41,6 +65,18 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentPrimaryGlow: 'rgba(232,168,124,0.45)',
       accentSecondary: '#d4798a',
       accentWarm: '#f0d8a0',
+      bgDeepest: '#161210',
+      bgDeep: '#1e1814',
+      bgSurface: '#2a221c',
+      bgRaised: '#382e26',
+      bgElevated: '#4a3e34',
+      borderSubtle: '#3e3428',
+      borderDefault: '#564a3c',
+      borderStrong: '#6e5f4e',
+      textPrimary: '#f5ece0',
+      textSecondary: '#c8b8a0',
+      textTertiary: '#9a8870',
+      textMuted: '#7a6850',
     },
   },
   midnight: {
@@ -53,6 +89,18 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentPrimaryGlow: 'rgba(107,181,255,0.45)',
       accentSecondary: '#a78bfa',
       accentWarm: '#7dd3fc',
+      bgDeepest: '#0c1018',
+      bgDeep: '#121a26',
+      bgSurface: '#1a2438',
+      bgRaised: '#24304a',
+      bgElevated: '#303e5c',
+      borderSubtle: '#2a3854',
+      borderDefault: '#3c4e6e',
+      borderStrong: '#4e6088',
+      textPrimary: '#e0e8f5',
+      textSecondary: '#a0b0c8',
+      textTertiary: '#7088a8',
+      textMuted: '#506888',
     },
   },
   forest: {
@@ -65,6 +113,18 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentPrimaryGlow: 'rgba(134,217,160,0.45)',
       accentSecondary: '#c9e4a8',
       accentWarm: '#d4e8a8',
+      bgDeepest: '#0e140e',
+      bgDeep: '#141e14',
+      bgSurface: '#1c2c1c',
+      bgRaised: '#283828',
+      bgElevated: '#344634',
+      borderSubtle: '#2a3e2a',
+      borderDefault: '#3e563e',
+      borderStrong: '#4e6e4e',
+      textPrimary: '#e4f0e4',
+      textSecondary: '#a8c4a8',
+      textTertiary: '#78a078',
+      textMuted: '#588058',
     },
   },
   neon: {
@@ -77,6 +137,18 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentPrimaryGlow: 'rgba(255,107,157,0.45)',
       accentSecondary: '#c084fc',
       accentWarm: '#fbbf24',
+      bgDeepest: '#0a0a10',
+      bgDeep: '#10101c',
+      bgSurface: '#18182c',
+      bgRaised: '#22223c',
+      bgElevated: '#2e2e50',
+      borderSubtle: '#2a2a48',
+      borderDefault: '#3e3e64',
+      borderStrong: '#52527e',
+      textPrimary: '#f0ecff',
+      textSecondary: '#b8b0d0',
+      textTertiary: '#8880a8',
+      textMuted: '#686088',
     },
   },
   monochrome: {
@@ -89,6 +161,18 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentPrimaryGlow: 'rgba(176,176,176,0.45)',
       accentSecondary: '#a0a0a0',
       accentWarm: '#c8c8c8',
+      bgDeepest: '#121216',
+      bgDeep: '#18181e',
+      bgSurface: '#1e1e26',
+      bgRaised: '#282830',
+      bgElevated: '#34343e',
+      borderSubtle: '#2e2e38',
+      borderDefault: '#40404c',
+      borderStrong: '#545460',
+      textPrimary: '#e4e4ea',
+      textSecondary: '#a8a8b4',
+      textTertiary: '#787888',
+      textMuted: '#585868',
     },
   },
 };
@@ -118,6 +202,18 @@ export function applyThemeToDOM(theme: Theme) {
   root.style.setProperty('--accent-primary-glow', theme.colors.accentPrimaryGlow);
   root.style.setProperty('--accent-secondary', theme.colors.accentSecondary);
   root.style.setProperty('--accent-warm', theme.colors.accentWarm);
+  root.style.setProperty('--bg-deepest', theme.colors.bgDeepest);
+  root.style.setProperty('--bg-deep', theme.colors.bgDeep);
+  root.style.setProperty('--bg-surface', theme.colors.bgSurface);
+  root.style.setProperty('--bg-raised', theme.colors.bgRaised);
+  root.style.setProperty('--bg-elevated', theme.colors.bgElevated);
+  root.style.setProperty('--border-subtle', theme.colors.borderSubtle);
+  root.style.setProperty('--border-default', theme.colors.borderDefault);
+  root.style.setProperty('--border-strong', theme.colors.borderStrong);
+  root.style.setProperty('--text-primary', theme.colors.textPrimary);
+  root.style.setProperty('--text-secondary', theme.colors.textSecondary);
+  root.style.setProperty('--text-tertiary', theme.colors.textTertiary);
+  root.style.setProperty('--text-muted', theme.colors.textMuted);
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

@@ -79,9 +79,9 @@
 /* Skip button - secondary hardware style */
 .tutorial-prompt-skip {
   background: linear-gradient(180deg,
-    rgba(50, 45, 60, 1) 0%,
-    rgba(37, 32, 48, 1) 40%,
-    rgba(26, 21, 32, 1) 100%);
+    var(--btn-secondary-top) 0%,
+    var(--btn-secondary-mid) 40%,
+    var(--btn-secondary-bot) 100%);
   border: 1px solid var(--border-strong);
   border-top-color: rgba(255, 255, 255, 0.1);
   border-bottom-color: rgba(0, 0, 0, 0.4);
@@ -97,9 +97,9 @@
 
 .tutorial-prompt-skip:hover {
   background: linear-gradient(180deg,
-    rgba(60, 55, 70, 1) 0%,
-    rgba(47, 42, 58, 1) 40%,
-    rgba(36, 31, 42, 1) 100%);
+    var(--btn-secondary-top-hover) 0%,
+    var(--btn-secondary-mid-hover) 40%,
+    var(--btn-secondary-bot-hover) 100%);
   color: var(--text-primary);
   box-shadow:
     0 3px 6px rgba(0, 0, 0, 0.4),
@@ -119,11 +119,11 @@
 /* Start button - primary hardware style */
 .tutorial-prompt-start {
   background: linear-gradient(180deg,
-    rgba(60, 50, 80, 1) 0%,
-    rgba(42, 34, 64, 1) 40%,
-    rgba(26, 21, 37, 1) 100%);
+    var(--btn-primary-top) 0%,
+    var(--btn-primary-mid) 40%,
+    var(--btn-primary-bot) 100%);
   border: 1px solid var(--accent-primary);
-  border-top-color: rgba(184, 160, 210, 0.5);
+  border-top-color: var(--btn-primary-border-top);
   border-bottom-color: rgba(0, 0, 0, 0.5);
   color: var(--accent-primary);
   padding: 0.625rem 1.25rem;
@@ -155,9 +155,9 @@
 
 .tutorial-prompt-start:hover {
   background: linear-gradient(180deg,
-    rgba(70, 60, 95, 1) 0%,
-    rgba(52, 44, 74, 1) 40%,
-    rgba(36, 31, 47, 1) 100%);
+    var(--btn-primary-top-hover) 0%,
+    var(--btn-primary-mid-hover) 40%,
+    var(--btn-primary-bot-hover) 100%);
   color: var(--accent-primary-hover);
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.5),

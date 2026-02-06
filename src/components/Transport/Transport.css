@@ -74,7 +74,7 @@
 }
 
 .play-button.playing {
-  background: radial-gradient(circle at 30% 30%, #5a4a6a 0%, #3a2a4a 40%, #2a1a3a 100%);
+  background: radial-gradient(circle at 30% 30%, var(--playing-tint-light) 0%, var(--playing-tint-mid) 40%, var(--playing-tint-dark) 100%);
   color: var(--accent-primary);
   animation: play-glow 1.2s ease-in-out infinite;
 }
@@ -84,7 +84,7 @@
 }
 
 .play-button.playing:hover {
-  background: radial-gradient(circle at 30% 30%, #6a5a7a 0%, #4a3a5a 40%, #3a2a4a 100%);
+  background: radial-gradient(circle at 30% 30%, var(--playing-tint-light-hover) 0%, var(--playing-tint-mid-hover) 40%, var(--playing-tint-dark-hover) 100%);
 }
 
 @keyframes play-glow {
@@ -94,7 +94,7 @@
       0 2px 4px rgba(0, 0, 0, 0.3),
       inset 0 1px 2px rgba(255, 255, 255, 0.1),
       inset 0 -1px 2px rgba(0, 0, 0, 0.3),
-      0 0 8px rgba(184, 160, 210, 0.3);
+      0 0 8px var(--accent-primary-dim);
   }
   50% {
     box-shadow:
@@ -102,7 +102,7 @@
       0 2px 4px rgba(0, 0, 0, 0.3),
       inset 0 1px 2px rgba(255, 255, 255, 0.1),
       inset 0 -1px 2px rgba(0, 0, 0, 0.3),
-      0 0 20px rgba(184, 160, 210, 0.5);
+      0 0 20px var(--accent-primary-glow);
   }
 }
 
@@ -117,9 +117,9 @@
 
 .keyboard-hint kbd {
   background: linear-gradient(180deg,
-    rgba(60, 55, 70, 1) 0%,
-    rgba(45, 40, 55, 1) 50%,
-    rgba(35, 30, 45, 1) 100%);
+    var(--kbd-bg-top) 0%,
+    var(--kbd-bg-mid) 50%,
+    var(--kbd-bg-bot) 100%);
   padding: 4px 8px;
   border-radius: 4px;
   font-family: inherit;
@@ -209,7 +209,7 @@
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.1s ease;
-  box-shadow: 0 0 6px rgba(184,160,210,0.3);
+  box-shadow: 0 0 6px var(--accent-primary-dim);
 }
 
 .tempo-slider::-webkit-slider-thumb:hover {
@@ -223,7 +223,7 @@
   border-radius: 50%;
   cursor: pointer;
   border: none;
-  box-shadow: 0 0 6px rgba(184,160,210,0.3);
+  box-shadow: 0 0 6px var(--accent-primary-dim);
 }
 
 .swing-control {
@@ -267,7 +267,7 @@
   transition: all 0.1s ease;
   position: relative;
   z-index: 2;
-  box-shadow: 0 0 6px rgba(184,160,210,0.3);
+  box-shadow: 0 0 6px var(--accent-primary-dim);
 }
 
 .swing-slider::-webkit-slider-thumb:hover {
@@ -281,7 +281,7 @@
   border-radius: 50%;
   cursor: pointer;
   border: none;
-  box-shadow: 0 0 6px rgba(184,160,210,0.3);
+  box-shadow: 0 0 6px var(--accent-primary-dim);
 }
 
 .tempo-knob-wrapper,
@@ -298,9 +298,9 @@
 .swing-presets button {
   padding: 3px 7px;
   background: linear-gradient(180deg,
-    rgba(50, 45, 55, 1) 0%,
-    rgba(38, 34, 42, 1) 40%,
-    rgba(28, 24, 32, 1) 100%);
+    var(--btn-secondary-top) 0%,
+    var(--btn-secondary-mid) 40%,
+    var(--btn-secondary-bot) 100%);
   border: 1px solid var(--border-default);
   border-top-color: rgba(255, 255, 255, 0.08);
   border-bottom-color: rgba(0, 0, 0, 0.3);
@@ -425,11 +425,11 @@
 .starter-beat-button {
   padding: 12px 20px;
   background: linear-gradient(180deg,
-    rgba(60, 50, 80, 1) 0%,
-    rgba(42, 34, 64, 1) 40%,
-    rgba(26, 21, 37, 1) 100%);
+    var(--btn-primary-top) 0%,
+    var(--btn-primary-mid) 40%,
+    var(--btn-primary-bot) 100%);
   border: 1px solid var(--accent-primary);
-  border-top-color: rgba(184, 160, 210, 0.5);
+  border-top-color: var(--btn-primary-border-top);
   border-bottom-color: rgba(0, 0, 0, 0.5);
   border-radius: 5px;
   color: var(--accent-primary);
@@ -472,9 +472,9 @@
 
 .starter-beat-button:hover {
   background: linear-gradient(180deg,
-    rgba(70, 60, 95, 1) 0%,
-    rgba(52, 44, 74, 1) 40%,
-    rgba(36, 31, 47, 1) 100%);
+    var(--btn-primary-top-hover) 0%,
+    var(--btn-primary-mid-hover) 40%,
+    var(--btn-primary-bot-hover) 100%);
   color: var(--accent-primary-hover);
   box-shadow:
     0 5px 10px rgba(0, 0, 0, 0.6),
@@ -487,8 +487,8 @@
 .starter-beat-button:active {
   transform: translateY(2px);
   background: linear-gradient(180deg,
-    rgba(35, 28, 50, 1) 0%,
-    rgba(42, 34, 64, 1) 100%);
+    var(--btn-primary-top-active) 0%,
+    var(--btn-primary-bot-active) 100%);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.4);
@@ -502,9 +502,9 @@
 .clear-button {
   padding: 12px 20px;
   background: linear-gradient(180deg,
-    rgba(50, 45, 60, 1) 0%,
-    rgba(37, 32, 48, 1) 40%,
-    rgba(26, 21, 32, 1) 100%);
+    var(--btn-secondary-top) 0%,
+    var(--btn-secondary-mid) 40%,
+    var(--btn-secondary-bot) 100%);
   border: 1px solid var(--border-strong);
   border-top-color: rgba(255, 255, 255, 0.12);
   border-bottom-color: rgba(0, 0, 0, 0.5);
@@ -548,9 +548,9 @@
 
 .clear-button:hover {
   background: linear-gradient(180deg,
-    rgba(60, 52, 75, 1) 0%,
-    rgba(48, 42, 64, 1) 40%,
-    rgba(37, 32, 48, 1) 100%);
+    var(--btn-secondary-top-hover) 0%,
+    var(--btn-secondary-mid-hover) 40%,
+    var(--btn-secondary-bot-hover) 100%);
   border-color: var(--accent-primary);
   color: var(--accent-primary);
   box-shadow:
@@ -563,8 +563,8 @@
 .clear-button:active {
   transform: translateY(2px);
   background: linear-gradient(180deg,
-    rgba(30, 26, 40, 1) 0%,
-    rgba(37, 32, 48, 1) 100%);
+    var(--btn-secondary-bot) 0%,
+    var(--btn-secondary-mid) 100%);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.4);

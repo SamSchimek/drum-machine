@@ -58,9 +58,9 @@
   font-weight: 500;
   color: var(--text-muted);
   background: linear-gradient(180deg,
-    rgba(33, 27, 44, 1) 0%,
-    rgba(28, 23, 38, 1) 50%,
-    rgba(24, 19, 32, 1) 100%);
+    var(--step-bg-top) 0%,
+    var(--step-bg-mid) 50%,
+    var(--step-bg-bot) 100%);
   border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.3);
   box-shadow:
@@ -89,9 +89,9 @@
   color: var(--text-tertiary);
   font-weight: 600;
   background: linear-gradient(180deg,
-    rgba(42, 34, 58, 1) 0%,
-    rgba(35, 28, 48, 1) 50%,
-    rgba(28, 23, 38, 1) 100%);
+    var(--step-bg-downbeat-top) 0%,
+    var(--step-bg-downbeat-mid) 50%,
+    var(--step-bg-downbeat-bot) 100%);
 }
 
 .step-indicator.beat-end {
@@ -346,7 +346,7 @@
 }
 
 .grid-cell.downbeat:not(.active) {
-  background: rgba(232,224,240,0.08);
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent 92%);
 }
 
 .grid-cell:focus {
@@ -366,8 +366,8 @@
 }
 
 @keyframes tutorial-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(184, 160, 210, 0.8); }
-  50% { box-shadow: 0 0 15px 5px rgba(184, 160, 210, 0.5); }
+  0%, 100% { box-shadow: 0 0 0 3px var(--accent-primary-glow); }
+  50% { box-shadow: 0 0 15px 5px var(--accent-primary-glow); }
 }
 
 /* Dim non-target cells during interactive tutorial step */

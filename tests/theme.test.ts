@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TRACK_COLORS } from '../src/constants';
+import { THEMES, THEME_IDS, applyThemeToDOM } from '../src/context/ThemeContext';
+import type { Theme } from '../src/context/ThemeContext';
 
 // Helper: parse hex color to RGB
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
@@ -79,19 +81,132 @@ describe('Theme: Track Colors', () => {
   });
 });
 
-describe('Theme: Accessibility Contrast', () => {
-  // These are the Bloom palette values
-  const bgSurface = '#1a1525';
-  const textPrimary = '#e8e0f0';
-  const accentPrimary = '#b8a0d2';
+describe('Theme: Full-Feel Color System', () => {
+  const allColorKeys: (keyof Theme['colors'])[] = [
+    'accentPrimary', 'accentPrimaryHover', 'accentPrimaryDim', 'accentPrimaryGlow',
+    'accentSecondary', 'accentWarm',
+    'bgDeepest', 'bgDeep', 'bgSurface', 'bgRaised', 'bgElevated',
+    'borderSubtle', 'borderDefault', 'borderStrong',
+    'textPrimary', 'textSecondary', 'textTertiary', 'textMuted',
+  ];
 
-  it('text-primary vs bg-surface meets WCAG AA (>= 4.5:1)', () => {
-    const ratio = contrastRatio(textPrimary, bgSurface);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+  it('every theme has all 18 color properties', () => {
+    for (const themeId of THEME_IDS) {
+      const theme = THEMES[themeId];
+      for (const key of allColorKeys) {
+        expect(theme.colors[key], `${themeId}.colors.${key} should be defined`).toBeDefined();
+        expect(typeof theme.colors[key], `${themeId}.colors.${key} should be a string`).toBe('string');
+      }
+    }
   });
 
-  it('accent-primary vs bg-surface meets WCAG AA for large text (>= 3:1)', () => {
-    const ratio = contrastRatio(accentPrimary, bgSurface);
-    expect(ratio).toBeGreaterThanOrEqual(3);
+  it('all hex colors are valid format', () => {
+    const hexKeys: (keyof Theme['colors'])[] = [
+      'accentPrimary', 'accentPrimaryHover', 'accentSecondary', 'accentWarm',
+      'bgDeepest', 'bgDeep', 'bgSurface', 'bgRaised', 'bgElevated',
+      'borderSubtle', 'borderDefault', 'borderStrong',
+      'textPrimary', 'textSecondary', 'textTertiary', 'textMuted',
+    ];
+    for (const themeId of THEME_IDS) {
+      const theme = THEMES[themeId];
+      for (const key of hexKeys) {
+        expect(theme.colors[key], `${themeId}.colors.${key} = ${theme.colors[key]}`).toMatch(/^#[0-9a-fA-F]{6}$/);
+      }
+    }
+  });
+
+  it('background luminance ordering: bgDeepest < bgDeep < bgSurface < bgRaised < bgElevated', () => {
+    for (const themeId of THEME_IDS) {
+      const c = THEMES[themeId].colors;
+      const lDeepest = relativeLuminance(c.bgDeepest);
+      const lDeep = relativeLuminance(c.bgDeep);
+      const lSurface = relativeLuminance(c.bgSurface);
+      const lRaised = relativeLuminance(c.bgRaised);
+      const lElevated = relativeLuminance(c.bgElevated);
+      expect(lDeepest, `${themeId}: bgDeepest < bgDeep`).toBeLessThan(lDeep);
+      expect(lDeep, `${themeId}: bgDeep < bgSurface`).toBeLessThan(lSurface);
+      expect(lSurface, `${themeId}: bgSurface < bgRaised`).toBeLessThan(lRaised);
+      expect(lRaised, `${themeId}: bgRaised < bgElevated`).toBeLessThan(lElevated);
+    }
+  });
+
+  it('text luminance ordering: textMuted < textTertiary < textSecondary < textPrimary', () => {
+    for (const themeId of THEME_IDS) {
+      const c = THEMES[themeId].colors;
+      const lMuted = relativeLuminance(c.textMuted);
+      const lTertiary = relativeLuminance(c.textTertiary);
+      const lSecondary = relativeLuminance(c.textSecondary);
+      const lPrimary = relativeLuminance(c.textPrimary);
+      expect(lMuted, `${themeId}: textMuted < textTertiary`).toBeLessThan(lTertiary);
+      expect(lTertiary, `${themeId}: textTertiary < textSecondary`).toBeLessThan(lSecondary);
+      expect(lSecondary, `${themeId}: textSecondary < textPrimary`).toBeLessThan(lPrimary);
+    }
+  });
+
+  it('border luminance ordering: borderSubtle < borderDefault < borderStrong', () => {
+    for (const themeId of THEME_IDS) {
+      const c = THEMES[themeId].colors;
+      const lSubtle = relativeLuminance(c.borderSubtle);
+      const lDefault = relativeLuminance(c.borderDefault);
+      const lStrong = relativeLuminance(c.borderStrong);
+      expect(lSubtle, `${themeId}: borderSubtle < borderDefault`).toBeLessThan(lDefault);
+      expect(lDefault, `${themeId}: borderDefault < borderStrong`).toBeLessThan(lStrong);
+    }
+  });
+
+  it('WCAG AA contrast: textPrimary vs bgSurface >= 4.5:1 for every theme', () => {
+    for (const themeId of THEME_IDS) {
+      const c = THEMES[themeId].colors;
+      const ratio = contrastRatio(c.textPrimary, c.bgSurface);
+      expect(ratio, `${themeId}: textPrimary vs bgSurface = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('WCAG AA large text: accentPrimary vs bgSurface >= 3:1 for every theme', () => {
+    for (const themeId of THEME_IDS) {
+      const c = THEMES[themeId].colors;
+      const ratio = contrastRatio(c.accentPrimary, c.bgSurface);
+      expect(ratio, `${themeId}: accentPrimary vs bgSurface = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('Bloom values match current hardcoded :root defaults', () => {
+    const bloom = THEMES.bloom.colors;
+    expect(bloom.bgDeepest).toBe('#14101a');
+    expect(bloom.bgDeep).toBe('#1a1528');
+    expect(bloom.bgSurface).toBe('#241d35');
+    expect(bloom.bgRaised).toBe('#302542');
+    expect(bloom.bgElevated).toBe('#3d3055');
+    expect(bloom.borderSubtle).toBe('#3a3058');
+    expect(bloom.borderDefault).toBe('#4d4068');
+    expect(bloom.borderStrong).toBe('#5f5080');
+    expect(bloom.textPrimary).toBe('#f0e8f8');
+    expect(bloom.textSecondary).toBe('#b8a8c8');
+    expect(bloom.textTertiary).toBe('#8878a0');
+    expect(bloom.textMuted).toBe('#685888');
+  });
+
+  it('applyThemeToDOM sets all 18 CSS custom properties', () => {
+    const theme = THEMES.sunset;
+    applyThemeToDOM(theme);
+    const root = document.documentElement;
+    expect(root.style.getPropertyValue('--accent-primary')).toBe(theme.colors.accentPrimary);
+    expect(root.style.getPropertyValue('--accent-primary-hover')).toBe(theme.colors.accentPrimaryHover);
+    expect(root.style.getPropertyValue('--accent-primary-dim')).toBe(theme.colors.accentPrimaryDim);
+    expect(root.style.getPropertyValue('--accent-primary-glow')).toBe(theme.colors.accentPrimaryGlow);
+    expect(root.style.getPropertyValue('--accent-secondary')).toBe(theme.colors.accentSecondary);
+    expect(root.style.getPropertyValue('--accent-warm')).toBe(theme.colors.accentWarm);
+    expect(root.style.getPropertyValue('--bg-deepest')).toBe(theme.colors.bgDeepest);
+    expect(root.style.getPropertyValue('--bg-deep')).toBe(theme.colors.bgDeep);
+    expect(root.style.getPropertyValue('--bg-surface')).toBe(theme.colors.bgSurface);
+    expect(root.style.getPropertyValue('--bg-raised')).toBe(theme.colors.bgRaised);
+    expect(root.style.getPropertyValue('--bg-elevated')).toBe(theme.colors.bgElevated);
+    expect(root.style.getPropertyValue('--border-subtle')).toBe(theme.colors.borderSubtle);
+    expect(root.style.getPropertyValue('--border-default')).toBe(theme.colors.borderDefault);
+    expect(root.style.getPropertyValue('--border-strong')).toBe(theme.colors.borderStrong);
+    expect(root.style.getPropertyValue('--text-primary')).toBe(theme.colors.textPrimary);
+    expect(root.style.getPropertyValue('--text-secondary')).toBe(theme.colors.textSecondary);
+    expect(root.style.getPropertyValue('--text-tertiary')).toBe(theme.colors.textTertiary);
+    expect(root.style.getPropertyValue('--text-muted')).toBe(theme.colors.textMuted);
   });
 });

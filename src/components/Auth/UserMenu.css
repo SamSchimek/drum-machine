@@ -121,6 +121,7 @@
   padding: 0.75rem 1rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
+  font-family: var(--font-display);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -142,6 +143,7 @@
   padding: 0.75rem 1rem;
   color: var(--text-primary);
   font-size: 0.875rem;
+  font-family: var(--font-display);
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;

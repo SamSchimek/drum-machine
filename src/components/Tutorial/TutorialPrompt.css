@@ -1,3 +1,20 @@
+/* Fade-in animations */
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 .tutorial-prompt-backdrop {
   position: fixed;
   inset: 0;
@@ -6,6 +23,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1002;
+  animation: backdropFadeIn 0.3s ease-out;
 }
 
 .tutorial-prompt {
@@ -23,6 +41,7 @@
   text-align: center;
   box-shadow: var(--panel-shadow);
   position: relative;
+  animation: dialogFadeIn 0.4s ease-out;
 }
 
 /* Beveled edge highlight */
@@ -162,6 +181,11 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .tutorial-prompt-backdrop,
+  .tutorial-prompt {
+    animation: none;
+  }
+
   .tutorial-prompt-skip,
   .tutorial-prompt-start {
     transition: none;

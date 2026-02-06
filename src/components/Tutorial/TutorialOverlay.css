@@ -1,3 +1,14 @@
+/* Fade-in animations */
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spotlightFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .tutorial-overlay {
   position: fixed;
   top: 0;
@@ -6,6 +17,7 @@
   bottom: 0;
   z-index: 1000;
   pointer-events: none;
+  animation: overlayFadeIn 0.3s ease-out;
 }
 
 .tutorial-overlay:focus {
@@ -22,6 +34,7 @@
   pointer-events: none;
   transition: top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out;
   z-index: 1000;
+  animation: spotlightFadeIn 0.4s ease-out;
 }
 
 .tutorial-tooltip-wrapper {
@@ -31,6 +44,11 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .tutorial-overlay,
+  .tutorial-spotlight {
+    animation: none;
+  }
+
   .tutorial-spotlight {
     transition: none;
   }

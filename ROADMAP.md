@@ -9,12 +9,12 @@
 - [x] Add `prefers-reduced-motion` support to animations
 
 ### 2. Theme System (Login-Gated)
-- [ ] Create ThemeContext with theme definitions
-- [ ] Add theme CSS variables for each palette
-- [ ] Create theme selector UI component
-- [ ] Add `theme` column to Supabase profiles table
-- [ ] Gate theme selection behind login (show preview, require auth to apply)
-- [ ] Persist theme choice to user profile
+- [x] Create ThemeContext with theme definitions
+- [x] Add theme CSS variables for each palette
+- [x] Create theme selector UI component
+- [ ] Add `theme` column to Supabase profiles table (run migration)
+- [x] Gate theme selection behind login (show preview, require auth to apply)
+- [x] Persist theme choice to user profile
 
 **Themes:**
 | Theme | Primary | Secondary | Vibe |

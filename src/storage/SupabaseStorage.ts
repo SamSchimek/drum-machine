@@ -379,17 +379,24 @@ export async function removeUpvote(
 
 export async function updateProfile(
   userId: string,
-  updates: { display_name?: string }
+  updates: { display_name?: string; theme?: string }
 ): Promise<boolean> {
-  const displayName = updates.display_name?.trim() || null;
+  const updateData: Record<string, unknown> = {
+    id: userId,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (updates.display_name !== undefined) {
+    updateData.display_name = updates.display_name?.trim() || null;
+  }
+
+  if (updates.theme !== undefined) {
+    updateData.theme = updates.theme;
+  }
 
   const { error } = await supabase
     .from('profiles')
-    .upsert({
-      id: userId,
-      display_name: displayName,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
+    .upsert(updateData, { onConflict: 'id' });
 
   if (error) {
     console.error('Error updating profile:', error.message);
@@ -401,10 +408,10 @@ export async function updateProfile(
 
 export async function getProfile(
   userId: string
-): Promise<{ display_name: string | null } | null> {
+): Promise<{ display_name: string | null; theme: string | null } | null> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('display_name')
+    .select('display_name, theme')
     .eq('id', userId)
     .maybeSingle();
 

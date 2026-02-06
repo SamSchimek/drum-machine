@@ -5,6 +5,7 @@ import { Transport } from '../Transport';
 import { PatternBank } from '../PatternBank';
 import { GeneratePanel } from '../GeneratePanel';
 import { UserMenu, MigrationBanner } from '../Auth';
+import { ThemeSelector } from '../ThemeSelector';
 import { TutorialOverlay, TutorialPrompt } from '../Tutorial';
 import './App.css';
 
@@ -41,6 +42,7 @@ export function App() {
               <span className="subtitle">Web Audio + Markov Chain Pattern Generation</span>
             </div>
             <div className="header-right">
+              <ThemeSelector />
               <HelpButton />
               <UserMenu />
             </div>

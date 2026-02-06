@@ -8,12 +8,12 @@
   font-weight: 400;
   color-scheme: dark;
 
-  /* Bloom-inspired color palette */
-  --bg-deepest: #0e0b10;
-  --bg-deep: #13101a;
-  --bg-surface: #1a1525;
-  --bg-raised: #211b30;
-  --bg-elevated: #2a2240;
+  /* Bloom-inspired color palette - brightened */
+  --bg-deepest: #100d14;
+  --bg-deep: #161220;
+  --bg-surface: #1e182c;
+  --bg-raised: #282038;
+  --bg-elevated: #332848;
   --border-subtle: #2e2645;
   --border-default: #3d3358;
   --border-strong: #4e4270;

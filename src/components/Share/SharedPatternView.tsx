@@ -23,11 +23,10 @@ function PatternGrid({ grid, currentStep }: PatternGridProps) {
           <div className="shared-grid-cells">
             {Array.from({ length: STEPS_PER_PATTERN }, (_, step) => {
               const isBarEnd = step === 15;
-              const isBarStart = false;
               return (
                 <div
                   key={step}
-                  className={`shared-grid-cell ${grid[trackId][step] ? 'active' : ''} ${step % 4 === 0 ? 'downbeat' : ''} ${step === currentStep ? 'current' : ''} ${isBarEnd ? 'bar-end' : ''} ${isBarStart ? 'bar-start' : ''}`}
+                  className={`shared-grid-cell ${grid[trackId][step] ? 'active' : ''} ${step % 4 === 0 ? 'downbeat' : ''} ${step === currentStep ? 'current' : ''} ${isBarEnd ? 'bar-end' : ''}`}
                   style={{ '--track-color': TRACK_COLORS[trackId] } as React.CSSProperties}
                 />
               );

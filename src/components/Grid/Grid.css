@@ -102,11 +102,6 @@
   margin-right: 14px;
 }
 
-.step-indicator.bar-start {
-  border-left: 2px solid var(--border-strong);
-  padding-left: 2px;
-}
-
 .grid-row {
   display: flex;
   align-items: center;
@@ -348,10 +343,6 @@
 
 .grid-cell.bar-end {
   margin-right: 14px;
-}
-
-.grid-cell.bar-start {
-  border-left: 2px solid var(--border-strong);
 }
 
 .grid-cell.downbeat:not(.active) {

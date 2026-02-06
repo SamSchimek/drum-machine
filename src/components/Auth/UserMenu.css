@@ -192,3 +192,10 @@
     min-width: 180px;
   }
 }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .user-menu-signin-button.tutorial-highlight {
+    animation: none;
+  }
+}

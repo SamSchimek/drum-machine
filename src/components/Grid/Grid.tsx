@@ -38,7 +38,6 @@ export function Grid() {
             const isDownbeat = step % 4 === 0;
             const isBeatEnd = step % 4 === 3;
             const isBarEnd = step === 15;
-            const isBarStart = false;
             const isActive = isPlaying && currentStep === step;
 
             const classNames = [
@@ -47,7 +46,6 @@ export function Grid() {
               isDownbeat && 'downbeat',
               isBeatEnd && !isBarEnd && 'beat-end',
               isBarEnd && 'bar-end',
-              isBarStart && 'bar-start',
             ].filter(Boolean).join(' ');
 
             return (

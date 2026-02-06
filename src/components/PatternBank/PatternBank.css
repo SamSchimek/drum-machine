@@ -536,3 +536,12 @@
     padding: 12px;
   }
 }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .save-tooltip,
+  .tutorial-save-target .save-button,
+  .save-dialog.tutorial-highlight {
+    animation: none;
+  }
+}

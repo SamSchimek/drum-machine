@@ -632,3 +632,10 @@
     font-size: 10px;
   }
 }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .play-button.playing {
+    animation: none;
+  }
+}

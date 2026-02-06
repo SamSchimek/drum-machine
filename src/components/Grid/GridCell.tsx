@@ -18,7 +18,6 @@ export function GridCell({ trackId, step, active, isCurrentStep, onClick }: Grid
   const isDownbeat = step % 4 === 0;
   const isBeatEnd = step % 4 === 3;
   const isBarEnd = step === 15;
-  const isBarStart = false;
   const isTarget = tutorialActive && isCellRequired(trackId, step);
 
   const classNames = [
@@ -28,7 +27,6 @@ export function GridCell({ trackId, step, active, isCurrentStep, onClick }: Grid
     isDownbeat && 'downbeat',
     isBeatEnd && !isBarEnd && 'beat-end',
     isBarEnd && 'bar-end',
-    isBarStart && 'bar-start',
     isTarget && 'tutorial-target',
   ].filter(Boolean).join(' ');
 

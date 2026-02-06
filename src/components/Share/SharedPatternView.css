@@ -348,10 +348,6 @@
   margin-right: 8px;
 }
 
-.shared-grid-cell.bar-start {
-  border-left: 2px solid var(--border-strong);
-}
-
 .shared-grid-cell.downbeat {
   margin-left: 4px;
 }

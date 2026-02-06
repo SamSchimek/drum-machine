@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import FocusTrap from 'focus-trap-react';
 import { useAuth } from '../../auth/AuthContext';
 import { updateProfile, getProfile } from '../../storage/SupabaseStorage';
 import './ProfileSettingsModal.css';
@@ -17,10 +18,6 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  const modalRef = useRef<HTMLDivElement>(null);
-  const firstFocusableRef = useRef<HTMLInputElement>(null);
-  const lastFocusableRef = useRef<HTMLButtonElement>(null);
 
   // Load profile when modal opens
   useEffect(() => {
@@ -47,39 +44,10 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
     }
   }, [isOpen, user]);
 
-  // Focus management - focus first element when modal opens
-  useEffect(() => {
-    if (isOpen && !loadingProfile && firstFocusableRef.current) {
-      firstFocusableRef.current.focus();
-    }
-  }, [isOpen, loadingProfile]);
-
   // Escape key handler
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && !loading) {
       onClose();
-    }
-
-    // Focus trap
-    if (e.key === 'Tab') {
-      const firstElement = firstFocusableRef.current;
-      const lastElement = lastFocusableRef.current;
-
-      if (!firstElement || !lastElement) return;
-
-      if (e.shiftKey) {
-        // Shift+Tab: if on first element, wrap to last
-        if (document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        }
-      } else {
-        // Tab: if on last element, wrap to first
-        if (document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
-        }
-      }
     }
   }, [loading, onClose]);
 
@@ -139,14 +107,18 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
   const charactersRemaining = MAX_DISPLAY_NAME_LENGTH - displayName.length;
 
   return (
-    <div className="profile-settings-overlay" onClick={handleOverlayClick}>
-      <div
-        ref={modalRef}
-        className="profile-settings-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="profile-settings-title"
-      >
+    <FocusTrap focusTrapOptions={{
+      allowOutsideClick: true,
+      fallbackFocus: '.profile-settings-modal',
+    }}>
+      <div className="profile-settings-overlay" onClick={handleOverlayClick}>
+        <div
+          className="profile-settings-modal"
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="profile-settings-title"
+        >
         <h2 id="profile-settings-title">Profile Settings</h2>
 
         {message && (
@@ -170,7 +142,6 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
             <div className="profile-settings-field">
               <label htmlFor="display-name">Display Name</label>
               <input
-                ref={firstFocusableRef}
                 id="display-name"
                 type="text"
                 value={displayName}
@@ -202,7 +173,6 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
                 Cancel
               </button>
               <button
-                ref={lastFocusableRef}
                 className="profile-settings-save"
                 onClick={handleSave}
                 disabled={loading || loadingProfile}
@@ -212,7 +182,8 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
             </div>
           </>
         )}
+        </div>
       </div>
-    </div>
+    </FocusTrap>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, FormEvent, useEffect, useRef } from 'react';
+import FocusTrap from 'focus-trap-react';
 import { useAuth } from '../../auth/AuthContext';
 import './AuthModal.css';
 
@@ -83,15 +84,19 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSucce
   const isLoading = loading || isSubmitting;
 
   return (
-    <div
-      className="auth-modal-backdrop"
-      data-testid="auth-modal-backdrop"
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="auth-modal-title"
-    >
-      <div className="auth-modal">
+    <FocusTrap focusTrapOptions={{
+      allowOutsideClick: true,
+      fallbackFocus: '.auth-modal',
+    }}>
+      <div
+        className="auth-modal-backdrop"
+        data-testid="auth-modal-backdrop"
+        onClick={handleBackdropClick}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+      >
+        <div className="auth-modal" tabIndex={-1}>
         <button
           className="auth-modal-close"
           onClick={onClose}
@@ -200,5 +205,6 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSucce
         </p>
       </div>
     </div>
+    </FocusTrap>
   );
 }

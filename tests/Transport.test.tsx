@@ -31,11 +31,9 @@ describe('Transport Controls', () => {
     expect(volumeControl).toBeInTheDocument();
   });
 
-  it('renders tempo slider with correct attributes', () => {
+  it('renders tempo knob', () => {
     renderTransport();
-    const tempoSlider = document.querySelector('.tempo-slider') as HTMLInputElement;
-    expect(tempoSlider).toBeInTheDocument();
-    expect(tempoSlider.type).toBe('range');
+    expect(screen.getByRole('slider', { name: /tempo/i })).toBeInTheDocument();
   });
 
   it('renders volume slider with correct attributes', () => {
@@ -46,23 +44,32 @@ describe('Transport Controls', () => {
   });
 });
 
-describe('Tempo Slider', () => {
+describe('Tempo Knob', () => {
   beforeEach(() => localStorage.clear());
 
-  it('resets tempo to 120 on double-click', async () => {
+  it('displays initial tempo value', () => {
+    renderTransport();
+    // Default tempo is 120
+    expect(screen.getByText('120')).toBeInTheDocument();
+  });
+
+  it('resets tempo to 120 on double-click of knob wrapper', async () => {
     renderTransport();
 
-    // Change tempo via slider
-    const tempoSlider = document.querySelector('.tempo-slider') as HTMLInputElement;
-    fireEvent.change(tempoSlider, { target: { value: '150' } });
+    // Change tempo via keyboard
+    const tempoKnob = screen.getByRole('slider', { name: /tempo/i });
+    fireEvent.keyDown(tempoKnob, { key: 'PageUp' }); // +10
+    fireEvent.keyDown(tempoKnob, { key: 'PageUp' }); // +10
+    fireEvent.keyDown(tempoKnob, { key: 'PageUp' }); // +10
 
     // Verify tempo changed
     await waitFor(() => {
       expect(screen.getByText('150')).toBeInTheDocument();
     });
 
-    // Double-click tempo slider
-    fireEvent.doubleClick(tempoSlider);
+    // Double-click tempo knob wrapper
+    const tempoWrapper = document.querySelector('.tempo-knob-wrapper');
+    fireEvent.doubleClick(tempoWrapper!);
 
     // Tempo should reset to 120
     await waitFor(() => {
@@ -73,9 +80,11 @@ describe('Tempo Slider', () => {
   it('does not reset tempo on double-click of play button', async () => {
     renderTransport();
 
-    // Change tempo
-    const tempoSlider = document.querySelector('.tempo-slider') as HTMLInputElement;
-    fireEvent.change(tempoSlider, { target: { value: '150' } });
+    // Change tempo via keyboard
+    const tempoKnob = screen.getByRole('slider', { name: /tempo/i });
+    fireEvent.keyDown(tempoKnob, { key: 'PageUp' }); // +10
+    fireEvent.keyDown(tempoKnob, { key: 'PageUp' }); // +10
+    fireEvent.keyDown(tempoKnob, { key: 'PageUp' }); // +10
 
     await waitFor(() => {
       expect(screen.getByText('150')).toBeInTheDocument();
@@ -90,54 +99,98 @@ describe('Tempo Slider', () => {
       expect(screen.getByText('150')).toBeInTheDocument();
     });
   });
+
+  it('responds to keyboard controls', async () => {
+    renderTransport();
+    const tempoKnob = screen.getByRole('slider', { name: /tempo/i });
+
+    // ArrowUp increases by 1
+    fireEvent.keyDown(tempoKnob, { key: 'ArrowUp' });
+    await waitFor(() => {
+      expect(screen.getByText('121')).toBeInTheDocument();
+    });
+
+    // ArrowDown decreases by 1
+    fireEvent.keyDown(tempoKnob, { key: 'ArrowDown' });
+    await waitFor(() => {
+      expect(screen.getByText('120')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('Volume Control', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('resets volume to 80% on double-click of volume control', async () => {
+    renderTransport();
+
+    // Get volume slider and change it
+    const volumeSlider = document.querySelector('.volume-slider') as HTMLInputElement;
+    fireEvent.change(volumeSlider, { target: { value: '0.5' } });
+
+    // Verify volume changed
+    await waitFor(() => {
+      expect(screen.getByText('50%')).toBeInTheDocument();
+    });
+
+    // Double-click volume control wrapper
+    const volumeControl = document.querySelector('.volume-control');
+    fireEvent.doubleClick(volumeControl!);
+
+    // Volume should reset to 80%
+    await waitFor(() => {
+      expect(screen.getByText('80%')).toBeInTheDocument();
+    });
+  });
 });
 
 describe('Swing Control', () => {
   beforeEach(() => localStorage.clear());
 
-  it('renders swing slider', () => {
+  it('renders swing knob', () => {
     renderTransport();
     expect(screen.getByRole('slider', { name: /swing/i })).toBeInTheDocument();
   });
 
-  it('renders all four swing preset labels', () => {
+  it('renders all four swing preset buttons', () => {
     renderTransport();
-    expect(screen.getByText('Str')).toBeInTheDocument();
-    expect(screen.getByText('Light')).toBeInTheDocument();
-    expect(screen.getByText('Trip')).toBeInTheDocument();
-    expect(screen.getByText('Heavy')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Str' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Light' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Trip' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Heavy' })).toBeInTheDocument();
   });
 
-  it('clicking Str label sets swing to 0', async () => {
+  it('clicking Str button sets swing to 0', async () => {
     renderTransport();
-    const swingSlider = screen.getByRole('slider', { name: /swing/i }) as HTMLInputElement;
+    const swingKnob = screen.getByRole('slider', { name: /swing/i });
 
-    fireEvent.click(screen.getByText('Str'));
+    fireEvent.click(screen.getByRole('button', { name: 'Str' }));
 
     await waitFor(() => {
-      expect(swingSlider.value).toBe('0');
+      expect(swingKnob).toHaveAttribute('aria-valuenow', '0');
     });
   });
 
-  it('clicking Trip label sets swing to 66', async () => {
+  it('clicking Trip button sets swing to 66', async () => {
     renderTransport();
-    const swingSlider = screen.getByRole('slider', { name: /swing/i }) as HTMLInputElement;
+    const swingKnob = screen.getByRole('slider', { name: /swing/i });
 
-    fireEvent.click(screen.getByText('Trip'));
+    fireEvent.click(screen.getByRole('button', { name: 'Trip' }));
 
     await waitFor(() => {
-      expect(swingSlider.value).toBe('66');
+      expect(swingKnob).toHaveAttribute('aria-valuenow', '66');
     });
   });
 
-  it('updates swing value when slider changes', async () => {
+  it('updates swing value via keyboard', async () => {
     renderTransport();
-    const swingSlider = screen.getByRole('slider', { name: /swing/i }) as HTMLInputElement;
+    const swingKnob = screen.getByRole('slider', { name: /swing/i });
 
-    fireEvent.change(swingSlider, { target: { value: '66' } });
+    // PageUp increases by 10
+    fireEvent.keyDown(swingKnob, { key: 'PageUp' });
 
     await waitFor(() => {
-      expect(swingSlider.value).toBe('66');
+      expect(swingKnob).toHaveAttribute('aria-valuenow', '10');
     });
   });
 });

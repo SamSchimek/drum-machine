@@ -16,7 +16,7 @@ export function Grid() {
     toggleMute,
   } = useDrumMachine();
 
-  const { isInteractiveStep, onTrackPreview } = useTutorial();
+  const { isInteractiveStep, onTrackPreview, onMuteToggle } = useTutorial();
 
   const containerClasses = [
     'grid-container',
@@ -25,6 +25,12 @@ export function Grid() {
 
   return (
     <div className={containerClasses} data-testid="grid">
+      <div className="panel-screws" aria-hidden="true">
+        <span className="screw screw-tl" />
+        <span className="screw screw-tr" />
+        <span className="screw screw-bl" />
+        <span className="screw screw-br" />
+      </div>
       <div className="step-indicators">
         <div className="track-label-spacer" />
         <div className="indicators">
@@ -62,7 +68,7 @@ export function Grid() {
           isMuted={mutedTracks[trackId]}
           onToggle={(step) => toggleCell(trackId, step)}
           onTrigger={() => { triggerSound(trackId); onTrackPreview(); }}
-          onMuteToggle={() => toggleMute(trackId)}
+          onMuteToggle={() => { toggleMute(trackId); onMuteToggle(); }}
         />
       ))}
     </div>

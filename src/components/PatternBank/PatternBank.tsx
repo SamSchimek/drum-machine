@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDrumMachine } from '../../context/DrumMachineContext';
 import { useTutorial } from '../../context/TutorialContext';
 import { useAuth } from '../../auth/AuthContext';
@@ -35,12 +35,27 @@ export function PatternBank() {
   const [isSaving, setIsSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [showSaveTooltip, setShowSaveTooltip] = useState(false);
+  const saveTooltipShown = useRef(false);
+
+  // Show save tooltip during tutorial save step (auto-dismiss after 4s)
+  useEffect(() => {
+    if (isSaveStep && !saveTooltipShown.current && !showSaveDialog) {
+      saveTooltipShown.current = true;
+      setShowSaveTooltip(true);
+      const timer = setTimeout(() => {
+        setShowSaveTooltip(false);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSaveStep, showSaveDialog]);
 
   // Pre-fill "My First Beat" when opening save dialog during tutorial
   const handleOpenSaveDialog = () => {
     if (isSaveStep) {
       setPatternName('My First Beat');
     }
+    setShowSaveTooltip(false); // Dismiss tooltip on interaction
     setShowSaveDialog(true);
   };
 
@@ -123,13 +138,20 @@ export function PatternBank() {
       </div>
       <div className="pattern-bank-header">
         <h3>Patterns ({patterns.length})</h3>
-        <button
-          className="save-button"
-          onClick={handleOpenSaveDialog}
-          disabled={isSaving}
-        >
-          Save Current
-        </button>
+        <div className="save-button-wrapper">
+          {showSaveTooltip && (
+            <div className="save-tooltip">
+              Click here to save your first beat.
+            </div>
+          )}
+          <button
+            className={`save-button ${isSaveStep ? 'tutorial-highlight' : ''}`}
+            onClick={handleOpenSaveDialog}
+            disabled={isSaving}
+          >
+            Save Current
+          </button>
+        </div>
       </div>
 
       {patternError && (

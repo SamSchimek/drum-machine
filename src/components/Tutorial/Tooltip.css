@@ -30,7 +30,7 @@
 
 .tutorial-tooltip-content {
   margin-bottom: 1rem;
-  animation: tooltipFadeIn 0.25s ease-out;
+  animation: tooltipFadeIn 0.3s ease-out;
 }
 
 @keyframes tooltipFadeIn {
@@ -53,8 +53,10 @@
 
 .tutorial-tooltip-text {
   margin: 0;
+  font-family: var(--font-display, inherit);
   font-size: 0.9375rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
   color: var(--text-primary);
 }
 

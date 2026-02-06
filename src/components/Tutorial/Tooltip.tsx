@@ -28,6 +28,8 @@ export function Tooltip({
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
   const isNextDisabled = isInteractiveStep && !isStepComplete;
+  // Hide Next button on interactive steps (0-4) - users must complete the action
+  const showNextButton = currentStep >= 5;
 
   return (
     <div className={`tutorial-tooltip tutorial-tooltip-${position}`}>
@@ -65,16 +67,18 @@ export function Tooltip({
             Previous
           </button>
 
-          <button
-            type="button"
-            className="tutorial-nav-button tutorial-nav-button-next"
-            onClick={onNext}
-            disabled={isNextDisabled}
-            aria-label={isLastStep ? 'Finish tutorial' : 'Next step'}
-            title={isNextDisabled ? 'Click the highlighted cells to continue' : undefined}
-          >
-            {isLastStep ? 'Finish' : 'Next'}
-          </button>
+          {showNextButton && (
+            <button
+              type="button"
+              className="tutorial-nav-button tutorial-nav-button-next"
+              onClick={onNext}
+              disabled={isNextDisabled}
+              aria-label={isLastStep ? 'Finish tutorial' : 'Next step'}
+              title={isNextDisabled ? 'Click the highlighted cells to continue' : undefined}
+            >
+              {isLastStep ? 'Finish' : 'Next'}
+            </button>
+          )}
         </div>
       </div>
     </div>

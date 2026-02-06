@@ -29,7 +29,7 @@ describe('Tooltip', () => {
     });
 
     it('renders all navigation buttons', () => {
-      render(<Tooltip {...defaultProps} currentStep={3} />);
+      render(<Tooltip {...defaultProps} currentStep={5} />);
       expect(screen.getByRole('button', { name: /skip/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /previous/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe('Tooltip', () => {
   describe('button interactions', () => {
     it('calls onNext when Next button is clicked', () => {
       const onNext = vi.fn();
-      render(<Tooltip {...defaultProps} onNext={onNext} />);
+      render(<Tooltip {...defaultProps} currentStep={5} onNext={onNext} />);
 
       fireEvent.click(screen.getByRole('button', { name: /next/i }));
       expect(onNext).toHaveBeenCalledTimes(1);
@@ -110,7 +110,7 @@ describe('Tooltip', () => {
   describe('keyboard accessibility', () => {
     it('allows keyboard activation with Enter', () => {
       const onNext = vi.fn();
-      render(<Tooltip {...defaultProps} onNext={onNext} />);
+      render(<Tooltip {...defaultProps} currentStep={5} onNext={onNext} />);
 
       const nextButton = screen.getByRole('button', { name: /next/i });
       fireEvent.keyDown(nextButton, { key: 'Enter' });
@@ -120,7 +120,7 @@ describe('Tooltip', () => {
 
     it('allows keyboard activation with Space', () => {
       const onNext = vi.fn();
-      render(<Tooltip {...defaultProps} onNext={onNext} />);
+      render(<Tooltip {...defaultProps} currentStep={5} onNext={onNext} />);
 
       const nextButton = screen.getByRole('button', { name: /next/i });
       fireEvent.keyDown(nextButton, { key: ' ' });
@@ -129,7 +129,7 @@ describe('Tooltip', () => {
     });
 
     it('has proper tab order (Skip, Previous, Next)', () => {
-      render(<Tooltip {...defaultProps} currentStep={3} />);
+      render(<Tooltip {...defaultProps} currentStep={5} />);
 
       const skipButton = screen.getByRole('button', { name: /skip/i });
       const prevButton = screen.getByRole('button', { name: /previous/i });
@@ -150,7 +150,7 @@ describe('Tooltip', () => {
     });
 
     it('has aria-label on navigation buttons', () => {
-      render(<Tooltip {...defaultProps} currentStep={3} />);
+      render(<Tooltip {...defaultProps} currentStep={5} />);
       expect(screen.getByRole('button', { name: /skip tutorial/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /previous step/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /next step/i })).toBeInTheDocument();
@@ -176,6 +176,43 @@ describe('Tooltip', () => {
       expect(content).toBeInTheDocument();
       // The CSS handles the animation - we verify the class exists
       expect(content).toHaveClass('tutorial-tooltip-content');
+    });
+  });
+
+  describe('Next button visibility on interactive steps', () => {
+    it('hides Next button on step 0', () => {
+      render(<Tooltip {...defaultProps} currentStep={0} />);
+      expect(screen.queryByRole('button', { name: /next/i })).not.toBeInTheDocument();
+    });
+
+    it('hides Next button on step 1', () => {
+      render(<Tooltip {...defaultProps} currentStep={1} />);
+      expect(screen.queryByRole('button', { name: /next/i })).not.toBeInTheDocument();
+    });
+
+    it('hides Next button on step 2', () => {
+      render(<Tooltip {...defaultProps} currentStep={2} />);
+      expect(screen.queryByRole('button', { name: /next/i })).not.toBeInTheDocument();
+    });
+
+    it('hides Next button on step 3', () => {
+      render(<Tooltip {...defaultProps} currentStep={3} />);
+      expect(screen.queryByRole('button', { name: /next/i })).not.toBeInTheDocument();
+    });
+
+    it('hides Next button on step 4', () => {
+      render(<Tooltip {...defaultProps} currentStep={4} />);
+      expect(screen.queryByRole('button', { name: /next/i })).not.toBeInTheDocument();
+    });
+
+    it('shows Next button on step 5', () => {
+      render(<Tooltip {...defaultProps} currentStep={5} />);
+      expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    });
+
+    it('shows Next button on step 6', () => {
+      render(<Tooltip {...defaultProps} currentStep={6} />);
+      expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
     });
   });
 });

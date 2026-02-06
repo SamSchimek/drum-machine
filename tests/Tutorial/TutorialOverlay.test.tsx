@@ -235,7 +235,7 @@ describe('TutorialOverlay', () => {
 
     it('renders navigation buttons in tooltip', () => {
       saveTutorialActive(true);
-      saveTutorialStep(0);
+      saveTutorialStep(5); // Use non-interactive step where Next button is shown
 
       const { cleanup } = renderWithProviders();
 

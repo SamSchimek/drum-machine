@@ -1,13 +1,29 @@
 import { useDrumMachine } from '../../context/DrumMachineContext';
+import { useTutorial } from '../../context/TutorialContext';
 import { MIN_TEMPO, MAX_TEMPO, MIN_SWING, MAX_SWING } from '../../constants';
 import { Knob } from '../Knob/Knob';
 import './Transport.css';
 
 export function Transport() {
   const { isPlaying, tempo, volume, swing, play, stop, setTempo, setVolume, setSwing, resetTempo, clearGrid, loadStarterBeat } = useDrumMachine();
+  const { onTempoReset, onSwingReset } = useTutorial();
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value));
+  };
+
+  const handleVolumeDoubleClick = () => {
+    setVolume(0.8); // Reset to 80%
+  };
+
+  const handleTempoDoubleClick = () => {
+    resetTempo();
+    onTempoReset();
+  };
+
+  const handleSwingDoubleClick = () => {
+    setSwing(0);
+    onSwingReset();
   };
 
   return (
@@ -41,7 +57,7 @@ export function Transport() {
 
       <div className="tempo-control">
         <label>BPM</label>
-        <div className="tempo-knob-wrapper" onDoubleClick={resetTempo} title="Double-click to reset to 120">
+        <div className="tempo-knob-wrapper" onDoubleClick={handleTempoDoubleClick} title="Double-click to reset to 120">
           <Knob
             value={tempo}
             min={MIN_TEMPO}
@@ -57,7 +73,7 @@ export function Transport() {
 
       <div className="swing-control">
         <label>Swing</label>
-        <div className="swing-knob-wrapper" onDoubleClick={() => setSwing(0)} title="Double-click to reset to Straight">
+        <div className="swing-knob-wrapper" onDoubleClick={handleSwingDoubleClick} title="Double-click to reset to Straight">
           <Knob
             value={swing}
             min={MIN_SWING}
@@ -77,7 +93,7 @@ export function Transport() {
         </div>
       </div>
 
-      <div className="volume-control">
+      <div className="volume-control" onDoubleClick={handleVolumeDoubleClick} title="Double-click to reset to 80%">
         <label htmlFor="volume">
           <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
             <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />

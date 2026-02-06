@@ -21,7 +21,7 @@ import {
 // Test component to access context
 function TestConsumer() {
   const ctx = useTutorial();
-  const { tempo, grid, setTempo, loadStarterBeat } = useDrumMachine();
+  const { tempo, grid, setTempo, loadStarterBeat, swing, setSwing } = useDrumMachine();
 
   return (
     <div>
@@ -36,6 +36,7 @@ function TestConsumer() {
       <span data-testid="isCellRequired-kick-0">{ctx.isCellRequired('kick', 0).toString()}</span>
       <span data-testid="isCellRequired-kick-1">{ctx.isCellRequired('kick', 1).toString()}</span>
       <span data-testid="tempo">{tempo}</span>
+      <span data-testid="swing">{swing}</span>
       <span data-testid="grid-kick-0">{grid.kick[0].toString()}</span>
       <span data-testid="grid-kick-6">{grid.kick[6].toString()}</span>
       <button data-testid="next" onClick={ctx.nextStep}>Next</button>
@@ -47,6 +48,10 @@ function TestConsumer() {
       <button data-testid="onCellToggle-kick-0" onClick={() => ctx.onCellToggle('kick', 0, true)}>Toggle Kick 0</button>
       <button data-testid="set-tempo-200" onClick={() => setTempo(200)}>Set Tempo 200</button>
       <button data-testid="load-starter-beat" onClick={loadStarterBeat}>Load Starter Beat</button>
+      <button data-testid="onMuteToggle" onClick={ctx.onMuteToggle}>Mute Toggle</button>
+      <button data-testid="onTempoReset" onClick={ctx.onTempoReset}>Tempo Reset</button>
+      <button data-testid="onSwingReset" onClick={ctx.onSwingReset}>Swing Reset</button>
+      <button data-testid="set-swing-50" onClick={() => setSwing(50)}>Set Swing 50</button>
     </div>
   );
 }
@@ -76,8 +81,8 @@ describe('TutorialContext', () => {
   });
 
   describe('TUTORIAL_STEPS', () => {
-    it('has 14 tutorial steps', () => {
-      expect(TUTORIAL_STEPS).toHaveLength(14);
+    it('has 15 tutorial steps', () => {
+      expect(TUTORIAL_STEPS).toHaveLength(15);
     });
 
     it('each step has required properties', () => {
@@ -610,7 +615,7 @@ describe('TutorialContext', () => {
       });
       expect(screen.getByTestId('tempo').textContent).toBe('200');
 
-      // Click Next
+      // Click Next (goes to swing step)
       act(() => {
         screen.getByTestId('next').click();
       });
@@ -620,18 +625,18 @@ describe('TutorialContext', () => {
     });
 
     it('saves grid when entering starter beat step and restores when leaving', () => {
-      saveTutorialStep(8);
+      saveTutorialStep(9); // Step before starter beat (swing step)
       saveTutorialActive(true);
       renderWithRouter('/');
 
       // Verify we start with empty grid
       expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
 
-      // Go to step 9 (saves grid)
+      // Go to step 10 (saves grid)
       act(() => {
         screen.getByTestId('next').click();
       });
-      expect(screen.getByTestId('step').textContent).toBe('9');
+      expect(screen.getByTestId('step').textContent).toBe('10');
 
       // Load starter beat (changes grid)
       act(() => {
@@ -645,24 +650,24 @@ describe('TutorialContext', () => {
         screen.getByTestId('next').click();
       });
 
-      expect(screen.getByTestId('step').textContent).toBe('10');
-      // Grid should be restored to empty (what it was before entering step 9)
+      expect(screen.getByTestId('step').textContent).toBe('11');
+      // Grid should be restored to empty (what it was before entering step 10)
       expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
     });
 
     it('restores grid when navigating backward from starter beat step', () => {
-      saveTutorialStep(8);
+      saveTutorialStep(9); // Step before starter beat (swing step)
       saveTutorialActive(true);
       renderWithRouter('/');
 
       // Verify we start with empty grid
       expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
 
-      // Go to step 9 (saves grid)
+      // Go to step 10 (saves grid)
       act(() => {
         screen.getByTestId('next').click();
       });
-      expect(screen.getByTestId('step').textContent).toBe('9');
+      expect(screen.getByTestId('step').textContent).toBe('10');
 
       // Load starter beat (changes grid)
       act(() => {
@@ -675,7 +680,7 @@ describe('TutorialContext', () => {
         screen.getByTestId('prev').click();
       });
 
-      expect(screen.getByTestId('step').textContent).toBe('8');
+      expect(screen.getByTestId('step').textContent).toBe('9');
       // Grid should be restored to empty
       expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
     });
@@ -702,11 +707,11 @@ describe('TutorialContext', () => {
     });
 
     it('resetTutorial clears saved grid state', () => {
-      saveTutorialStep(8);
+      saveTutorialStep(9); // Swing step (before starter beat)
       saveTutorialActive(true);
       renderWithRouter('/');
 
-      // Go to step 9 (saves grid)
+      // Go to step 10 (saves grid)
       act(() => {
         screen.getByTestId('next').click();
       });
@@ -725,6 +730,126 @@ describe('TutorialContext', () => {
       // Grid should be cleared (from resetTutorial's clearGrid call)
       expect(screen.getByTestId('grid-kick-0').textContent).toBe('false');
       expect(screen.getByTestId('step').textContent).toBe('0');
+    });
+  });
+
+  describe('auto-advance callbacks', () => {
+    it('onMuteToggle advances only when currentStep === 7', () => {
+      saveTutorialStep(7);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      expect(screen.getByTestId('step').textContent).toBe('7');
+
+      // Click mute toggle callback
+      act(() => {
+        screen.getByTestId('onMuteToggle').click();
+      });
+
+      // Should advance after delay
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('8');
+    });
+
+    it('onMuteToggle does NOT advance when currentStep !== 7', () => {
+      saveTutorialStep(6);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      expect(screen.getByTestId('step').textContent).toBe('6');
+
+      // Click mute toggle callback
+      act(() => {
+        screen.getByTestId('onMuteToggle').click();
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      // Should NOT advance
+      expect(screen.getByTestId('step').textContent).toBe('6');
+    });
+
+    it('onTempoReset advances only when currentStep === 8', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      expect(screen.getByTestId('step').textContent).toBe('8');
+
+      // Click tempo reset callback
+      act(() => {
+        screen.getByTestId('onTempoReset').click();
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('9');
+    });
+
+    it('onTempoReset does NOT advance when currentStep !== 8', () => {
+      saveTutorialStep(7);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      expect(screen.getByTestId('step').textContent).toBe('7');
+
+      // Click tempo reset callback
+      act(() => {
+        screen.getByTestId('onTempoReset').click();
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      // Should NOT advance
+      expect(screen.getByTestId('step').textContent).toBe('7');
+    });
+
+    it('onSwingReset advances only when currentStep === 9', () => {
+      saveTutorialStep(9);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      expect(screen.getByTestId('step').textContent).toBe('9');
+
+      // Click swing reset callback
+      act(() => {
+        screen.getByTestId('onSwingReset').click();
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByTestId('step').textContent).toBe('10');
+    });
+
+    it('onSwingReset does NOT advance when currentStep !== 9', () => {
+      saveTutorialStep(8);
+      saveTutorialActive(true);
+      renderWithRouter('/');
+
+      expect(screen.getByTestId('step').textContent).toBe('8');
+
+      // Click swing reset callback
+      act(() => {
+        screen.getByTestId('onSwingReset').click();
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      // Should NOT advance
+      expect(screen.getByTestId('step').textContent).toBe('8');
     });
   });
 });

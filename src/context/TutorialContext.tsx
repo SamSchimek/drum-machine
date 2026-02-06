@@ -17,31 +17,86 @@ import { useAuth } from '../auth/AuthContext';
 import { DEFAULT_TEMPO } from '../constants';
 import type { TrackId, GridState } from '../types';
 
-// Fire celebratory confetti
+// Fire celebratory confetti with music-themed icons and colors
 function fireConfetti() {
-  // Fire from both sides
+  const musicColors = ['#c4b0e0', '#e0b0c8', '#e0c8a8', '#98d0b0', '#d8c8f0'];
+
+  // Create music emoji shapes (with fallback for test environments)
+  const musicEmojis = ['🎵', '🎶', '🎸', '🥁', '🎹', '🎤'];
+  let emojiShapes: ReturnType<typeof confetti.shapeFromText>[] | undefined;
+  try {
+    if (typeof confetti.shapeFromText === 'function') {
+      emojiShapes = musicEmojis.map(emoji => confetti.shapeFromText({ text: emoji, scalar: 2 }));
+    }
+  } catch {
+    // shapeFromText may not work in test environments without canvas
+  }
+
+  // Fire regular confetti from both sides
   confetti({
-    particleCount: 100,
+    particleCount: 80,
     spread: 70,
     origin: { x: 0.1, y: 0.6 },
+    colors: musicColors,
   });
   confetti({
-    particleCount: 100,
+    particleCount: 80,
     spread: 70,
     origin: { x: 0.9, y: 0.6 },
+    colors: musicColors,
   });
+
+  // Fire music emoji confetti (if shapes were created successfully)
+  if (emojiShapes) {
+    confetti({
+      particleCount: 30,
+      spread: 100,
+      origin: { y: 0.6 },
+      shapes: emojiShapes,
+      scalar: 2,
+    });
+  }
+
+  // Second burst with different timing for dynamic effect
+  setTimeout(() => {
+    confetti({
+      particleCount: 40,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+      colors: musicColors,
+    });
+    confetti({
+      particleCount: 40,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+      colors: musicColors,
+    });
+    // More emoji confetti (if shapes were created successfully)
+    if (emojiShapes) {
+      confetti({
+        particleCount: 20,
+        spread: 80,
+        origin: { y: 0.7 },
+        shapes: emojiShapes,
+        scalar: 2,
+      });
+    }
+  }, 250);
 }
 
 // Step indices for special behavior
 const LAST_INTERACTIVE_STEP_INDEX = 4;
 const PLAY_STEP_INDEX = 5;
 const PREVIEW_STEP_INDEX = 6;
-// Step 7 (mute) intentionally does NOT auto-advance - multi-click is appropriate
+const MUTE_STEP_INDEX = 7;
 const BPM_STEP_INDEX = 8;
-const STARTER_BEAT_STEP_INDEX = 9;
-const SAVE_STEP_INDEX = 10;
-const SIGNUP_STEP_INDEX = 11;
-const SHARE_STEP_INDEX = 12;
+const SWING_STEP_INDEX = 9;
+const STARTER_BEAT_STEP_INDEX = 10;
+const SAVE_STEP_INDEX = 11;
+const SIGNUP_STEP_INDEX = 12;
+const SHARE_STEP_INDEX = 13;
 
 // Deep copy helper to prevent mutations affecting saved state
 function deepCopyGrid(grid: GridState): GridState {
@@ -124,8 +179,13 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     target: '.tempo-control',
-    content: 'Adjust tempo from 40-300 BPM',
+    content: 'Speed up or slow down with the tempo knob. Double-click to reset.',
     position: 'bottom',
+  },
+  {
+    target: '.swing-knob-wrapper',
+    content: 'Use this knob to add swing feel.',
+    position: 'top',
   },
   {
     target: '.starter-beat-button',
@@ -144,7 +204,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     target: '.pattern-item:first-child .share-button',
-    content: 'Share your beats with friends to earn upvotes',
+    content: 'Share your beats with friends and earn their upvotes.',
     position: 'left',
   },
   {
@@ -174,6 +234,9 @@ interface TutorialContextValue {
   onTrackPreview: () => void;
   onPatternSaved: () => void;
   onAuthComplete: () => void;
+  onMuteToggle: () => void;
+  onTempoReset: () => void;
+  onSwingReset: () => void;
   isInteractiveStep: boolean;
   isStepComplete: boolean;
   isSaveStep: boolean;
@@ -324,11 +387,14 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
 
     setIsContinuing(false);
 
-    // Save grid when ENTERING starter beat step (leaving BPM step)
+    // Reset tempo to default when leaving BPM step
     if (currentStep === BPM_STEP_INDEX) {
-      savedGridBeforeStarterStep.current = deepCopyGrid(grid);
-      // Reset tempo to default when leaving BPM step
       setTempo(DEFAULT_TEMPO);
+    }
+
+    // Save grid when ENTERING starter beat step (leaving swing step)
+    if (currentStep === SWING_STEP_INDEX) {
+      savedGridBeforeStarterStep.current = deepCopyGrid(grid);
     }
 
     // Restore grid when LEAVING starter beat step
@@ -360,7 +426,7 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     // Prevent auto-advance when navigating backward to completed interactive steps
     skipAutoAdvance.current = true;
 
-    // Restore grid when leaving step 9 backward
+    // Restore grid when leaving starter beat step backward
     if (currentStep === STARTER_BEAT_STEP_INDEX && savedGridBeforeStarterStep.current) {
       setGrid(deepCopyGrid(savedGridBeforeStarterStep.current));
     }
@@ -474,6 +540,42 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     }, 300);
   }, [isActive, currentStep]);
 
+  // Handle mute toggle - auto-advance on mute step
+  const onMuteToggle = useCallback(() => {
+    if (!isActive) return;
+    if (currentStep !== MUTE_STEP_INDEX) return;
+
+    // User toggled mute - advance after brief delay
+    setTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      saveTutorialStep(currentStep + 1);
+    }, 300);
+  }, [isActive, currentStep]);
+
+  // Handle tempo reset - auto-advance on tempo step
+  const onTempoReset = useCallback(() => {
+    if (!isActive) return;
+    if (currentStep !== BPM_STEP_INDEX) return;
+
+    // User reset tempo - advance after brief delay
+    setTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      saveTutorialStep(currentStep + 1);
+    }, 300);
+  }, [isActive, currentStep]);
+
+  // Handle swing reset - auto-advance on swing step
+  const onSwingReset = useCallback(() => {
+    if (!isActive) return;
+    if (currentStep !== SWING_STEP_INDEX) return;
+
+    // User reset swing - advance after brief delay
+    setTimeout(() => {
+      setCurrentStep(currentStep + 1);
+      saveTutorialStep(currentStep + 1);
+    }, 300);
+  }, [isActive, currentStep]);
+
   const currentStepData = isActive && currentStep < TUTORIAL_STEPS.length
     ? TUTORIAL_STEPS[currentStep]
     : null;
@@ -502,6 +604,9 @@ export function TutorialProvider({ children }: { children: React.ReactNode }) {
     onTrackPreview,
     onPatternSaved,
     onAuthComplete,
+    onMuteToggle,
+    onTempoReset,
+    onSwingReset,
     isInteractiveStep,
     isStepComplete,
     isSaveStep,

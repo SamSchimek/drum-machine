@@ -8,27 +8,27 @@
   font-weight: 400;
   color-scheme: dark;
 
-  /* Bloom-inspired color palette - brightened */
-  --bg-deepest: #100d14;
-  --bg-deep: #161220;
-  --bg-surface: #1e182c;
-  --bg-raised: #282038;
-  --bg-elevated: #332848;
-  --border-subtle: #2e2645;
-  --border-default: #3d3358;
-  --border-strong: #4e4270;
-  --accent-primary: #b8a0d2;
-  --accent-primary-hover: #ceb8e8;
-  --accent-primary-dim: rgba(184,160,210,0.13);
-  --accent-primary-glow: rgba(184,160,210,0.38);
-  --accent-secondary: #d4a0b8;
-  --accent-warm: #d4b896;
-  --accent-danger: #d47a7a;
-  --accent-success: #8abfa0;
-  --text-primary: #e8e0f0;
-  --text-secondary: #9a8fb0;
-  --text-tertiary: #6b5f82;
-  --text-muted: #4e4268;
+  /* Bloom-inspired color palette - brightened for visibility */
+  --bg-deepest: #14101a;
+  --bg-deep: #1a1528;
+  --bg-surface: #241d35;
+  --bg-raised: #302542;
+  --bg-elevated: #3d3055;
+  --border-subtle: #3a3058;
+  --border-default: #4d4068;
+  --border-strong: #5f5080;
+  --accent-primary: #c4b0e0;
+  --accent-primary-hover: #d8c8f0;
+  --accent-primary-dim: rgba(196,176,224,0.18);
+  --accent-primary-glow: rgba(196,176,224,0.45);
+  --accent-secondary: #e0b0c8;
+  --accent-warm: #e0c8a8;
+  --accent-danger: #e08888;
+  --accent-success: #98d0b0;
+  --text-primary: #f0e8f8;
+  --text-secondary: #b8a8c8;
+  --text-tertiary: #8878a0;
+  --text-muted: #685888;
   --panel-shadow:
     inset 0 1px 0 rgba(255,255,255,0.03),
     inset 0 -1px 0 rgba(0,0,0,0.2),
@@ -94,11 +94,11 @@ button {
   height: 12px;
   border-radius: 50%;
   background:
-    linear-gradient(0deg, transparent 42%, #222 42%, #222 58%, transparent 58%),
-    linear-gradient(90deg, transparent 42%, #222 42%, #222 58%, transparent 58%),
-    radial-gradient(circle at 30% 30%, #555 0%, #333 50%, #1a1a1a 100%);
+    linear-gradient(0deg, transparent 42%, #333 42%, #333 58%, transparent 58%),
+    linear-gradient(90deg, transparent 42%, #333 42%, #333 58%, transparent 58%),
+    radial-gradient(circle at 30% 30%, #666 0%, #444 50%, #2a2a2a 100%);
   box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.15),
+    inset 0 1px 2px rgba(255,255,255,0.2),
     0 1px 2px rgba(0,0,0,0.5);
 }
 

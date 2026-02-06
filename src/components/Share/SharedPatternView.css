@@ -23,21 +23,74 @@
   margin-bottom: 1.5rem;
 }
 
+/* CTA links - primary hardware style */
 .shared-pattern-home-link,
 .shared-pattern-cta {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: var(--accent-primary);
-  color: #000;
+  background: linear-gradient(180deg,
+    rgba(60, 50, 80, 1) 0%,
+    rgba(42, 34, 64, 1) 40%,
+    rgba(26, 21, 37, 1) 100%);
+  border: 1px solid var(--accent-primary);
+  border-top-color: rgba(184, 160, 210, 0.5);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  color: var(--accent-primary);
   text-decoration: none;
   border-radius: 6px;
   font-weight: 600;
-  transition: background 0.2s;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glint effect */
+.shared-pattern-home-link::before,
+.shared-pattern-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent);
+  transition: left 0.3s ease;
 }
 
 .shared-pattern-home-link:hover,
 .shared-pattern-cta:hover {
-  background: var(--accent-primary-hover);
+  background: linear-gradient(180deg,
+    rgba(70, 60, 95, 1) 0%,
+    rgba(52, 44, 74, 1) 40%,
+    rgba(36, 31, 47, 1) 100%);
+  color: var(--accent-primary-hover);
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 15px var(--accent-primary-glow);
+}
+
+.shared-pattern-home-link:hover::before,
+.shared-pattern-cta:hover::before {
+  left: 100%;
+}
+
+.shared-pattern-home-link:active,
+.shared-pattern-cta:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.shared-pattern-home-link:focus-visible,
+.shared-pattern-cta:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .shared-pattern-container {
@@ -83,51 +136,140 @@
   gap: 1rem;
 }
 
+/* Play button - primary hardware style */
 .shared-play-button {
   display: inline-block;
   padding: 0.75rem 2rem;
-  background: var(--accent-primary);
-  color: #000;
-  border: none;
+  background: linear-gradient(180deg,
+    rgba(60, 50, 80, 1) 0%,
+    rgba(42, 34, 64, 1) 40%,
+    rgba(26, 21, 37, 1) 100%);
+  border: 1px solid var(--accent-primary);
+  border-top-color: rgba(184, 160, 210, 0.5);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  color: var(--accent-primary);
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glint effect */
+.shared-play-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent);
+  transition: left 0.3s ease;
+}
+
+/* Corner highlight */
+.shared-play-button::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at top left,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 70%);
+  border-radius: 2px;
+  pointer-events: none;
 }
 
 .shared-play-button:hover {
-  background: var(--accent-primary-hover);
-  transform: scale(1.02);
+  background: linear-gradient(180deg,
+    rgba(70, 60, 95, 1) 0%,
+    rgba(52, 44, 74, 1) 40%,
+    rgba(36, 31, 47, 1) 100%);
+  color: var(--accent-primary-hover);
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 15px var(--accent-primary-glow);
+}
+
+.shared-play-button:hover::before {
+  left: 100%;
 }
 
 .shared-play-button:active {
-  transform: scale(0.98);
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
+.shared-play-button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Upvote button - secondary hardware style */
 .shared-upvote-button {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: transparent;
-  border: 2px solid var(--border-strong);
+  background: linear-gradient(180deg,
+    rgba(50, 45, 60, 1) 0%,
+    rgba(37, 32, 48, 1) 40%,
+    rgba(26, 21, 32, 1) 100%);
+  border: 1px solid var(--border-strong);
+  border-top-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.4);
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   color: var(--text-secondary);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .shared-upvote-button:hover:not(:disabled) {
+  background: linear-gradient(180deg,
+    rgba(60, 45, 55, 1) 0%,
+    rgba(47, 35, 42, 1) 40%,
+    rgba(36, 26, 32, 1) 100%);
   border-color: #e91e63;
   color: #e91e63;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 10px rgba(233, 30, 99, 0.3);
+}
+
+.shared-upvote-button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.shared-upvote-button:focus-visible {
+  outline: 2px solid #e91e63;
+  outline-offset: 2px;
 }
 
 .shared-upvote-button.upvoted {
+  background: linear-gradient(180deg,
+    rgba(70, 40, 55, 1) 0%,
+    rgba(55, 30, 42, 1) 40%,
+    rgba(40, 22, 32, 1) 100%);
   border-color: #e91e63;
   color: #e91e63;
 }
@@ -260,6 +402,26 @@
   font-size: 0.8125rem;
 }
 
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .shared-play-button,
+  .shared-upvote-button,
+  .shared-pattern-home-link,
+  .shared-pattern-cta {
+    transition: none;
+  }
+
+  .shared-play-button::before,
+  .shared-pattern-home-link::before,
+  .shared-pattern-cta::before {
+    display: none;
+  }
+
+  .shared-upvote-button.upvoted .upvote-icon {
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .shared-grid-cell {
     width: 20px;
@@ -294,5 +456,16 @@
 
   .shared-grid-cell.bar-end {
     margin-right: 4px;
+  }
+
+  .shared-pattern-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .shared-play-button,
+  .shared-upvote-button {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

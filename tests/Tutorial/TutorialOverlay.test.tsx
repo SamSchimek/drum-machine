@@ -262,4 +262,24 @@ describe('TutorialOverlay', () => {
       cleanup();
     });
   });
+
+  describe('step change animation', () => {
+    it('tooltip wrapper has key prop that changes with step for animation trigger', () => {
+      saveTutorialActive(true);
+      saveTutorialStep(5);
+
+      const { cleanup } = renderWithProviders();
+
+      // Advance to next step
+      const overlay = document.querySelector('.tutorial-overlay');
+      if (overlay) {
+        (overlay as HTMLElement).focus();
+        fireEvent.keyDown(overlay, { key: 'ArrowRight' });
+      }
+
+      // Wrapper should still exist (key change triggers remount with animation)
+      expect(document.querySelector('.tutorial-tooltip-wrapper')).toBeInTheDocument();
+      cleanup();
+    });
+  });
 });

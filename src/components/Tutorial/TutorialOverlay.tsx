@@ -211,6 +211,7 @@ export function TutorialOverlay() {
 
       {/* Tooltip */}
       <div
+        key={currentStep}
         className="tutorial-tooltip-wrapper"
         style={{
           position: 'fixed',

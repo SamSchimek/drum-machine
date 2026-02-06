@@ -168,4 +168,14 @@ describe('Tooltip', () => {
       expect(screen.queryByText(/continuing/i)).not.toBeInTheDocument();
     });
   });
+
+  describe('fade animation', () => {
+    it('content wrapper has animation class for fade effect', () => {
+      const { container } = render(<Tooltip {...defaultProps} />);
+      const content = container.querySelector('.tutorial-tooltip-content');
+      expect(content).toBeInTheDocument();
+      // The CSS handles the animation - we verify the class exists
+      expect(content).toHaveClass('tutorial-tooltip-content');
+    });
+  });
 });

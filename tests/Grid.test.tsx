@@ -81,10 +81,10 @@ describe('Grid', () => {
     expect(dim).toBeTruthy();
   });
 
-  it('--track-color-dim ends with 28 (brighter inactive LEDs)', () => {
+  it('--track-color-dim ends with 55 (brighter inactive LEDs)', () => {
     renderGrid();
     const cell = screen.getByTestId('cell-kick-0');
     const dim = cell.style.getPropertyValue('--track-color-dim');
-    expect(dim).toMatch(/28$/);
+    expect(dim).toMatch(/55$/);
   });
 });

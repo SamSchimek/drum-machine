@@ -32,32 +32,32 @@
 
   /* Derived colors via color-mix() — auto-adapt to any theme */
 
-  /* Primary button gradients */
-  --btn-primary-top: color-mix(in srgb, var(--bg-elevated) 70%, var(--accent-primary) 30%);
-  --btn-primary-mid: color-mix(in srgb, var(--bg-raised) 75%, var(--accent-primary) 25%);
-  --btn-primary-bot: color-mix(in srgb, var(--bg-deep) 80%, var(--accent-primary) 20%);
+  /* Primary button gradients — subtle accent tint on dark bg levels */
+  --btn-primary-top: color-mix(in srgb, var(--bg-raised) 90%, var(--accent-primary) 10%);
+  --btn-primary-mid: color-mix(in srgb, var(--bg-surface) 95%, var(--accent-primary) 5%);
+  --btn-primary-bot: color-mix(in srgb, var(--bg-deepest) 95%, var(--accent-primary) 5%);
 
-  /* Primary button hover */
-  --btn-primary-top-hover: color-mix(in srgb, var(--bg-elevated) 60%, var(--accent-primary) 40%);
-  --btn-primary-mid-hover: color-mix(in srgb, var(--bg-raised) 65%, var(--accent-primary) 35%);
-  --btn-primary-bot-hover: color-mix(in srgb, var(--bg-deep) 70%, var(--accent-primary) 30%);
+  /* Primary button hover — more accent tint */
+  --btn-primary-top-hover: color-mix(in srgb, var(--bg-raised) 80%, var(--accent-primary) 20%);
+  --btn-primary-mid-hover: color-mix(in srgb, var(--bg-surface) 85%, var(--accent-primary) 15%);
+  --btn-primary-bot-hover: color-mix(in srgb, var(--bg-deepest) 90%, var(--accent-primary) 10%);
 
-  /* Primary button active (pressed) */
-  --btn-primary-top-active: color-mix(in srgb, var(--bg-deep) 75%, var(--accent-primary) 25%);
-  --btn-primary-bot-active: color-mix(in srgb, var(--bg-raised) 70%, var(--accent-primary) 30%);
+  /* Primary button active (pressed) — inverted gradient, deeper */
+  --btn-primary-top-active: color-mix(in srgb, var(--bg-deep) 90%, var(--accent-primary) 10%);
+  --btn-primary-bot-active: color-mix(in srgb, var(--bg-surface) 88%, var(--accent-primary) 12%);
 
   /* Primary button border-top tint */
   --btn-primary-border-top: color-mix(in srgb, var(--accent-primary) 50%, white 50%);
 
-  /* Secondary button gradients */
-  --btn-secondary-top: color-mix(in srgb, var(--bg-elevated) 85%, white 15%);
-  --btn-secondary-mid: color-mix(in srgb, var(--bg-raised) 85%, white 15%);
-  --btn-secondary-bot: color-mix(in srgb, var(--bg-deep) 85%, white 15%);
+  /* Secondary button gradients — minimal lightening of dark bg levels */
+  --btn-secondary-top: color-mix(in srgb, var(--bg-surface) 95%, white 5%);
+  --btn-secondary-mid: color-mix(in srgb, var(--bg-deep) 95%, white 5%);
+  --btn-secondary-bot: color-mix(in srgb, var(--bg-deepest) 95%, white 5%);
 
   /* Secondary button hover */
-  --btn-secondary-top-hover: color-mix(in srgb, var(--bg-elevated) 75%, white 25%);
-  --btn-secondary-mid-hover: color-mix(in srgb, var(--bg-raised) 75%, white 25%);
-  --btn-secondary-bot-hover: color-mix(in srgb, var(--bg-deep) 75%, white 25%);
+  --btn-secondary-top-hover: color-mix(in srgb, var(--bg-surface) 88%, white 12%);
+  --btn-secondary-mid-hover: color-mix(in srgb, var(--bg-deep) 88%, white 12%);
+  --btn-secondary-bot-hover: color-mix(in srgb, var(--bg-deepest) 88%, white 12%);
 
   /* Step indicator backgrounds */
   --step-bg-top: color-mix(in srgb, var(--bg-deep) 95%, var(--bg-surface) 5%);
@@ -79,20 +79,20 @@
   --pattern-item-mid-hover: color-mix(in srgb, var(--bg-raised) 80%, var(--bg-surface) 20%);
   --pattern-item-bot-hover: color-mix(in srgb, var(--bg-surface) 60%, var(--bg-raised) 40%);
 
-  /* Playing state tints */
-  --playing-tint-light: color-mix(in srgb, var(--bg-elevated) 65%, var(--accent-primary) 35%);
-  --playing-tint-mid: color-mix(in srgb, var(--bg-raised) 65%, var(--accent-primary) 35%);
-  --playing-tint-dark: color-mix(in srgb, var(--bg-deep) 65%, var(--accent-primary) 35%);
+  /* Playing state tints — accent tint decreasing with darkness */
+  --playing-tint-light: color-mix(in srgb, var(--bg-raised) 75%, var(--accent-primary) 25%);
+  --playing-tint-mid: color-mix(in srgb, var(--bg-deep) 82%, var(--accent-primary) 18%);
+  --playing-tint-dark: color-mix(in srgb, var(--bg-deepest) 88%, var(--accent-primary) 12%);
 
   /* Playing state hover tints (slightly brighter) */
-  --playing-tint-light-hover: color-mix(in srgb, var(--bg-elevated) 55%, var(--accent-primary) 45%);
-  --playing-tint-mid-hover: color-mix(in srgb, var(--bg-raised) 55%, var(--accent-primary) 45%);
-  --playing-tint-dark-hover: color-mix(in srgb, var(--bg-deep) 55%, var(--accent-primary) 45%);
+  --playing-tint-light-hover: color-mix(in srgb, var(--bg-raised) 65%, var(--accent-primary) 35%);
+  --playing-tint-mid-hover: color-mix(in srgb, var(--bg-deep) 72%, var(--accent-primary) 28%);
+  --playing-tint-dark-hover: color-mix(in srgb, var(--bg-deepest) 80%, var(--accent-primary) 20%);
 
   /* Keyboard hint backgrounds */
-  --kbd-bg-top: color-mix(in srgb, var(--bg-elevated) 80%, white 20%);
-  --kbd-bg-mid: color-mix(in srgb, var(--bg-raised) 80%, white 20%);
-  --kbd-bg-bot: color-mix(in srgb, var(--bg-surface) 80%, white 20%);
+  --kbd-bg-top: color-mix(in srgb, var(--bg-elevated) 94%, white 6%);
+  --kbd-bg-mid: color-mix(in srgb, var(--bg-raised) 94%, white 6%);
+  --kbd-bg-bot: color-mix(in srgb, var(--bg-surface) 94%, white 6%);
 
   /* Menu item hover */
   --menu-item-hover: color-mix(in srgb, var(--accent-primary) 10%, transparent 90%);

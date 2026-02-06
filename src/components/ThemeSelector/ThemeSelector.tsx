@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useTheme, THEMES, ThemeId } from '../../context/ThemeContext';
+import { useTheme, THEMES, ThemeId, applyThemeToDOM } from '../../context/ThemeContext';
 import './ThemeSelector.css';
 
 export function ThemeSelector() {
@@ -35,29 +35,13 @@ export function ThemeSelector() {
   const handlePreview = (id: ThemeId) => {
     if (!isLocked) {
       setPreviewTheme(id);
-      // Temporarily apply for preview
-      const theme = THEMES[id];
-      const root = document.documentElement;
-      root.style.setProperty('--accent-primary', theme.colors.accentPrimary);
-      root.style.setProperty('--accent-primary-hover', theme.colors.accentPrimaryHover);
-      root.style.setProperty('--accent-primary-dim', theme.colors.accentPrimaryDim);
-      root.style.setProperty('--accent-primary-glow', theme.colors.accentPrimaryGlow);
-      root.style.setProperty('--accent-secondary', theme.colors.accentSecondary);
-      root.style.setProperty('--accent-warm', theme.colors.accentWarm);
+      applyThemeToDOM(THEMES[id]);
     }
   };
 
   const handlePreviewEnd = () => {
     if (previewTheme) {
-      // Restore current theme
-      const theme = THEMES[themeId];
-      const root = document.documentElement;
-      root.style.setProperty('--accent-primary', theme.colors.accentPrimary);
-      root.style.setProperty('--accent-primary-hover', theme.colors.accentPrimaryHover);
-      root.style.setProperty('--accent-primary-dim', theme.colors.accentPrimaryDim);
-      root.style.setProperty('--accent-primary-glow', theme.colors.accentPrimaryGlow);
-      root.style.setProperty('--accent-secondary', theme.colors.accentSecondary);
-      root.style.setProperty('--accent-warm', theme.colors.accentWarm);
+      applyThemeToDOM(THEMES[themeId]);
       setPreviewTheme(null);
     }
   };

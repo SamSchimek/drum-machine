@@ -1,6 +1,8 @@
 import { supabase } from '../lib/supabase';
 import type { Pattern } from '../types';
 import type { SupabasePatternStorageInterface, SupabasePatternRow, SupabasePatternInput } from './types';
+import { isValidThemeId } from '../context/ThemeContext';
+import { logger } from '../utils/logger';
 
 // Generate a random share slug
 function generateShareSlug(): string {
@@ -391,7 +393,11 @@ export async function updateProfile(
   }
 
   if (updates.theme !== undefined) {
-    updateData.theme = updates.theme;
+    if (isValidThemeId(updates.theme)) {
+      updateData.theme = updates.theme;
+    } else {
+      logger.warn('Invalid theme ID provided:', updates.theme);
+    }
   }
 
   const { error } = await supabase
@@ -399,7 +405,7 @@ export async function updateProfile(
     .upsert(updateData, { onConflict: 'id' });
 
   if (error) {
-    console.error('Error updating profile:', error.message);
+    logger.error('Error updating profile:', error.message);
     return false;
   }
 
@@ -416,7 +422,7 @@ export async function getProfile(
     .maybeSingle();
 
   if (error) {
-    console.error('Error fetching profile:', error.message);
+    logger.error('Error fetching profile:', error.message);
     return null;
   }
 

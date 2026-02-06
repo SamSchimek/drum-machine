@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import FocusTrap from 'focus-trap-react';
 import { useAuth } from '../../auth/AuthContext';
 import { updateProfile, getProfile } from '../../storage/SupabaseStorage';
+import { logger } from '../../utils/logger';
 import './ProfileSettingsModal.css';
 
 interface ProfileSettingsModalProps {
@@ -37,7 +38,7 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
           setLoadingProfile(false);
         })
         .catch((err) => {
-          console.error('Failed to load profile:', err);
+          logger.error('Failed to load profile:', err);
           setLoadError(true);
           setLoadingProfile(false);
         });
@@ -109,6 +110,7 @@ export function ProfileSettingsModal({ isOpen, onClose }: ProfileSettingsModalPr
   return (
     <FocusTrap focusTrapOptions={{
       allowOutsideClick: true,
+      initialFocus: '#display-name',
       fallbackFocus: '.profile-settings-modal',
     }}>
       <div className="profile-settings-overlay" onClick={handleOverlayClick}>

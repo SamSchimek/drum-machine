@@ -163,4 +163,9 @@
   .theme-selector-dropdown {
     animation: none;
   }
+
+  .theme-selector-button,
+  .theme-option {
+    transition: none;
+  }
 }

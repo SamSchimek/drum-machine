@@ -86,17 +86,21 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSucce
   return (
     <FocusTrap focusTrapOptions={{
       allowOutsideClick: true,
+      initialFocus: '.auth-modal-close',
       fallbackFocus: '.auth-modal',
     }}>
       <div
         className="auth-modal-backdrop"
         data-testid="auth-modal-backdrop"
         onClick={handleBackdropClick}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="auth-modal-title"
       >
-        <div className="auth-modal" tabIndex={-1}>
+        <div
+          className="auth-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="auth-modal-title"
+          tabIndex={-1}
+        >
         <button
           className="auth-modal-close"
           onClick={onClose}

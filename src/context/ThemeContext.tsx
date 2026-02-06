@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { getProfile, updateProfile } from '../storage/SupabaseStorage';
+import { logger } from '../utils/logger';
 
 export type ThemeId = 'bloom' | 'sunset' | 'midnight' | 'forest' | 'neon' | 'monochrome';
 
@@ -92,8 +93,12 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
 };
 
-const THEME_IDS = Object.keys(THEMES) as ThemeId[];
+export const THEME_IDS = Object.keys(THEMES) as ThemeId[];
 const DEFAULT_THEME: ThemeId = 'bloom';
+
+export function isValidThemeId(id: string): id is ThemeId {
+  return THEME_IDS.includes(id as ThemeId);
+}
 
 interface ThemeContextType {
   theme: Theme;
@@ -105,7 +110,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
-function applyThemeToDOM(theme: Theme) {
+export function applyThemeToDOM(theme: Theme) {
   const root = document.documentElement;
   root.style.setProperty('--accent-primary', theme.colors.accentPrimary);
   root.style.setProperty('--accent-primary-hover', theme.colors.accentPrimaryHover);
@@ -118,15 +123,36 @@ function applyThemeToDOM(theme: Theme) {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [themeId, setThemeId] = useState<ThemeId>(DEFAULT_THEME);
+  const loadingRef = useRef(false);
 
   // Load theme from profile when user logs in
   useEffect(() => {
     if (user) {
-      getProfile(user.id).then((profile) => {
-        if (profile?.theme && THEME_IDS.includes(profile.theme as ThemeId)) {
-          setThemeId(profile.theme as ThemeId);
-        }
-      });
+      // Track if this effect is still active to prevent race conditions
+      let cancelled = false;
+      loadingRef.current = true;
+
+      getProfile(user.id)
+        .then((profile) => {
+          if (cancelled) return;
+          if (profile?.theme && isValidThemeId(profile.theme)) {
+            setThemeId(profile.theme);
+          }
+        })
+        .catch((error) => {
+          if (cancelled) return;
+          logger.error('Failed to load theme preference:', error);
+          // Keep default theme on error
+        })
+        .finally(() => {
+          if (!cancelled) {
+            loadingRef.current = false;
+          }
+        });
+
+      return () => {
+        cancelled = true;
+      };
     } else {
       // Reset to default when logged out
       setThemeId(DEFAULT_THEME);

@@ -8,58 +8,112 @@
 }
 
 .user-menu-signin-button {
-  background: var(--accent-primary);
-  color: #000;
-  border: none;
-  border-radius: 6px;
+  background: linear-gradient(180deg,
+    rgba(60, 50, 80, 1) 0%,
+    rgba(42, 34, 64, 1) 40%,
+    rgba(26, 21, 37, 1) 100%);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+  border-top-color: rgba(184, 160, 210, 0.5);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .user-menu-signin-button:hover {
-  background: var(--accent-primary-hover);
+  background: linear-gradient(180deg,
+    rgba(70, 60, 95, 1) 0%,
+    rgba(52, 44, 74, 1) 40%,
+    rgba(36, 31, 47, 1) 100%);
+  color: var(--accent-primary-hover);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 10px var(--accent-primary-glow);
+}
+
+.user-menu-signin-button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.user-menu-signin-button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .user-menu-button {
   background: none;
   border: none;
-  padding: 0;
+  padding: 3px;
   cursor: pointer;
   border-radius: 50%;
-  transition: transform 0.2s;
+  transition: all 0.15s ease;
+  background: radial-gradient(circle at 30% 30%, #555 0%, #333 50%, #1a1a1a 100%);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .user-menu-button:hover {
   transform: scale(1.05);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 0 10px var(--accent-primary-glow);
+}
+
+.user-menu-button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
   color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .user-menu-dropdown {
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background: var(--bg-raised);
-  border: 1px solid var(--border-default);
+  background-color: var(--bg-surface);
+  background-image:
+    repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px
+    ),
+    url('/textures/brushed-metal-dark.jpg');
+  background-size: auto, 400px auto;
+  background-blend-mode: normal, overlay;
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 0.5rem 0;
   min-width: 200px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   z-index: 100;
 }
 
@@ -70,11 +124,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 0.25rem;
 }
 
 .user-menu-divider {
   border: none;
-  border-top: 1px solid var(--border-default);
+  border-top: 1px solid var(--border-subtle);
   margin: 0.25rem 0;
 }
 
@@ -88,11 +144,18 @@
   font-size: 0.875rem;
   text-align: left;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s ease;
 }
 
 .user-menu-item:hover {
-  background: var(--bg-elevated);
+  background: rgba(184, 160, 210, 0.1);
+  color: var(--accent-primary);
+}
+
+.user-menu-item:focus-visible {
+  outline: none;
+  background: rgba(184, 160, 210, 0.15);
+  color: var(--accent-primary);
 }
 
 /* Tutorial highlight for signup button */
@@ -110,13 +173,17 @@
 @media (max-width: 600px) {
   .user-menu-signin-button {
     padding: 0.4rem 0.75rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .user-menu-button {
+    padding: 2px;
   }
 
   .user-avatar {
-    width: 32px;
-    height: 32px;
-    font-size: 0.875rem;
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
   }
 
   .user-menu-dropdown {

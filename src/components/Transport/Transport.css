@@ -2,23 +2,40 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 14px 20px;
+  padding: 20px 24px;
   background-color: var(--bg-surface);
-  background-image: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px
-  );
+  background-image:
+    repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px
+    ),
+    url('/textures/brushed-metal-dark.jpg');
+  background-size: auto, 400px auto;
+  background-blend-mode: normal, overlay;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
   box-shadow: var(--panel-shadow);
+  position: relative;
+}
+
+/* Beveled edge highlight */
+.transport::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  border-top-color: rgba(255,255,255,0.05);
+  border-left-color: rgba(255,255,255,0.03);
+  pointer-events: none;
 }
 
 .play-button {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  border: 2px solid var(--accent-primary);
-  background: transparent;
+  border: 2px solid #1a1a1a;
+  background: radial-gradient(circle at 30% 30%, #444 0%, #222 40%, #111 100%);
   color: var(--accent-primary);
   cursor: pointer;
   display: flex;
@@ -26,38 +43,69 @@
   justify-content: center;
   transition: all 0.15s ease;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
-              0 1px 2px rgba(0,0,0,0.3);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .play-button svg {
   width: 22px;
   height: 22px;
+  filter: drop-shadow(0 0 4px var(--accent-primary-glow));
 }
 
 .play-button:hover {
-  background: var(--accent-primary-dim);
-  transform: scale(1.03);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+    0 0 12px var(--accent-primary-glow);
+  transform: scale(1.02);
+}
+
+.play-button:active {
+  transform: scale(0.98);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .play-button.playing {
-  background: var(--accent-primary);
-  color: #000;
-  animation: pulse 1.2s ease-in-out infinite;
+  background: radial-gradient(circle at 30% 30%, #5a4a6a 0%, #3a2a4a 40%, #2a1a3a 100%);
+  color: var(--accent-primary);
+  animation: play-glow 1.2s ease-in-out infinite;
+}
+
+.play-button.playing svg {
+  filter: drop-shadow(0 0 8px var(--accent-primary));
 }
 
 .play-button.playing:hover {
-  background: var(--accent-primary-hover);
+  background: radial-gradient(circle at 30% 30%, #6a5a7a 0%, #4a3a5a 40%, #3a2a4a 100%);
 }
 
-@keyframes pulse {
+@keyframes play-glow {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(184, 160, 210, 0.4);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.5),
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      inset 0 1px 2px rgba(255, 255, 255, 0.1),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+      0 0 8px rgba(184, 160, 210, 0.3);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(184, 160, 210, 0);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.5),
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      inset 0 1px 2px rgba(255, 255, 255, 0.1),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(184, 160, 210, 0.5);
   }
 }
+
 
 .keyboard-hint {
   font-size: 10px;
@@ -68,13 +116,23 @@
 }
 
 .keyboard-hint kbd {
-  background: var(--bg-raised);
-  padding: 3px 7px;
-  border-radius: 3px;
+  background: linear-gradient(180deg,
+    rgba(60, 55, 70, 1) 0%,
+    rgba(45, 40, 55, 1) 50%,
+    rgba(35, 30, 45, 1) 100%);
+  padding: 4px 8px;
+  border-radius: 4px;
   font-family: inherit;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   font-size: 9px;
-  border: 1px solid var(--border-subtle);
+  font-weight: 500;
+  border: 1px solid var(--border-default);
+  border-top-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .tempo-control {
@@ -95,6 +153,7 @@
 .tempo-value {
   font-size: 26px;
   font-weight: 700;
+  font-family: var(--font-display);
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   background: transparent;
@@ -225,23 +284,68 @@
   box-shadow: 0 0 6px rgba(184,160,210,0.3);
 }
 
-.swing-labels {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 4px;
-  padding: 0 2px;
+.tempo-knob-wrapper,
+.swing-knob-wrapper {
+  cursor: pointer;
 }
 
-.swing-labels span {
+.swing-presets {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.swing-presets button {
+  padding: 3px 7px;
+  background: linear-gradient(180deg,
+    rgba(50, 45, 55, 1) 0%,
+    rgba(38, 34, 42, 1) 40%,
+    rgba(28, 24, 32, 1) 100%);
+  border: 1px solid var(--border-default);
+  border-top-color: rgba(255, 255, 255, 0.08);
+  border-bottom-color: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
   font-size: 8px;
+  font-weight: 500;
   color: var(--text-tertiary);
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.swing-labels span:hover {
+.swing-presets button:hover {
+  border-color: var(--accent-primary);
   color: var(--accent-primary);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.swing-presets button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.swing-presets button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 1px;
+}
+
+.swing-presets button.active {
+  background: linear-gradient(180deg,
+    var(--accent-primary-hover) 0%,
+    var(--accent-primary) 50%,
+    color-mix(in srgb, var(--accent-primary) 80%, black) 100%);
+  border-color: var(--accent-primary);
+  border-top-color: var(--accent-primary-hover);
+  color: #000;
+  font-weight: 600;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 6px var(--accent-primary-glow);
 }
 
 .volume-control {
@@ -264,37 +368,50 @@
 
 .volume-slider {
   flex: 1;
-  height: 3px;
+  height: 6px;
   -webkit-appearance: none;
   appearance: none;
   background: var(--bg-elevated);
-  border-radius: 2px;
+  border-radius: 3px;
   cursor: pointer;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  background: var(--text-tertiary);
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle at 30% 30%, #555 0%, #333 50%, #1a1a1a 100%);
   border-radius: 50%;
+  border: 1px solid #111;
   cursor: pointer;
   transition: all 0.1s ease;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .volume-slider::-webkit-slider-thumb:hover {
-  background: var(--accent-primary);
-  transform: scale(1.15);
-  box-shadow: 0 0 6px rgba(184,160,210,0.3);
+  background: radial-gradient(circle at 30% 30%, #666 0%, #444 50%, #222 100%);
+  transform: scale(1.1);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 0 8px var(--accent-primary-glow);
 }
 
 .volume-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  background: var(--text-tertiary);
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle at 30% 30%, #555 0%, #333 50%, #1a1a1a 100%);
   border-radius: 50%;
+  border: 1px solid #111;
   cursor: pointer;
-  border: none;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .volume-value {
@@ -306,23 +423,75 @@
 }
 
 .starter-beat-button {
-  padding: 8px 16px;
-  background: transparent;
+  padding: 12px 20px;
+  background: linear-gradient(180deg,
+    rgba(60, 50, 80, 1) 0%,
+    rgba(42, 34, 64, 1) 40%,
+    rgba(26, 21, 37, 1) 100%);
   border: 1px solid var(--accent-primary);
-  border-radius: 4px;
+  border-top-color: rgba(184, 160, 210, 0.5);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
   color: var(--accent-primary);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.15s ease;
   margin-left: auto;
+  position: relative;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.starter-beat-button::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  border-radius: 3px 3px 0 0;
+}
+
+.starter-beat-button::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+  border-radius: 3px 0 4px 0;
 }
 
 .starter-beat-button:hover {
-  background: var(--accent-primary-dim);
+  background: linear-gradient(180deg,
+    rgba(70, 60, 95, 1) 0%,
+    rgba(52, 44, 74, 1) 40%,
+    rgba(36, 31, 47, 1) 100%);
   color: var(--accent-primary-hover);
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.25),
+    0 0 15px var(--accent-primary-glow);
+}
+
+.starter-beat-button:active {
+  transform: translateY(2px);
+  background: linear-gradient(180deg,
+    rgba(35, 28, 50, 1) 0%,
+    rgba(42, 34, 64, 1) 100%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .starter-beat-button:focus-visible {
@@ -331,22 +500,74 @@
 }
 
 .clear-button {
-  padding: 8px 16px;
-  background: transparent;
-  border: 1px solid var(--border-default);
-  border-radius: 4px;
-  color: var(--text-tertiary);
+  padding: 12px 20px;
+  background: linear-gradient(180deg,
+    rgba(50, 45, 60, 1) 0%,
+    rgba(37, 32, 48, 1) 40%,
+    rgba(26, 21, 32, 1) 100%);
+  border: 1px solid var(--border-strong);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  color: var(--text-secondary);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.15s ease;
+  position: relative;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.clear-button::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  border-radius: 3px 3px 0 0;
+}
+
+.clear-button::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  border-radius: 3px 0 4px 0;
 }
 
 .clear-button:hover {
+  background: linear-gradient(180deg,
+    rgba(60, 52, 75, 1) 0%,
+    rgba(48, 42, 64, 1) 40%,
+    rgba(37, 32, 48, 1) 100%);
   border-color: var(--accent-primary);
   color: var(--accent-primary);
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.clear-button:active {
+  transform: translateY(2px);
+  background: linear-gradient(180deg,
+    rgba(30, 26, 40, 1) 0%,
+    rgba(37, 32, 48, 1) 100%);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 900px) {

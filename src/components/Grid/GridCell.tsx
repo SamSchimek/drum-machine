@@ -43,7 +43,7 @@ export function GridCell({ trackId, step, active, isCurrentStep, onClick }: Grid
       className={classNames}
       style={{
         '--track-color': color,
-        '--track-color-dim': `${color}18`,
+        '--track-color-dim': `${color}28`,
       } as React.CSSProperties}
       onClick={handleClick}
       data-testid={`cell-${trackId}-${step}`}

@@ -1,56 +1,23 @@
-import { useState } from 'react';
 import { useDrumMachine } from '../../context/DrumMachineContext';
 import { MIN_TEMPO, MAX_TEMPO, MIN_SWING, MAX_SWING } from '../../constants';
+import { Knob } from '../Knob/Knob';
 import './Transport.css';
 
 export function Transport() {
   const { isPlaying, tempo, volume, swing, play, stop, setTempo, setVolume, setSwing, resetTempo, clearGrid, loadStarterBeat } = useDrumMachine();
-  const [isEditingTempo, setIsEditingTempo] = useState(false);
-  const [tempoInput, setTempoInput] = useState(String(tempo));
-
-  const handleTempoSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempo(Number(e.target.value));
-  };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value));
   };
 
-  const handleSwingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSwing(Number(e.target.value));
-  };
-
-  const handleTempoSliderDoubleClick = () => {
-    resetTempo();
-  };
-
-  const handleTempoClick = () => {
-    setTempoInput(String(tempo));
-    setIsEditingTempo(true);
-  };
-
-  const handleTempoInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempoInput(e.target.value);
-  };
-
-  const handleTempoInputBlur = () => {
-    const value = parseInt(tempoInput, 10);
-    if (!isNaN(value)) {
-      setTempo(Math.max(MIN_TEMPO, Math.min(MAX_TEMPO, value)));
-    }
-    setIsEditingTempo(false);
-  };
-
-  const handleTempoInputKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleTempoInputBlur();
-    } else if (e.key === 'Escape') {
-      setIsEditingTempo(false);
-    }
-  };
-
   return (
     <div className="transport">
+      <div className="panel-screws" aria-hidden="true">
+        <span className="screw screw-tl" />
+        <span className="screw screw-tr" />
+        <span className="screw screw-bl" />
+        <span className="screw screw-br" />
+      </div>
       <button
         className={`play-button ${isPlaying ? 'playing' : ''}`}
         onClick={isPlaying ? stop : play}
@@ -73,56 +40,40 @@ export function Transport() {
       </div>
 
       <div className="tempo-control">
-        <label htmlFor="tempo">BPM</label>
-        {isEditingTempo ? (
-          <input
-            type="number"
-            className="tempo-input"
-            value={tempoInput}
-            onChange={handleTempoInputChange}
-            onBlur={handleTempoInputBlur}
-            onKeyDown={handleTempoInputKeyDown}
+        <label>BPM</label>
+        <div className="tempo-knob-wrapper" onDoubleClick={resetTempo} title="Double-click to reset to 120">
+          <Knob
+            value={tempo}
             min={MIN_TEMPO}
             max={MAX_TEMPO}
-            autoFocus
+            onChange={setTempo}
+            label="Tempo"
+            size={56}
+            step={1}
+            largeStep={10}
           />
-        ) : (
-          <button className="tempo-value" onClick={handleTempoClick} title="Click to edit">
-            {tempo}
-          </button>
-        )}
-        <input
-          id="tempo"
-          type="range"
-          min={MIN_TEMPO}
-          max={MAX_TEMPO}
-          value={tempo}
-          onChange={handleTempoSliderChange}
-          onDoubleClick={handleTempoSliderDoubleClick}
-          className="tempo-slider"
-          title="Double-click to reset to 120"
-        />
+        </div>
       </div>
 
       <div className="swing-control">
-        <label htmlFor="swing">Swing</label>
-        <div className="swing-slider-container">
-          <input
-            id="swing"
-            type="range"
+        <label>Swing</label>
+        <div className="swing-knob-wrapper" onDoubleClick={() => setSwing(0)} title="Double-click to reset to Straight">
+          <Knob
+            value={swing}
             min={MIN_SWING}
             max={MAX_SWING}
-            value={swing}
-            onChange={handleSwingChange}
-            className="swing-slider"
-            aria-label="Swing"
+            onChange={setSwing}
+            label="Swing"
+            size={56}
+            step={1}
+            largeStep={10}
           />
-          <div className="swing-labels">
-            <span onClick={() => setSwing(0)}>Str</span>
-            <span onClick={() => setSwing(50)}>Light</span>
-            <span onClick={() => setSwing(66)}>Trip</span>
-            <span onClick={() => setSwing(100)}>Heavy</span>
-          </div>
+        </div>
+        <div className="swing-presets">
+          <button onClick={() => setSwing(0)} className={swing === 0 ? 'active' : ''}>Str</button>
+          <button onClick={() => setSwing(50)} className={swing === 50 ? 'active' : ''}>Light</button>
+          <button onClick={() => setSwing(66)} className={swing === 66 ? 'active' : ''}>Trip</button>
+          <button onClick={() => setSwing(100)} className={swing === 100 ? 'active' : ''}>Heavy</button>
         </div>
       </div>
 

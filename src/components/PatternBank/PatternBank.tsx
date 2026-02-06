@@ -115,6 +115,12 @@ export function PatternBank() {
 
   return (
     <div className="pattern-bank">
+      <div className="panel-screws" aria-hidden="true">
+        <span className="screw screw-tl" />
+        <span className="screw screw-tr" />
+        <span className="screw screw-bl" />
+        <span className="screw screw-br" />
+      </div>
       <div className="pattern-bank-header">
         <h3>Patterns ({patterns.length})</h3>
         <button

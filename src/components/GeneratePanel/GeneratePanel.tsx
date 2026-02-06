@@ -8,6 +8,12 @@ export function GeneratePanel() {
 
   return (
     <div className="generate-panel">
+      <div className="panel-screws" aria-hidden="true">
+        <span className="screw screw-tl" />
+        <span className="screw screw-tr" />
+        <span className="screw screw-bl" />
+        <span className="screw screw-br" />
+      </div>
       <div className="generate-header">
         <h3>AI Generator</h3>
         <span className="pattern-count">

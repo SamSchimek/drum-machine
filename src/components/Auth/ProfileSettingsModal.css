@@ -13,20 +13,46 @@
 }
 
 .profile-settings-modal {
-  background: #1a1a1a;
+  background-color: var(--bg-surface);
+  background-image:
+    repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px
+    ),
+    url('/textures/brushed-metal-dark.jpg');
+  background-size: auto, 400px auto;
+  background-blend-mode: normal, overlay;
   border-radius: 12px;
   padding: 2rem;
   width: 100%;
   max-width: 400px;
-  border: 1px solid #333;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-subtle);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+/* Beveled edge */
+.profile-settings-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  border-top-color: rgba(255,255,255,0.08);
+  border-left-color: rgba(255,255,255,0.05);
+  pointer-events: none;
 }
 
 .profile-settings-modal h2 {
   margin: 0 0 1.5rem;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 1.25rem;
   font-weight: 600;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 
 .profile-settings-field {
@@ -35,7 +61,7 @@
 
 .profile-settings-field label {
   display: block;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
@@ -43,21 +69,30 @@
 .profile-settings-field input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: #252525;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #fff;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: 5px;
+  color: var(--text-primary);
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .profile-settings-field input:focus {
   outline: none;
-  border-color: #ff5722;
+  border-color: var(--accent-primary);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 0 2px rgba(184, 160, 210, 0.2);
+}
+
+.profile-settings-field input:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .profile-settings-field input::placeholder {
-  color: #666;
+  color: var(--text-muted);
 }
 
 .profile-settings-field-footer {
@@ -69,20 +104,20 @@
 }
 
 .profile-settings-hint {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.75rem;
   margin: 0;
   flex: 1;
 }
 
 .profile-settings-char-count {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.75rem;
   flex-shrink: 0;
 }
 
 .profile-settings-char-count.low {
-  color: #ff9800;
+  color: var(--accent-warm);
 }
 
 .profile-settings-error {
@@ -91,24 +126,45 @@
 }
 
 .profile-settings-error p {
-  color: #f44336;
+  color: var(--accent-danger);
   margin: 0 0 1rem;
 }
 
 .profile-settings-retry {
   padding: 0.5rem 1rem;
-  background: transparent;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #888;
+  background: linear-gradient(180deg,
+    rgba(50, 45, 60, 1) 0%,
+    rgba(37, 32, 48, 1) 40%,
+    rgba(26, 21, 32, 1) 100%);
+  border: 1px solid var(--border-default);
+  border-top-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .profile-settings-retry:hover {
-  border-color: #666;
-  color: #fff;
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.profile-settings-retry:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.profile-settings-retry:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .profile-settings-actions {
@@ -119,18 +175,41 @@
 
 .profile-settings-cancel {
   padding: 0.75rem 1.25rem;
-  background: transparent;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #888;
+  background: linear-gradient(180deg,
+    rgba(50, 45, 60, 1) 0%,
+    rgba(37, 32, 48, 1) 40%,
+    rgba(26, 21, 32, 1) 100%);
+  border: 1px solid var(--border-default);
+  border-top-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  color: var(--text-secondary);
   font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .profile-settings-cancel:hover:not(:disabled) {
-  border-color: #666;
-  color: #fff;
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.profile-settings-cancel:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.profile-settings-cancel:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .profile-settings-cancel:disabled {
@@ -140,18 +219,45 @@
 
 .profile-settings-save {
   padding: 0.75rem 1.25rem;
-  background: #ff5722;
-  border: none;
-  border-radius: 6px;
-  color: #fff;
+  background: linear-gradient(180deg,
+    rgba(60, 50, 80, 1) 0%,
+    rgba(42, 34, 64, 1) 40%,
+    rgba(26, 21, 37, 1) 100%);
+  border: 1px solid var(--accent-primary);
+  border-top-color: rgba(184, 160, 210, 0.5);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  color: var(--accent-primary);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.15s ease;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .profile-settings-save:hover:not(:disabled) {
-  background: #ff7043;
+  background: linear-gradient(180deg,
+    rgba(70, 60, 95, 1) 0%,
+    rgba(52, 44, 74, 1) 40%,
+    rgba(36, 31, 47, 1) 100%);
+  color: var(--accent-primary-hover);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 10px var(--accent-primary-glow);
+}
+
+.profile-settings-save:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.profile-settings-save:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .profile-settings-save:disabled {
@@ -161,21 +267,21 @@
 
 .profile-settings-message {
   padding: 0.75rem 1rem;
-  border-radius: 6px;
+  border-radius: 5px;
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
 
 .profile-settings-message.success {
-  background: rgba(76, 175, 80, 0.2);
-  color: #4caf50;
-  border: 1px solid rgba(76, 175, 80, 0.3);
+  background: rgba(138, 191, 160, 0.15);
+  color: var(--accent-success);
+  border: 1px solid rgba(138, 191, 160, 0.3);
 }
 
 .profile-settings-message.error {
-  background: rgba(244, 67, 54, 0.2);
-  color: #f44336;
-  border: 1px solid rgba(244, 67, 54, 0.3);
+  background: rgba(212, 122, 122, 0.15);
+  color: var(--accent-danger);
+  border: 1px solid rgba(212, 122, 122, 0.3);
 }
 
 @media (max-width: 600px) {

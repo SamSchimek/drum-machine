@@ -1,0 +1,93 @@
+.knob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+}
+
+.knob:active {
+  cursor: grabbing;
+}
+
+.knob:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+.knob-body {
+  width: 100%;
+  height: calc(100% - 20px);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, #444 0%, #222 40%, #111 100%);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+  position: relative;
+  border: 2px solid #1a1a1a;
+}
+
+.knob-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 40%;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  transform-origin: center bottom;
+  box-shadow: 0 0 8px var(--accent-primary-glow);
+}
+
+.knob-value {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Size variations */
+.knob[style*="width: 48px"] .knob-value {
+  font-size: 10px;
+}
+
+.knob[style*="width: 80px"] .knob-value {
+  font-size: 14px;
+}
+
+/* Hover state */
+.knob:hover .knob-body {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.knob:hover .knob-indicator {
+  box-shadow: 0 0 12px var(--accent-primary-glow);
+}
+
+/* Active/dragging state */
+.knob:active .knob-indicator,
+.knob:focus .knob-indicator {
+  background: var(--accent-primary-hover);
+  box-shadow: 0 0 16px var(--accent-primary-glow);
+}
+
+@media (max-width: 600px) {
+  .knob {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}

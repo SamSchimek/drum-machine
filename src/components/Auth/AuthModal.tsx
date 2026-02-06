@@ -101,7 +101,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSucce
         </button>
 
         <h2 id="auth-modal-title" className="auth-modal-title">
-          {mode === 'signin' ? 'Welcome back' : 'Sign Up'}
+          {mode === 'signin' ? 'Sign In' : 'Sign Up'}
         </h2>
 
         {error && (
@@ -145,7 +145,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signin', onAuthSucce
           >
             {isLoading
               ? mode === 'signin' ? 'Signing in...' : 'Signing up...'
-              : mode === 'signin' ? 'Welcome back' : 'Sign Up'
+              : mode === 'signin' ? 'Sign In' : 'Sign Up'
             }
           </button>
         </form>

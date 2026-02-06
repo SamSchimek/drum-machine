@@ -75,11 +75,11 @@ describe('AuthModal', () => {
   });
 
   describe('sign in form', () => {
-    it('shows "Welcome back" title by default', async () => {
+    it('shows "Sign In" title by default', async () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
       });
     });
 
@@ -110,7 +110,7 @@ describe('AuthModal', () => {
 
       await user.type(screen.getByLabelText(/email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/password/i), 'password123');
-      await user.click(screen.getByRole('button', { name: /^welcome back$/i }));
+      await user.click(screen.getByRole('button', { name: /^sign in$/i }));
 
       await waitFor(() => {
         expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
@@ -125,11 +125,11 @@ describe('AuthModal', () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /^welcome back$/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument();
       });
 
       // Try to submit empty form
-      await user.click(screen.getByRole('button', { name: /^welcome back$/i }));
+      await user.click(screen.getByRole('button', { name: /^sign in$/i }));
 
       // HTML5 validation should prevent submission
       expect(mockSupabase.auth.signInWithPassword).not.toHaveBeenCalled();
@@ -151,7 +151,7 @@ describe('AuthModal', () => {
 
       await user.type(screen.getByLabelText(/email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/password/i), 'wrongpassword');
-      await user.click(screen.getByRole('button', { name: /^welcome back$/i }));
+      await user.click(screen.getByRole('button', { name: /^sign in$/i }));
 
       await waitFor(() => {
         expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument();
@@ -165,7 +165,7 @@ describe('AuthModal', () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
       });
 
       await user.click(screen.getByText(/create an account/i));
@@ -178,7 +178,7 @@ describe('AuthModal', () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
       });
 
       await user.click(screen.getByText(/create an account/i));
@@ -200,7 +200,7 @@ describe('AuthModal', () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
       });
 
       await user.click(screen.getByText(/create an account/i));
@@ -228,7 +228,7 @@ describe('AuthModal', () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
       });
 
       await user.click(screen.getByText(/create an account/i));
@@ -293,7 +293,7 @@ describe('AuthModal', () => {
 
       await user.type(screen.getByLabelText(/email/i), 'test@example.com');
       await user.type(screen.getByLabelText(/password/i), 'password123');
-      await user.click(screen.getByRole('button', { name: /^welcome back$/i }));
+      await user.click(screen.getByRole('button', { name: /^sign in$/i }));
 
       // Button should show loading state
       expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
@@ -306,7 +306,7 @@ describe('AuthModal', () => {
       renderWithAuth(<AuthModal isOpen={true} onClose={mockOnClose} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Welcome back', { selector: 'h2' })).toBeInTheDocument();
+        expect(screen.getByText('Sign In', { selector: 'h2' })).toBeInTheDocument();
       });
 
       // Switch to sign up
@@ -322,7 +322,7 @@ describe('AuthModal', () => {
       await user.click(signInLink);
 
       await waitFor(() => {
-        expect(screen.getByText('Welcome back', { selector: 'h2' })).toBeInTheDocument();
+        expect(screen.getByText('Sign In', { selector: 'h2' })).toBeInTheDocument();
       });
     });
   });

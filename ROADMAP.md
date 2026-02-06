@@ -12,7 +12,7 @@
 - [x] Create ThemeContext with theme definitions
 - [x] Add theme CSS variables for each palette
 - [x] Create theme selector UI component
-- [ ] Add `theme` column to Supabase profiles table (run migration)
+- [x] Add `theme` column to Supabase profiles table
 - [x] Gate theme selection behind login (show preview, require auth to apply)
 - [x] Persist theme choice to user profile
 
@@ -69,7 +69,7 @@
 - [ ] Add integration tests for save→load→share flow
 - [ ] Debounce ML training after pattern operations
 - [ ] Handle localStorage quota exceeded
-- [ ] Centralize error logging utility
+- [x] Centralize error logging utility (logger.ts created)
 
 ### Auth Improvements
 - [ ] Password reset flow
@@ -82,3 +82,6 @@
 - [x] Tutorial fade-in animations
 - [x] Display font consistency in user menu
 - [x] Change "Welcome back" to "Sign In"
+- [x] Quick cleanup (dead code, focus traps, reduced motion)
+- [x] Theme system with 6 palettes (login-gated)
+- [x] Code review fixes (error handling, validation, DRY)

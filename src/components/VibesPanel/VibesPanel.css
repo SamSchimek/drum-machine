@@ -154,7 +154,7 @@
 }
 
 
-/* ─── Recessed well — visible cavity with gold rim ─── */
+/* ─── Recessed well — visible cavity with themed rim ─── */
 .vibes-well {
   flex: 1;
   position: relative;
@@ -163,11 +163,11 @@
   margin: 0 8px;
   border-radius: 4px;
   background: var(--bg-deepest);
-  border: 1px solid rgba(160,130,60,0.2);
+  border: 1px solid var(--accent-primary-dim);
   box-shadow:
     inset 0 2px 8px rgba(0,0,0,0.6),
     inset 0 -1px 4px rgba(0,0,0,0.3),
-    0 1px 0 rgba(212,175,95,0.08);
+    0 1px 0 var(--accent-primary-dim);
 }
 
 
@@ -191,7 +191,7 @@
   width: 100%;
 }
 
-/* Recessed circular well for each knob — gold rim */
+/* Recessed circular well for each knob — themed rim */
 .vibes-knob-well {
   position: relative;
   display: flex;
@@ -204,8 +204,8 @@
   box-shadow:
     inset 0 2px 6px rgba(0,0,0,0.5),
     inset 0 -1px 2px rgba(255,255,255,0.02),
-    0 1px 0 rgba(212,175,95,0.1),
-    0 0 0 0.5px rgba(160,130,60,0.15);
+    0 1px 0 var(--accent-primary-dim),
+    0 0 0 0.5px var(--accent-primary-dim);
 }
 
 /* Theme-colored backlight glow — behind the knob */
@@ -230,6 +230,23 @@
   z-index: 1;
 }
 
+/* Theme tint overlay on sprite knobs — shifts hue to match current theme */
+.vibes-knob-well .knob-sprite {
+  position: relative;
+}
+
+.vibes-knob-well .knob-sprite::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  mix-blend-mode: color;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* Glow on when effect is active (non-zero), brighter on hover/drag */
 .vibes-knob-well.lit .vibes-knob-glow {
   opacity: 0.6;
@@ -251,7 +268,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: rgba(212,175,95,0.3);
+  color: var(--text-tertiary);
   line-height: 1;
 }
 
@@ -354,7 +371,7 @@
 
 /* ─── Knob scaling — compensate for different sprite visual sizes ─── */
 .vibes-knob-well.warmth .knob {
-  transform: scale(1.25);
+  transform: scale(1.4);
 }
 
 .vibes-knob-well.lofi .knob {

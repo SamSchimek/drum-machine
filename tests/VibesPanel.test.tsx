@@ -67,4 +67,26 @@ describe('VibesPanel', () => {
       expect(slider.getAttribute('aria-valuenow')).toBe('0');
     }
   });
+
+  it('renders reverb mode toggle with I and II labels', () => {
+    renderWithProviders();
+    const door = screen.getByRole('button', { name: /vibes/i });
+    act(() => { door.click(); });
+    const toggle = screen.getByRole('button', { name: /reverb mode/i });
+    expect(toggle).toBeInTheDocument();
+    expect(screen.getByText('I')).toBeInTheDocument();
+    expect(screen.getByText('II')).toBeInTheDocument();
+  });
+
+  it('clicking reverb mode toggle switches from room to hall', () => {
+    renderWithProviders();
+    const door = screen.getByRole('button', { name: /vibes/i });
+    act(() => { door.click(); });
+    const toggle = screen.getByRole('button', { name: /reverb mode/i });
+    // Default is room (I)
+    expect(toggle.getAttribute('aria-label')).toContain('I');
+    act(() => { toggle.click(); });
+    // Now hall (II)
+    expect(toggle.getAttribute('aria-label')).toContain('II');
+  });
 });

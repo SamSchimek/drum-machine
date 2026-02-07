@@ -133,19 +133,14 @@
   box-shadow:
     0 2px 4px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    0 0 8px var(--accent-primary-glow);
+    inset 0 -1px 0 rgba(0,0,0,0.3);
 }
 
-/* Hover — handle brightens */
+/* Hover — subtle brighten, no glow */
 .vibes-header:hover .vibes-latch-bar {
   background:
     linear-gradient(180deg,
-      #ccc 0%, #aaa 20%, #888 50%, #777 80%, #666 100%);
-  box-shadow:
-    0 2px 5px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.5),
-    inset 0 -1px 0 rgba(0,0,0,0.3);
+      #bbb 0%, #999 20%, #777 50%, #666 80%, #555 100%);
 }
 
 /* Active — pressed in */
@@ -159,7 +154,7 @@
 }
 
 
-/* ─── Recessed well — visible cavity in the panel ─── */
+/* ─── Recessed well — visible cavity with gold rim ─── */
 .vibes-well {
   flex: 1;
   position: relative;
@@ -168,11 +163,11 @@
   margin: 0 8px;
   border-radius: 4px;
   background: var(--bg-deepest);
-  border: 1px solid rgba(0,0,0,0.4);
+  border: 1px solid rgba(160,130,60,0.2);
   box-shadow:
     inset 0 2px 8px rgba(0,0,0,0.6),
     inset 0 -1px 4px rgba(0,0,0,0.3),
-    0 1px 0 rgba(255,255,255,0.04);
+    0 1px 0 rgba(212,175,95,0.08);
 }
 
 
@@ -181,10 +176,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 2px;
-  padding: 4px 6px;
-  height: 100%;
+  justify-content: flex-start;
+  gap: 32px;
+  padding: 16px 6px;
   position: relative;
   z-index: 1; /* Below door (z-index: 3) */
 }
@@ -197,7 +191,7 @@
   width: 100%;
 }
 
-/* Recessed circular well for each knob */
+/* Recessed circular well for each knob — gold rim */
 .vibes-knob-well {
   position: relative;
   display: flex;
@@ -210,7 +204,8 @@
   box-shadow:
     inset 0 2px 6px rgba(0,0,0,0.5),
     inset 0 -1px 2px rgba(255,255,255,0.02),
-    0 1px 0 rgba(255,255,255,0.03);
+    0 1px 0 rgba(212,175,95,0.1),
+    0 0 0 0.5px rgba(160,130,60,0.15);
 }
 
 /* Theme-colored backlight glow — behind the knob */
@@ -256,12 +251,13 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--text-tertiary);
+  color: rgba(212,175,95,0.3);
   line-height: 1;
 }
 
 
 /* ─── Bypass toggle — hardware insert button ─── */
+/* IN state (default) — pressed into the panel */
 .vibes-bypass {
   display: flex;
   align-items: center;
@@ -271,26 +267,50 @@
   height: 22px;
   margin-bottom: 2px;
   padding: 0 8px;
-  border: 1px solid rgba(0,0,0,0.5);
+  border: 1px solid rgba(0,0,0,0.6);
   border-radius: 4px;
   cursor: pointer;
   background:
-    linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #151515 100%);
+    linear-gradient(180deg, #151515 0%, #111 50%, #0d0d0d 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    0 1px 3px rgba(0,0,0,0.4);
+    inset 0 2px 4px rgba(0,0,0,0.7),
+    inset 0 -1px 0 rgba(255,255,255,0.02),
+    0 1px 0 rgba(255,255,255,0.04);
   flex-shrink: 0;
 }
 
 .vibes-bypass:hover {
   background:
-    linear-gradient(180deg, #333 0%, #222 50%, #1a1a1a 100%);
+    linear-gradient(180deg, #1a1a1a 0%, #141414 50%, #101010 100%);
 }
 
 .vibes-bypass:active {
   background:
-    linear-gradient(180deg, #1a1a1a 0%, #111 50%, #0a0a0a 100%);
+    linear-gradient(180deg, #111 0%, #0d0d0d 50%, #080808 100%);
+  box-shadow:
+    inset 0 3px 5px rgba(0,0,0,0.8),
+    0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* OUT state — raised, popped out of the panel */
+.vibes-bypass.bypassed {
+  background:
+    linear-gradient(180deg, #2a2a2a 0%, #1e1e1e 50%, #181818 100%);
+  border-color: rgba(0,0,0,0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 2px 4px rgba(0,0,0,0.5);
+}
+
+.vibes-bypass.bypassed:hover {
+  background:
+    linear-gradient(180deg, #333 0%, #262626 50%, #1e1e1e 100%);
+}
+
+.vibes-bypass.bypassed:active {
+  background:
+    linear-gradient(180deg, #1a1a1a 0%, #141414 50%, #101010 100%);
   box-shadow:
     inset 0 2px 4px rgba(0,0,0,0.6),
     0 1px 0 rgba(255,255,255,0.03);
@@ -329,6 +349,82 @@
 
 .vibes-bypass.bypassed .vibes-bypass-label {
   color: var(--text-tertiary);
+}
+
+
+/* ─── Knob scaling — compensate for different sprite visual sizes ─── */
+.vibes-knob-well.warmth .knob {
+  transform: scale(1.25);
+}
+
+.vibes-knob-well.lofi .knob {
+  transform: scale(1.08);
+}
+
+
+/* ─── Reverb mode toggle — I / II ─── */
+.vibes-reverb-mode {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.vibes-reverb-mode:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+.vibes-reverb-mode-label {
+  font-family: var(--font-display);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.vibes-reverb-mode-label.active {
+  color: var(--text-secondary);
+}
+
+.vibes-reverb-mode-track {
+  width: 20px;
+  height: 10px;
+  border-radius: 5px;
+  background:
+    linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 40%, #111 100%);
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,0.8),
+    inset 0 -1px 1px rgba(255,255,255,0.04),
+    0 1px 0 rgba(255,255,255,0.05);
+  border: 1px solid rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.vibes-reverb-mode-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 8px;
+  height: 6px;
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, #aaa 0%, #777 50%, #555 100%);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: left 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vibes-reverb-mode.hall .vibes-reverb-mode-thumb {
+  left: 9px;
 }
 
 

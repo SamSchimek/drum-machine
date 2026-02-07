@@ -19,7 +19,10 @@ export class VibesEffects {
   private reverbOutput: GainNode;
   private dryGain: GainNode;
   private wetGain: GainNode;
-  private convolver: ConvolverNode;
+  private roomConvolver: ConvolverNode;
+  private hallConvolver: ConvolverNode;
+  private roomGain: GainNode;
+  private hallGain: GainNode;
 
   // Warmth nodes
   private warmthShaper: WaveShaperNode;
@@ -46,15 +49,24 @@ export class VibesEffects {
     this.inputNode.connect(this.bypassGain);
     this.bypassGain.connect(this.outputNode);
 
-    // --- Reverb (parallel dry/wet) ---
+    // --- Reverb (parallel dry/wet with dual convolvers) ---
     this.reverbInput = ctx.createGain();
     this.reverbOutput = ctx.createGain();
     this.dryGain = ctx.createGain();
     this.wetGain = ctx.createGain();
-    this.convolver = ctx.createConvolver();
 
-    // Build impulse response
-    this.convolver.buffer = this.createImpulseResponse(2, 2);
+    // Dual convolvers: room (short) and hall (long)
+    this.roomConvolver = ctx.createConvolver();
+    this.hallConvolver = ctx.createConvolver();
+    this.roomGain = ctx.createGain();
+    this.hallGain = ctx.createGain();
+
+    this.roomConvolver.buffer = this.createImpulseResponse(1.0, 2, 0.35, 0);
+    this.hallConvolver.buffer = this.createImpulseResponse(2, 2, 0.5, 0);
+
+    // Default: room active
+    this.roomGain.gain.value = 1;
+    this.hallGain.gain.value = 0;
 
     // Effect path: input → reverbInput → ... → effectGain → output
     this.inputNode.connect(this.reverbInput);
@@ -63,9 +75,15 @@ export class VibesEffects {
     this.reverbInput.connect(this.dryGain);
     this.dryGain.connect(this.reverbOutput);
 
-    // wet path
-    this.reverbInput.connect(this.convolver);
-    this.convolver.connect(this.wetGain);
+    // wet path: reverbInput → both convolvers → respective gains → wetGain
+    this.reverbInput.connect(this.roomConvolver);
+    this.roomConvolver.connect(this.roomGain);
+    this.roomGain.connect(this.wetGain);
+
+    this.reverbInput.connect(this.hallConvolver);
+    this.hallConvolver.connect(this.hallGain);
+    this.hallGain.connect(this.wetGain);
+
     this.wetGain.connect(this.reverbOutput);
 
     // Send architecture: dry always 100%, knob controls wet level
@@ -125,10 +143,17 @@ export class VibesEffects {
     return this.bypassed;
   }
 
+  setReverbMode(mode: 'room' | 'hall'): void {
+    const now = this.ctx.currentTime;
+    const tau = 0.005; // ~15ms crossfade
+    this.roomGain.gain.setTargetAtTime(mode === 'room' ? 1 : 0, now, tau);
+    this.hallGain.gain.setTargetAtTime(mode === 'hall' ? 1 : 0, now, tau);
+  }
+
   setReverb(value: number): void {
     const v = Math.max(0, Math.min(100, value)) / 100;
     // Send style: dry always at 100%, knob controls reverb send level
-    this.wetGain.gain.value = v * 0.7;
+    this.wetGain.gain.value = v;
   }
 
   setWarmth(value: number): void {
@@ -138,7 +163,7 @@ export class VibesEffects {
     this.warmthFilter.gain.value = v * 6; // 0 to +6 dB low-shelf
     // Compensate: saturation boosts RMS, shelf adds low-end energy
     // Reduce output proportionally to keep perceived volume stable
-    this.warmthMakeup.gain.value = 1 / (1 + v * 0.6);
+    this.warmthMakeup.gain.value = 1 / (1 + v * 1.0);
   }
 
   setLofi(value: number): void {
@@ -159,7 +184,10 @@ export class VibesEffects {
     this.outputNode.disconnect();
     this.reverbInput.disconnect();
     this.dryGain.disconnect();
-    this.convolver.disconnect();
+    this.roomConvolver.disconnect();
+    this.hallConvolver.disconnect();
+    this.roomGain.disconnect();
+    this.hallGain.disconnect();
     this.wetGain.disconnect();
     this.reverbOutput.disconnect();
     this.warmthShaper.disconnect();
@@ -170,13 +198,21 @@ export class VibesEffects {
     this.lofiMakeup.disconnect();
   }
 
-  private createImpulseResponse(duration: number, channels: number): AudioBuffer {
+  private createImpulseResponse(duration: number, channels: number, decay: number, damping = 0): AudioBuffer {
     const length = this.ctx.sampleRate * duration;
     const buffer = this.ctx.createBuffer(channels, length, this.ctx.sampleRate);
+    // damping: 0 = bright (no filtering), 1 = very dark
+    // Single-pole lowpass coefficient: higher = more HF rolloff
+    const coeff = Math.max(0, Math.min(0.995, damping));
     for (let ch = 0; ch < channels; ch++) {
       const data = buffer.getChannelData(ch);
+      let prev = 0;
       for (let i = 0; i < length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.5));
+        const noise = Math.random() * 2 - 1;
+        // Apply single-pole lowpass: y[n] = coeff * y[n-1] + (1 - coeff) * x[n]
+        const filtered = coeff * prev + (1 - coeff) * noise;
+        prev = filtered;
+        data[i] = filtered * Math.exp(-i / (this.ctx.sampleRate * decay));
       }
     }
     return buffer;

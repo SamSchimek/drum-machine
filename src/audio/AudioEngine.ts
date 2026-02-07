@@ -138,6 +138,10 @@ export class AudioEngine {
     this.vibesEffects?.setLofi(value);
   }
 
+  setReverbMode(mode: 'room' | 'hall'): void {
+    this.vibesEffects?.setReverbMode(mode);
+  }
+
   setVibesBypassed(bypassed: boolean): void {
     this.vibesEffects?.setBypassed(bypassed);
   }

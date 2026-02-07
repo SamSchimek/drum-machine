@@ -4,7 +4,7 @@ import { Knob } from '../Knob/Knob';
 import './VibesPanel.css';
 
 export function VibesPanel() {
-  const { reverb, warmth, lofi, vibesOpen, vibesBypassed, setReverb, setWarmth, setLofi, setVibesOpen, setVibesBypassed } = useDrumMachine();
+  const { reverb, warmth, lofi, vibesOpen, vibesBypassed, reverbMode, setReverb, setWarmth, setLofi, setVibesOpen, setVibesBypassed, setReverbMode } = useDrumMachine();
   const toggleLock = useRef(false);
 
   const toggle = () => {
@@ -59,16 +59,27 @@ export function VibesPanel() {
               <Knob value={reverb} min={0} max={100} onChange={setReverb} label="Reverb" size={46} spriteSheet="/knobs/Credence_128.png" />
             </div>
             <span className="vibes-knob-label">Reverb</span>
+            <button
+              className={`vibes-reverb-mode${reverbMode === 'hall' ? ' hall' : ''}`}
+              onClick={() => setReverbMode(reverbMode === 'room' ? 'hall' : 'room')}
+              aria-label={`Reverb mode: ${reverbMode === 'room' ? 'I' : 'II'}`}
+            >
+              <span className={`vibes-reverb-mode-label${reverbMode === 'room' ? ' active' : ''}`}>I</span>
+              <span className="vibes-reverb-mode-track">
+                <span className="vibes-reverb-mode-thumb" />
+              </span>
+              <span className={`vibes-reverb-mode-label${reverbMode === 'hall' ? ' active' : ''}`}>II</span>
+            </button>
           </div>
           <div className="vibes-knob-group">
-            <div className={`vibes-knob-well${warmth > 0 ? ' lit' : ''}`}>
+            <div className={`vibes-knob-well warmth${warmth > 0 ? ' lit' : ''}`}>
               <div className="vibes-knob-glow" />
               <Knob value={warmth} min={0} max={100} onChange={setWarmth} label="Warmth" size={46} spriteSheet="/knobs/Bluesbreaker_128.png" />
             </div>
             <span className="vibes-knob-label">Warmth</span>
           </div>
           <div className="vibes-knob-group">
-            <div className={`vibes-knob-well${lofi > 0 ? ' lit' : ''}`}>
+            <div className={`vibes-knob-well lofi${lofi > 0 ? ' lit' : ''}`}>
               <div className="vibes-knob-glow" />
               <Knob value={lofi} min={0} max={100} onChange={setLofi} label="Lo-fi" size={46} spriteSheet="/knobs/FStyle_128.png" />
             </div>

@@ -370,11 +370,11 @@
 
 
 /* ─── Knob scaling — compensate for different sprite visual sizes ─── */
-.vibes-knob-well.warmth .knob {
+.vibes-knob-well.warmth .knob-sprite-img {
   transform: scale(1.4);
 }
 
-.vibes-knob-well.lofi .knob {
+.vibes-knob-well.lofi .knob-sprite-img {
   transform: scale(1.08);
 }
 

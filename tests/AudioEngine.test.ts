@@ -47,4 +47,26 @@ describe('AudioEngine', () => {
     await engine.initialize();
     expect(engine.context).toBe(context);
   });
+
+  describe('vibes effects', () => {
+    it('setReverb/setWarmth/setLofi are null-safe before initialization', () => {
+      expect(() => engine.setReverb(50)).not.toThrow();
+      expect(() => engine.setWarmth(50)).not.toThrow();
+      expect(() => engine.setLofi(50)).not.toThrow();
+    });
+
+    it('setReverb/setWarmth/setLofi work after initialization', async () => {
+      await engine.initialize();
+      expect(() => engine.setReverb(50)).not.toThrow();
+      expect(() => engine.setWarmth(50)).not.toThrow();
+      expect(() => engine.setLofi(50)).not.toThrow();
+    });
+
+    it('cleans up vibes effects on dispose', async () => {
+      await engine.initialize();
+      engine.dispose();
+      // Should be null-safe after dispose
+      expect(() => engine.setReverb(50)).not.toThrow();
+    });
+  });
 });

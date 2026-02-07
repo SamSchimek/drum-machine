@@ -123,6 +123,19 @@
   min-width: 0;
 }
 
+.sequencer-content {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+.sequencer-content > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -153,6 +166,10 @@
   .app-main {
     flex-direction: column;
     padding: 16px;
+  }
+
+  .sequencer-content {
+    flex-direction: column;
   }
 
   .sidebar {

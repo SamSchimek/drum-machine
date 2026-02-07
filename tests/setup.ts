@@ -90,6 +90,7 @@ class MockAudioContext {
     return {
       gain: { value: 1, setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
       connect: vi.fn(),
+      disconnect: vi.fn(),
     };
   }
 
@@ -98,7 +99,9 @@ class MockAudioContext {
       type: 'lowpass',
       frequency: { value: 350 },
       Q: { value: 1 },
+      gain: { value: 0 },
       connect: vi.fn(),
+      disconnect: vi.fn(),
     };
   }
 
@@ -111,6 +114,14 @@ class MockAudioContext {
       release: { value: 0.25 },
       connect: vi.fn(),
     };
+  }
+
+  createConvolver() {
+    return { buffer: null, connect: vi.fn(), disconnect: vi.fn() };
+  }
+
+  createWaveShaper() {
+    return { curve: null, oversample: 'none', connect: vi.fn(), disconnect: vi.fn() };
   }
 
   createBuffer(channels: number, length: number, sampleRate: number) {

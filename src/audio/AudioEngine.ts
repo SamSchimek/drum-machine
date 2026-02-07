@@ -1,4 +1,5 @@
 import type { TrackId, DrumSynth } from '../types';
+import { VibesEffects } from './VibesEffects';
 import {
   Kick,
   Snare,
@@ -19,6 +20,7 @@ export class AudioEngine {
   synths: Map<TrackId, DrumSynth> = new Map();
   private masterGain: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
+  private vibesEffects: VibesEffects | null = null;
   private unlocked = false;
 
   /**
@@ -77,7 +79,9 @@ export class AudioEngine {
     this.masterGain = this.context.createGain();
     this.masterGain.gain.value = 0.8;
 
-    this.compressor.connect(this.masterGain);
+    this.vibesEffects = new VibesEffects(this.context);
+    this.compressor.connect(this.vibesEffects.getInput());
+    this.vibesEffects.connect(this.masterGain);
     this.masterGain.connect(this.context.destination);
 
     // Initialize all synths
@@ -122,19 +126,34 @@ export class AudioEngine {
     }
   }
 
+  setReverb(value: number): void {
+    this.vibesEffects?.setReverb(value);
+  }
+
+  setWarmth(value: number): void {
+    this.vibesEffects?.setWarmth(value);
+  }
+
+  setLofi(value: number): void {
+    this.vibesEffects?.setLofi(value);
+  }
+
   dispose(): void {
     for (const synth of this.synths.values()) {
       synth.dispose();
     }
     this.synths.clear();
 
+    // Disconnect all nodes BEFORE closing context
+    this.vibesEffects?.dispose();
+    this.vibesEffects = null;
+    this.masterGain = null;
+    this.compressor = null;
+
     if (this.context) {
       this.context.close();
       this.context = null;
     }
-
-    this.masterGain = null;
-    this.compressor = null;
   }
 }
 

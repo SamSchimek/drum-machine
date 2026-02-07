@@ -42,7 +42,7 @@ describe('TutorialPrompt', () => {
     });
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText('Welcome to 808 Drum Machine')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to YOUCANGROOVE')).toBeInTheDocument();
   });
 
   it('dismisses on Escape key', () => {
@@ -124,6 +124,6 @@ describe('TutorialPrompt', () => {
 
     // Before the delay
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.queryByText('Welcome to 808 Drum Machine')).not.toBeInTheDocument();
+    expect(screen.queryByText('Welcome to YOUCANGROOVE')).not.toBeInTheDocument();
   });
 });

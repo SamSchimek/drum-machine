@@ -85,6 +85,15 @@
   box-shadow: 0 0 16px var(--accent-primary-glow);
 }
 
+/* Sprite-based knob */
+.knob-sprite .knob-sprite-img {
+  image-rendering: auto;
+}
+
+.knob-sprite .knob-value {
+  font-size: 9px;
+}
+
 @media (max-width: 600px) {
   .knob {
     min-width: 48px;

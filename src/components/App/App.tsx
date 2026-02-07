@@ -7,6 +7,7 @@ import { GeneratePanel } from '../GeneratePanel';
 import { UserMenu, MigrationBanner } from '../Auth';
 import { ThemeSelector } from '../ThemeSelector';
 import { TutorialOverlay, TutorialPrompt } from '../Tutorial';
+import { VibesPanel } from '../VibesPanel';
 import './App.css';
 
 function HelpButton() {
@@ -38,7 +39,7 @@ export function App() {
         <div className="app">
           <header className="app-header">
             <div className="header-left">
-              <h1>808 Drum Machine</h1>
+              <h1>YOUCANGROOVE</h1>
               <span className="subtitle">Web Audio + Markov Chain Pattern Generation</span>
             </div>
             <div className="header-right">
@@ -51,7 +52,10 @@ export function App() {
           <main className="app-main">
             <div className="sequencer-section">
               <Transport />
-              <Grid />
+              <div className="sequencer-content">
+                <Grid />
+                <VibesPanel />
+              </div>
             </div>
 
             <aside className="sidebar">

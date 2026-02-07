@@ -57,7 +57,7 @@ export function TutorialPrompt() {
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="tutorial-prompt-title">Welcome to 808 Drum Machine</h2>
+        <h2 id="tutorial-prompt-title">Welcome to YOUCANGROOVE</h2>
         <p id="tutorial-prompt-description">Would you like a quick tour of the features?</p>
         <div className="tutorial-prompt-buttons">
           <button

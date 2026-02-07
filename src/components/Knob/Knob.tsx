@@ -10,6 +10,11 @@ export interface KnobProps {
   label?: string;
   step?: number;
   largeStep?: number;
+  className?: string;
+  /** Path to a vertical sprite strip image (e.g. from JSAudioKnobs) */
+  spriteSheet?: string;
+  /** Number of frames in the sprite strip (default 51) */
+  spriteFrames?: number;
 }
 
 export function Knob({
@@ -21,6 +26,9 @@ export function Knob({
   label,
   step = 1,
   largeStep = 10,
+  className,
+  spriteSheet,
+  spriteFrames = 51,
 }: KnobProps) {
   const knobRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef<number | null>(null);
@@ -145,6 +153,11 @@ export function Knob({
     };
   }, [handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
+  // Sprite frame calculation: map normalized value to frame index
+  const frameIndex = spriteSheet
+    ? Math.round(normalized * (spriteFrames - 1))
+    : 0;
+
   return (
     <div
       ref={knobRef}
@@ -154,18 +167,31 @@ export function Knob({
       aria-valuemin={min}
       aria-valuemax={max}
       aria-label={label}
-      className="knob"
+      className={`knob${className ? ` ${className}` : ''}${spriteSheet ? ' knob-sprite' : ''}`}
       style={{ width: size, height: size }}
       onKeyDown={handleKeyDown}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
-      <div className="knob-body">
+      {spriteSheet ? (
         <div
-          className="knob-indicator"
-          style={{ transform: `rotate(${rotation}deg)` }}
+          className="knob-sprite-img"
+          style={{
+            width: size,
+            height: size,
+            backgroundImage: `url(${spriteSheet})`,
+            backgroundPosition: `0 ${-frameIndex * size}px`,
+            backgroundSize: `${size}px auto`,
+          }}
         />
-      </div>
+      ) : (
+        <div className="knob-body">
+          <div
+            className="knob-indicator"
+            style={{ transform: `rotate(${rotation}deg)` }}
+          />
+        </div>
+      )}
       <div className="knob-value">{value}</div>
     </div>
   );

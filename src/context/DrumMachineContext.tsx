@@ -34,6 +34,10 @@ interface DrumMachineState {
   patternsLoading: boolean;
   patternError: string | null;
   lastStarterBeat: string | null;
+  reverb: number;
+  warmth: number;
+  lofi: number;
+  vibesOpen: boolean;
 }
 
 type Action =
@@ -50,7 +54,11 @@ type Action =
   | { type: 'TOGGLE_MUTE'; trackId: TrackId }
   | { type: 'SET_PATTERNS_LOADING'; loading: boolean }
   | { type: 'SET_PATTERN_ERROR'; error: string | null }
-  | { type: 'LOAD_STARTER_BEAT'; grid: GridState; beatName: string };
+  | { type: 'LOAD_STARTER_BEAT'; grid: GridState; beatName: string }
+  | { type: 'SET_REVERB'; value: number }
+  | { type: 'SET_WARMTH'; value: number }
+  | { type: 'SET_LOFI'; value: number }
+  | { type: 'SET_VIBES_OPEN'; open: boolean };
 
 const initialState: DrumMachineState = {
   grid: createEmptyGrid(),
@@ -65,6 +73,10 @@ const initialState: DrumMachineState = {
   patternsLoading: true,
   patternError: null,
   lastStarterBeat: null,
+  reverb: 0,
+  warmth: 0,
+  lofi: 0,
+  vibesOpen: false,
 };
 
 function reducer(state: DrumMachineState, action: Action): DrumMachineState {
@@ -104,6 +116,14 @@ function reducer(state: DrumMachineState, action: Action): DrumMachineState {
       return { ...state, patternError: action.error };
     case 'LOAD_STARTER_BEAT':
       return { ...state, grid: action.grid, lastStarterBeat: action.beatName };
+    case 'SET_REVERB':
+      return { ...state, reverb: Math.max(0, Math.min(100, action.value)) };
+    case 'SET_WARMTH':
+      return { ...state, warmth: Math.max(0, Math.min(100, action.value)) };
+    case 'SET_LOFI':
+      return { ...state, lofi: Math.max(0, Math.min(100, action.value)) };
+    case 'SET_VIBES_OPEN':
+      return { ...state, vibesOpen: action.open };
     default:
       return state;
   }
@@ -132,6 +152,10 @@ interface DrumMachineContextValue extends DrumMachineState {
   makePatternPrivate: (id: string) => Promise<boolean>;
   refreshPatterns: () => Promise<void>;
   loadStarterBeat: () => void;
+  setReverb: (value: number) => void;
+  setWarmth: (value: number) => void;
+  setLofi: (value: number) => void;
+  setVibesOpen: (open: boolean) => void;
 }
 
 const DrumMachineContext = createContext<DrumMachineContextValue | null>(null);
@@ -445,6 +469,27 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     await loadPatterns();
   }, [loadPatterns]);
 
+  const setReverb = useCallback((value: number) => {
+    dispatch({ type: 'SET_REVERB', value });
+  }, []);
+
+  const setWarmth = useCallback((value: number) => {
+    dispatch({ type: 'SET_WARMTH', value });
+  }, []);
+
+  const setLofi = useCallback((value: number) => {
+    dispatch({ type: 'SET_LOFI', value });
+  }, []);
+
+  const setVibesOpen = useCallback((open: boolean) => {
+    dispatch({ type: 'SET_VIBES_OPEN', open });
+  }, []);
+
+  // Sync vibes effects with audio engine
+  useEffect(() => { audioEngine.setReverb(state.reverb); }, [state.reverb]);
+  useEffect(() => { audioEngine.setWarmth(state.warmth); }, [state.warmth]);
+  useEffect(() => { audioEngine.setLofi(state.lofi); }, [state.lofi]);
+
   const loadStarterBeat = useCallback(() => {
     const beat = getRandomStarterBeat(state.lastStarterBeat);
     dispatch({ type: 'LOAD_STARTER_BEAT', grid: beat.grid, beatName: beat.name });
@@ -474,6 +519,10 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     makePatternPrivate,
     refreshPatterns,
     loadStarterBeat,
+    setReverb,
+    setWarmth,
+    setLofi,
+    setVibesOpen,
   };
 
   return (

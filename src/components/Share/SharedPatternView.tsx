@@ -190,7 +190,7 @@ export function SharedPatternView() {
         <PatternGrid grid={pattern.grid} currentStep={currentStep} />
 
         <footer className="shared-pattern-footer">
-          <p>Created with 808 Drum Machine</p>
+          <p>Created with YOUCANGROOVE</p>
           <Link to="/" className="shared-pattern-cta">
             Create Your Own Pattern
           </Link>

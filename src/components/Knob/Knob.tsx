@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 import './Knob.css';
 
 export interface KnobProps {
@@ -33,6 +33,7 @@ export function Knob({
   const knobRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef<number | null>(null);
   const dragStartValue = useRef<number>(value);
+  const [isDragging, setIsDragging] = useState(false);
 
   const clamp = useCallback(
     (val: number) => Math.min(max, Math.max(min, val)),
@@ -84,6 +85,7 @@ export function Knob({
       e.preventDefault();
       dragStartY.current = e.clientY;
       dragStartValue.current = value;
+      setIsDragging(true);
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     },
@@ -106,6 +108,7 @@ export function Knob({
 
   const handleMouseUp = useCallback(() => {
     dragStartY.current = null;
+    setIsDragging(false);
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
   }, [handleMouseMove]);
@@ -115,6 +118,7 @@ export function Knob({
       const touch = e.touches[0];
       dragStartY.current = touch.clientY;
       dragStartValue.current = value;
+      setIsDragging(true);
       document.addEventListener('touchmove', handleTouchMove, { passive: false });
       document.addEventListener('touchend', handleTouchEnd);
     },
@@ -139,6 +143,7 @@ export function Knob({
 
   const handleTouchEnd = useCallback(() => {
     dragStartY.current = null;
+    setIsDragging(false);
     document.removeEventListener('touchmove', handleTouchMove);
     document.removeEventListener('touchend', handleTouchEnd);
   }, [handleTouchMove]);
@@ -167,7 +172,7 @@ export function Knob({
       aria-valuemin={min}
       aria-valuemax={max}
       aria-label={label}
-      className={`knob${className ? ` ${className}` : ''}${spriteSheet ? ' knob-sprite' : ''}`}
+      className={`knob${className ? ` ${className}` : ''}${spriteSheet ? ' knob-sprite' : ''}${isDragging ? ' knob-active' : ''}`}
       style={{ width: size, height: size }}
       onKeyDown={handleKeyDown}
       onMouseDown={handleMouseDown}

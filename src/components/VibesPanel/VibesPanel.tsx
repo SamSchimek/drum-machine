@@ -36,21 +36,21 @@ export function VibesPanel() {
         {/* @ts-expect-error inert is valid HTML but missing from React types */}
         <div className="vibes-knobs" data-testid="vibes-knobs" aria-hidden={!vibesOpen} inert={!vibesOpen ? '' : undefined}>
           <div className="vibes-knob-group">
-            <div className="vibes-knob-well">
+            <div className={`vibes-knob-well${reverb > 0 ? ' lit' : ''}`}>
               <div className="vibes-knob-glow" />
               <Knob value={reverb} min={0} max={100} onChange={setReverb} label="Reverb" size={46} spriteSheet="/knobs/Credence_128.png" />
             </div>
             <span className="vibes-knob-label">Reverb</span>
           </div>
           <div className="vibes-knob-group">
-            <div className="vibes-knob-well">
+            <div className={`vibes-knob-well${warmth > 0 ? ' lit' : ''}`}>
               <div className="vibes-knob-glow" />
               <Knob value={warmth} min={0} max={100} onChange={setWarmth} label="Warmth" size={46} spriteSheet="/knobs/Bluesbreaker_128.png" />
             </div>
             <span className="vibes-knob-label">Warmth</span>
           </div>
           <div className="vibes-knob-group">
-            <div className="vibes-knob-well">
+            <div className={`vibes-knob-well${lofi > 0 ? ' lit' : ''}`}>
               <div className="vibes-knob-glow" />
               <Knob value={lofi} min={0} max={100} onChange={setLofi} label="Lo-fi" size={46} spriteSheet="/knobs/FStyle_128.png" />
             </div>

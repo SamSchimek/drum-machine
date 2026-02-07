@@ -213,23 +213,36 @@
     0 1px 0 rgba(255,255,255,0.03);
 }
 
-/* Theme-colored glow behind knob */
+/* Theme-colored backlight glow — behind the knob */
 .vibes-knob-glow {
   position: absolute;
-  inset: 2px;
+  inset: 0;
   border-radius: 50%;
   background: radial-gradient(
     circle,
     var(--accent-primary-glow) 0%,
-    transparent 70%
+    transparent 65%
   );
-  opacity: 0.4;
+  opacity: 0.3;
   pointer-events: none;
+  z-index: 0;
   transition: opacity 0.15s ease;
 }
 
-.vibes-knob-well:hover .vibes-knob-glow {
-  opacity: 0.9;
+/* Knob sits above the glow */
+.vibes-knob-well .knob {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glow on when effect is active (non-zero), brighter on hover/drag */
+.vibes-knob-well.lit .vibes-knob-glow {
+  opacity: 0.6;
+}
+
+.vibes-knob-well:hover .vibes-knob-glow,
+.vibes-knob-well:has(.knob-active) .vibes-knob-glow {
+  opacity: 1;
 }
 
 /* Hide numeric value — labels are enough */

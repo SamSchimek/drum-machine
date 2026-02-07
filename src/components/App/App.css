@@ -1,5 +1,6 @@
 .app {
   height: 100vh;
+  height: 100dvh;
   background: var(--bg-deepest);
   color: var(--text-primary);
   display: flex;

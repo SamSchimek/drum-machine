@@ -179,6 +179,23 @@ export const THEMES: Record<ThemeId, Theme> = {
 
 export const THEME_IDS = Object.keys(THEMES) as ThemeId[];
 const DEFAULT_THEME: ThemeId = 'bloom';
+const THEME_CACHE_KEY = 'drum-machine-theme';
+
+function getCachedTheme(): ThemeId {
+  try {
+    const cached = localStorage.getItem(THEME_CACHE_KEY);
+    if (cached && isValidThemeId(cached)) return cached;
+  } catch { /* localStorage unavailable */ }
+  return DEFAULT_THEME;
+}
+
+function cacheTheme(id: ThemeId) {
+  try { localStorage.setItem(THEME_CACHE_KEY, id); } catch { /* ignore */ }
+}
+
+function clearCachedTheme() {
+  try { localStorage.removeItem(THEME_CACHE_KEY); } catch { /* ignore */ }
+}
 
 export function isValidThemeId(id: string): id is ThemeId {
   return THEME_IDS.includes(id as ThemeId);
@@ -377,8 +394,14 @@ export function applyThemeToDOM(theme: Theme) {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [themeId, setThemeId] = useState<ThemeId>(DEFAULT_THEME);
+  const [themeId, setThemeId] = useState<ThemeId>(getCachedTheme);
   const loadingRef = useRef(false);
+
+  // Apply cached theme immediately on mount (before Supabase fetch)
+  useEffect(() => {
+    applyThemeToDOM(THEMES[themeId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only on mount
 
   // Load theme from profile when user logs in
   useEffect(() => {
@@ -392,12 +415,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           if (cancelled) return;
           if (profile?.theme && isValidThemeId(profile.theme)) {
             setThemeId(profile.theme);
+            cacheTheme(profile.theme);
           }
         })
         .catch((error) => {
           if (cancelled) return;
           logger.error('Failed to load theme preference:', error);
-          // Keep default theme on error
+          // Keep cached/default theme on error
         })
         .finally(() => {
           if (!cancelled) {
@@ -411,6 +435,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } else {
       // Reset to default when logged out
       setThemeId(DEFAULT_THEME);
+      clearCachedTheme();
     }
   }, [user]);
 
@@ -424,6 +449,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     setThemeId(id);
     applyThemeToDOM(THEMES[id]);
+    cacheTheme(id);
 
     // Persist to database
     await updateProfile(user.id, { theme: id });

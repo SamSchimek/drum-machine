@@ -169,7 +169,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     target: '.grid-row[data-track="kick"] .track-label',
-    content: 'Click any track name to hear a preview',
+    content: 'Groovey! Click any track name to hear a preview',
     position: 'right',
   },
   {

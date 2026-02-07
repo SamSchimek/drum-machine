@@ -81,6 +81,7 @@ class MockAudioContext {
       type: 'sine',
       frequency: { value: 440, setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
       connect: vi.fn(),
+      disconnect: vi.fn(),
       start: vi.fn(),
       stop: vi.fn(),
     };
@@ -113,6 +114,14 @@ class MockAudioContext {
       attack: { value: 0.003 },
       release: { value: 0.25 },
       connect: vi.fn(),
+    };
+  }
+
+  createDelay(maxDelayTime?: number) {
+    return {
+      delayTime: { value: 0, setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn() },
+      connect: vi.fn(),
+      disconnect: vi.fn(),
     };
   }
 

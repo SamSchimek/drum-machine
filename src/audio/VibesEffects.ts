@@ -24,6 +24,17 @@ export class VibesEffects {
   private roomGain: GainNode;
   private hallGain: GainNode;
 
+  // Room plate-style enhancement nodes
+  private roomPreDelay: DelayNode;
+  private roomModDelay: DelayNode;
+  private roomModLFO: OscillatorNode;
+  private roomModDepth: GainNode;
+  private roomHPF: BiquadFilterNode;
+  private roomLPF: BiquadFilterNode;
+
+  // Hall enhancement nodes
+  private hallHPF: BiquadFilterNode;
+
   // Warmth nodes
   private warmthShaper: WaveShaperNode;
   private warmthFilter: BiquadFilterNode;
@@ -75,13 +86,55 @@ export class VibesEffects {
     this.reverbInput.connect(this.dryGain);
     this.dryGain.connect(this.reverbOutput);
 
-    // wet path: reverbInput → both convolvers → respective gains → wetGain
-    this.reverbInput.connect(this.roomConvolver);
-    this.roomConvolver.connect(this.roomGain);
+    // --- Room wet path (plate-style): reverbInput → preDelay → convolver → modDelay → HPF → LPF → roomGain → wetGain ---
+    this.roomPreDelay = ctx.createDelay(0.1);
+    this.roomPreDelay.delayTime.value = 0.02; // 20ms pre-delay preserves transient
+
+    this.roomModDelay = ctx.createDelay(0.05);
+    this.roomModDelay.delayTime.value = 0.007; // 7ms center for chorus-zone shimmer
+
+    this.roomModLFO = ctx.createOscillator();
+    this.roomModLFO.type = 'sine';
+    this.roomModLFO.frequency.value = 1.2; // Slow, subtle movement
+
+    this.roomModDepth = ctx.createGain();
+    this.roomModDepth.gain.value = 0.002; // ±2ms pitch wobble
+
+    this.roomHPF = ctx.createBiquadFilter();
+    this.roomHPF.type = 'highpass' as any;
+    this.roomHPF.frequency.value = 200;
+    this.roomHPF.Q.value = 0.707; // Butterworth, no resonance
+
+    this.roomLPF = ctx.createBiquadFilter();
+    this.roomLPF.type = 'lowpass' as any;
+    this.roomLPF.frequency.value = 6000;
+    this.roomLPF.Q.value = 0.707;
+
+    // LFO modulation chain
+    this.roomModLFO.connect(this.roomModDepth);
+    this.roomModDepth.connect(this.roomModDelay.delayTime);
+
+    // Room signal chain
+    this.reverbInput.connect(this.roomPreDelay);
+    this.roomPreDelay.connect(this.roomConvolver);
+    this.roomConvolver.connect(this.roomModDelay);
+    this.roomModDelay.connect(this.roomHPF);
+    this.roomHPF.connect(this.roomLPF);
+    this.roomLPF.connect(this.roomGain);
     this.roomGain.connect(this.wetGain);
 
+    // Start LFO after all connections are made (avoids initial click)
+    this.roomModLFO.start();
+
+    // --- Hall wet path (reduced boom): reverbInput → hallConvolver → hallHPF → hallGain → wetGain ---
+    this.hallHPF = ctx.createBiquadFilter();
+    this.hallHPF.type = 'highpass' as any;
+    this.hallHPF.frequency.value = 200;
+    this.hallHPF.Q.value = 0.707;
+
     this.reverbInput.connect(this.hallConvolver);
-    this.hallConvolver.connect(this.hallGain);
+    this.hallConvolver.connect(this.hallHPF);
+    this.hallHPF.connect(this.hallGain);
     this.hallGain.connect(this.wetGain);
 
     this.wetGain.connect(this.reverbOutput);
@@ -189,6 +242,14 @@ export class VibesEffects {
     this.roomGain.disconnect();
     this.hallGain.disconnect();
     this.wetGain.disconnect();
+    this.roomPreDelay.disconnect();
+    this.roomModDelay.disconnect();
+    this.roomModLFO.stop();
+    this.roomModLFO.disconnect();
+    this.roomModDepth.disconnect();
+    this.roomHPF.disconnect();
+    this.roomLPF.disconnect();
+    this.hallHPF.disconnect();
     this.reverbOutput.disconnect();
     this.warmthShaper.disconnect();
     this.warmthFilter.disconnect();

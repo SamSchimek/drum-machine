@@ -79,8 +79,37 @@ export class VibesEffects {
     this.roomGain.gain.value = 1;
     this.hallGain.gain.value = 0;
 
-    // Effect path: input → reverbInput → ... → effectGain → output
-    this.inputNode.connect(this.reverbInput);
+    // Effect path: input → warmth → lofi → reverb → effectGain → output
+
+    // --- Warmth (series: waveshaper → low-shelf → makeup) ---
+    this.warmthShaper = ctx.createWaveShaper();
+    this.warmthFilter = ctx.createBiquadFilter();
+    this.warmthFilter.type = 'lowshelf' as any;
+    this.warmthFilter.frequency.value = 200;
+    this.warmthFilter.gain.value = 0;
+    this.warmthShaper.curve = this.makeTanhCurve(0);
+    this.warmthMakeup = ctx.createGain();
+    this.warmthMakeup.gain.value = 1;
+
+    this.inputNode.connect(this.warmthShaper);
+    this.warmthShaper.connect(this.warmthFilter);
+    this.warmthFilter.connect(this.warmthMakeup);
+
+    // --- Lo-fi (series: staircase waveshaper → lowpass → makeup) ---
+    this.lofiShaper = ctx.createWaveShaper();
+    this.lofiFilter = ctx.createBiquadFilter();
+    this.lofiFilter.type = 'lowpass' as any;
+    this.lofiFilter.frequency.value = 22000;
+    this.lofiShaper.curve = this.makeStaircaseCurve(65536);
+    this.lofiMakeup = ctx.createGain();
+    this.lofiMakeup.gain.value = 1;
+
+    this.warmthMakeup.connect(this.lofiShaper);
+    this.lofiShaper.connect(this.lofiFilter);
+    this.lofiFilter.connect(this.lofiMakeup);
+
+    // --- Reverb (parallel dry/wet) fed by lofi output ---
+    this.lofiMakeup.connect(this.reverbInput);
 
     // dry path
     this.reverbInput.connect(this.dryGain);
@@ -143,35 +172,8 @@ export class VibesEffects {
     this.dryGain.gain.value = 1;
     this.wetGain.gain.value = 0;
 
-    // --- Warmth (series: waveshaper → low-shelf → makeup) ---
-    this.warmthShaper = ctx.createWaveShaper();
-    this.warmthFilter = ctx.createBiquadFilter();
-    this.warmthFilter.type = 'lowshelf' as any;
-    this.warmthFilter.frequency.value = 200;
-    this.warmthFilter.gain.value = 0;
-    this.warmthShaper.curve = this.makeTanhCurve(0);
-    this.warmthMakeup = ctx.createGain();
-    this.warmthMakeup.gain.value = 1;
-
-    this.reverbOutput.connect(this.warmthShaper);
-    this.warmthShaper.connect(this.warmthFilter);
-    this.warmthFilter.connect(this.warmthMakeup);
-
-    // --- Lo-fi (series: staircase waveshaper → lowpass → makeup) ---
-    this.lofiShaper = ctx.createWaveShaper();
-    this.lofiFilter = ctx.createBiquadFilter();
-    this.lofiFilter.type = 'lowpass' as any;
-    this.lofiFilter.frequency.value = 22000;
-    this.lofiShaper.curve = this.makeStaircaseCurve(65536);
-    this.lofiMakeup = ctx.createGain();
-    this.lofiMakeup.gain.value = 1;
-
-    this.warmthMakeup.connect(this.lofiShaper);
-    this.lofiShaper.connect(this.lofiFilter);
-    this.lofiFilter.connect(this.lofiMakeup);
-
     // Effect chain output → effectGain → output
-    this.lofiMakeup.connect(this.effectGain);
+    this.reverbOutput.connect(this.effectGain);
     this.effectGain.connect(this.outputNode);
   }
 

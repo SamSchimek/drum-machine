@@ -46,18 +46,18 @@
   --btn-primary-top-active: color-mix(in srgb, var(--bg-deep) 90%, var(--accent-primary) 10%);
   --btn-primary-bot-active: color-mix(in srgb, var(--bg-surface) 88%, var(--accent-primary) 12%);
 
-  /* Primary button border-top tint */
-  --btn-primary-border-top: color-mix(in srgb, var(--accent-primary) 50%, white 50%);
+  /* Primary button border-top tint — semi-transparent accent */
+  --btn-primary-border-top: color-mix(in srgb, var(--accent-primary), transparent);
 
-  /* Secondary button gradients — minimal lightening of dark bg levels */
-  --btn-secondary-top: color-mix(in srgb, var(--bg-surface) 95%, white 5%);
-  --btn-secondary-mid: color-mix(in srgb, var(--bg-deep) 95%, white 5%);
-  --btn-secondary-bot: color-mix(in srgb, var(--bg-deepest) 95%, white 5%);
+  /* Secondary button gradients — desaturated via neutral gray mixing */
+  --btn-secondary-top: color-mix(in srgb, var(--bg-raised) 55%, #333 45%);
+  --btn-secondary-mid: color-mix(in srgb, var(--bg-deep) 60%, #333 40%);
+  --btn-secondary-bot: color-mix(in srgb, var(--bg-deepest) 75%, #333 25%);
 
   /* Secondary button hover */
-  --btn-secondary-top-hover: color-mix(in srgb, var(--bg-surface) 88%, white 12%);
-  --btn-secondary-mid-hover: color-mix(in srgb, var(--bg-deep) 88%, white 12%);
-  --btn-secondary-bot-hover: color-mix(in srgb, var(--bg-deepest) 88%, white 12%);
+  --btn-secondary-top-hover: color-mix(in srgb, var(--bg-elevated) 55%, #444 45%);
+  --btn-secondary-mid-hover: color-mix(in srgb, var(--bg-raised) 55%, #444 45%);
+  --btn-secondary-bot-hover: color-mix(in srgb, var(--bg-deep) 60%, #333 40%);
 
   /* Step indicator backgrounds */
   --step-bg-top: color-mix(in srgb, var(--bg-deep) 95%, var(--bg-surface) 5%);
@@ -89,10 +89,10 @@
   --playing-tint-mid-hover: color-mix(in srgb, var(--bg-deep) 72%, var(--accent-primary) 28%);
   --playing-tint-dark-hover: color-mix(in srgb, var(--bg-deepest) 80%, var(--accent-primary) 20%);
 
-  /* Keyboard hint backgrounds */
-  --kbd-bg-top: color-mix(in srgb, var(--bg-elevated) 94%, white 6%);
-  --kbd-bg-mid: color-mix(in srgb, var(--bg-raised) 94%, white 6%);
-  --kbd-bg-bot: color-mix(in srgb, var(--bg-surface) 94%, white 6%);
+  /* Keyboard hint backgrounds — desaturated neutral */
+  --kbd-bg-top: color-mix(in srgb, var(--bg-raised) 55%, #444 45%);
+  --kbd-bg-mid: color-mix(in srgb, var(--bg-deep) 55%, #333 45%);
+  --kbd-bg-bot: color-mix(in srgb, var(--bg-deepest) 55%, #333 45%);
 
   /* Menu item hover */
   --menu-item-hover: color-mix(in srgb, var(--accent-primary) 10%, transparent 90%);

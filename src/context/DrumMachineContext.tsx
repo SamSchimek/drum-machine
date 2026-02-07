@@ -38,6 +38,7 @@ interface DrumMachineState {
   warmth: number;
   lofi: number;
   vibesOpen: boolean;
+  vibesBypassed: boolean;
 }
 
 type Action =
@@ -58,7 +59,8 @@ type Action =
   | { type: 'SET_REVERB'; value: number }
   | { type: 'SET_WARMTH'; value: number }
   | { type: 'SET_LOFI'; value: number }
-  | { type: 'SET_VIBES_OPEN'; open: boolean };
+  | { type: 'SET_VIBES_OPEN'; open: boolean }
+  | { type: 'SET_VIBES_BYPASSED'; bypassed: boolean };
 
 const initialState: DrumMachineState = {
   grid: createEmptyGrid(),
@@ -77,6 +79,7 @@ const initialState: DrumMachineState = {
   warmth: 0,
   lofi: 0,
   vibesOpen: false,
+  vibesBypassed: false,
 };
 
 function reducer(state: DrumMachineState, action: Action): DrumMachineState {
@@ -124,6 +127,8 @@ function reducer(state: DrumMachineState, action: Action): DrumMachineState {
       return { ...state, lofi: Math.max(0, Math.min(100, action.value)) };
     case 'SET_VIBES_OPEN':
       return { ...state, vibesOpen: action.open };
+    case 'SET_VIBES_BYPASSED':
+      return { ...state, vibesBypassed: action.bypassed };
     default:
       return state;
   }
@@ -156,6 +161,8 @@ interface DrumMachineContextValue extends DrumMachineState {
   setWarmth: (value: number) => void;
   setLofi: (value: number) => void;
   setVibesOpen: (open: boolean) => void;
+  vibesBypassed: boolean;
+  setVibesBypassed: (bypassed: boolean) => void;
 }
 
 const DrumMachineContext = createContext<DrumMachineContextValue | null>(null);
@@ -485,10 +492,15 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     dispatch({ type: 'SET_VIBES_OPEN', open });
   }, []);
 
+  const setVibesBypassed = useCallback((bypassed: boolean) => {
+    dispatch({ type: 'SET_VIBES_BYPASSED', bypassed });
+  }, []);
+
   // Sync vibes effects with audio engine
   useEffect(() => { audioEngine.setReverb(state.reverb); }, [state.reverb]);
   useEffect(() => { audioEngine.setWarmth(state.warmth); }, [state.warmth]);
   useEffect(() => { audioEngine.setLofi(state.lofi); }, [state.lofi]);
+  useEffect(() => { audioEngine.setVibesBypassed(state.vibesBypassed); }, [state.vibesBypassed]);
 
   const loadStarterBeat = useCallback(() => {
     const beat = getRandomStarterBeat(state.lastStarterBeat);
@@ -523,6 +535,7 @@ export function DrumMachineProvider({ children }: { children: React.ReactNode })
     setWarmth,
     setLofi,
     setVibesOpen,
+    setVibesBypassed,
   };
 
   return (

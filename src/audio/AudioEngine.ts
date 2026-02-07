@@ -138,6 +138,10 @@ export class AudioEngine {
     this.vibesEffects?.setLofi(value);
   }
 
+  setVibesBypassed(bypassed: boolean): void {
+    this.vibesEffects?.setBypassed(bypassed);
+  }
+
   dispose(): void {
     for (const synth of this.synths.values()) {
       synth.dispose();

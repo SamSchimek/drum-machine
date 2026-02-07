@@ -7,6 +7,13 @@ export interface VibesValues {
 export class VibesEffects {
   private ctx: AudioContext;
 
+  // Bypass routing
+  private inputNode: GainNode;
+  private outputNode: GainNode;
+  private bypassGain: GainNode;
+  private effectGain: GainNode;
+  private bypassed = false;
+
   // Reverb nodes
   private reverbInput: GainNode;
   private reverbOutput: GainNode;
@@ -17,6 +24,7 @@ export class VibesEffects {
   // Warmth nodes
   private warmthShaper: WaveShaperNode;
   private warmthFilter: BiquadFilterNode;
+  private warmthMakeup: GainNode;
 
   // Lo-fi nodes
   private lofiShaper: WaveShaperNode;
@@ -25,6 +33,18 @@ export class VibesEffects {
 
   constructor(ctx: AudioContext) {
     this.ctx = ctx;
+
+    // --- Bypass routing ---
+    this.inputNode = ctx.createGain();
+    this.outputNode = ctx.createGain();
+    this.bypassGain = ctx.createGain();
+    this.effectGain = ctx.createGain();
+    // Default: effects active
+    this.bypassGain.gain.value = 0;
+    this.effectGain.gain.value = 1;
+    // Bypass path: input → bypassGain → output
+    this.inputNode.connect(this.bypassGain);
+    this.bypassGain.connect(this.outputNode);
 
     // --- Reverb (parallel dry/wet) ---
     this.reverbInput = ctx.createGain();
@@ -35,6 +55,9 @@ export class VibesEffects {
 
     // Build impulse response
     this.convolver.buffer = this.createImpulseResponse(2, 2);
+
+    // Effect path: input → reverbInput → ... → effectGain → output
+    this.inputNode.connect(this.reverbInput);
 
     // dry path
     this.reverbInput.connect(this.dryGain);
@@ -49,18 +72,21 @@ export class VibesEffects {
     this.dryGain.gain.value = 1;
     this.wetGain.gain.value = 0;
 
-    // --- Warmth (series: waveshaper → low-shelf) ---
+    // --- Warmth (series: waveshaper → low-shelf → makeup) ---
     this.warmthShaper = ctx.createWaveShaper();
     this.warmthFilter = ctx.createBiquadFilter();
     this.warmthFilter.type = 'lowshelf' as any;
     this.warmthFilter.frequency.value = 200;
     this.warmthFilter.gain.value = 0;
     this.warmthShaper.curve = this.makeTanhCurve(0);
+    this.warmthMakeup = ctx.createGain();
+    this.warmthMakeup.gain.value = 1;
 
     this.reverbOutput.connect(this.warmthShaper);
     this.warmthShaper.connect(this.warmthFilter);
+    this.warmthFilter.connect(this.warmthMakeup);
 
-    // --- Lo-fi (series: staircase waveshaper → lowpass → makeup gain) ---
+    // --- Lo-fi (series: staircase waveshaper → lowpass → makeup) ---
     this.lofiShaper = ctx.createWaveShaper();
     this.lofiFilter = ctx.createBiquadFilter();
     this.lofiFilter.type = 'lowpass' as any;
@@ -69,17 +95,34 @@ export class VibesEffects {
     this.lofiMakeup = ctx.createGain();
     this.lofiMakeup.gain.value = 1;
 
-    this.warmthFilter.connect(this.lofiShaper);
+    this.warmthMakeup.connect(this.lofiShaper);
     this.lofiShaper.connect(this.lofiFilter);
     this.lofiFilter.connect(this.lofiMakeup);
+
+    // Effect chain output → effectGain → output
+    this.lofiMakeup.connect(this.effectGain);
+    this.effectGain.connect(this.outputNode);
   }
 
   getInput(): GainNode {
-    return this.reverbInput;
+    return this.inputNode;
   }
 
   connect(destination: AudioNode): void {
-    this.lofiMakeup.connect(destination);
+    this.outputNode.connect(destination);
+  }
+
+  setBypassed(bypassed: boolean): void {
+    this.bypassed = bypassed;
+    // Smooth crossfade to avoid clicks (15ms ramp)
+    const now = this.ctx.currentTime;
+    const tau = 0.005; // ~15ms to reach target (3× tau)
+    this.bypassGain.gain.setTargetAtTime(bypassed ? 1 : 0, now, tau);
+    this.effectGain.gain.setTargetAtTime(bypassed ? 0 : 1, now, tau);
+  }
+
+  isBypassed(): boolean {
+    return this.bypassed;
   }
 
   setReverb(value: number): void {
@@ -90,12 +133,12 @@ export class VibesEffects {
 
   setWarmth(value: number): void {
     const v = Math.max(0, Math.min(100, value)) / 100;
-    // Full tanh saturation range — tanh compresses peaks so compensate
-    // with a slight gain boost to keep perceived volume steady
-    const drive = v;
-    this.warmthShaper.curve = this.makeTanhCurve(drive);
+    // Full tanh saturation range
+    this.warmthShaper.curve = this.makeTanhCurve(v);
     this.warmthFilter.gain.value = v * 6; // 0 to +6 dB low-shelf
-    // Tanh compression lowers peaks; shelf boost adds energy — roughly cancel out
+    // Compensate: saturation boosts RMS, shelf adds low-end energy
+    // Reduce output proportionally to keep perceived volume stable
+    this.warmthMakeup.gain.value = 1 / (1 + v * 0.6);
   }
 
   setLofi(value: number): void {
@@ -105,11 +148,15 @@ export class VibesEffects {
     this.lofiShaper.curve = this.makeStaircaseCurve(steps);
     // Frequency: 22000 Hz at 0 → 2500 Hz at 100
     this.lofiFilter.frequency.value = 22000 * Math.pow(2500 / 22000, v);
-    // Makeup gain: compensate for energy loss from lowpass rolloff
-    this.lofiMakeup.gain.value = 1 + v * 0.5;
+    // Gentle compensation — lowpass removes energy, staircase adds harmonics
+    this.lofiMakeup.gain.value = 1 / (1 + v * 0.15);
   }
 
   dispose(): void {
+    this.inputNode.disconnect();
+    this.bypassGain.disconnect();
+    this.effectGain.disconnect();
+    this.outputNode.disconnect();
     this.reverbInput.disconnect();
     this.dryGain.disconnect();
     this.convolver.disconnect();
@@ -117,6 +164,7 @@ export class VibesEffects {
     this.reverbOutput.disconnect();
     this.warmthShaper.disconnect();
     this.warmthFilter.disconnect();
+    this.warmthMakeup.disconnect();
     this.lofiShaper.disconnect();
     this.lofiFilter.disconnect();
     this.lofiMakeup.disconnect();

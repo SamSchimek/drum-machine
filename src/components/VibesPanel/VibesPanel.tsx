@@ -1,11 +1,19 @@
+import { useRef } from 'react';
 import { useDrumMachine } from '../../context/DrumMachineContext';
 import { Knob } from '../Knob/Knob';
 import './VibesPanel.css';
 
 export function VibesPanel() {
-  const { reverb, warmth, lofi, vibesOpen, setReverb, setWarmth, setLofi, setVibesOpen } = useDrumMachine();
+  const { reverb, warmth, lofi, vibesOpen, vibesBypassed, setReverb, setWarmth, setLofi, setVibesOpen, setVibesBypassed } = useDrumMachine();
+  const toggleLock = useRef(false);
 
-  const toggle = () => setVibesOpen(!vibesOpen);
+  const toggle = () => {
+    // Prevent rapid toggling during animation (750ms total for latch + door)
+    if (toggleLock.current) return;
+    toggleLock.current = true;
+    setTimeout(() => { toggleLock.current = false; }, 750);
+    setVibesOpen(!vibesOpen);
+  };
 
   return (
     <div className={`vibes-panel ${vibesOpen ? 'open' : ''}`}>
@@ -35,6 +43,16 @@ export function VibesPanel() {
         {/* Knobs — inside the well, behind door */}
         {/* @ts-expect-error inert is valid HTML but missing from React types */}
         <div className="vibes-knobs" data-testid="vibes-knobs" aria-hidden={!vibesOpen} inert={!vibesOpen ? '' : undefined}>
+          {/* Bypass toggle — IN/OUT like a hardware insert */}
+          <button
+            className={`vibes-bypass${vibesBypassed ? ' bypassed' : ''}`}
+            onClick={() => setVibesBypassed(!vibesBypassed)}
+            aria-label={vibesBypassed ? 'Effects bypassed' : 'Effects active'}
+            aria-pressed={!vibesBypassed}
+          >
+            <span className="vibes-bypass-led" />
+            <span className="vibes-bypass-label">{vibesBypassed ? 'OUT' : 'IN'}</span>
+          </button>
           <div className="vibes-knob-group">
             <div className={`vibes-knob-well${reverb > 0 ? ' lit' : ''}`}>
               <div className="vibes-knob-glow" />

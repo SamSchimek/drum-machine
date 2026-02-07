@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { DrumMachineProvider } from '../src/context/DrumMachineContext';
 import { AuthProvider } from '../src/auth/AuthContext';
@@ -38,12 +38,16 @@ describe('VibesPanel', () => {
   });
 
   it('clicking again closes the panel', () => {
+    vi.useFakeTimers();
     renderWithProviders();
     const door = screen.getByRole('button', { name: /vibes/i });
     act(() => { door.click(); });
+    // Advance past the 750ms toggle debounce lock
+    act(() => { vi.advanceTimersByTime(800); });
     act(() => { door.click(); });
     const knobsContainer = screen.getByTestId('vibes-knobs');
     expect(knobsContainer.getAttribute('aria-hidden')).toBe('true');
+    vi.useRealTimers();
   });
 
   it('has correct aria-expanded on door button', () => {

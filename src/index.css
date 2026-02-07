@@ -30,79 +30,47 @@
   --text-tertiary: #8878a0;
   --text-muted: #685888;
 
-  /* Derived colors via color-mix() — auto-adapt to any theme */
-
-  /* Primary button gradients — subtle accent tint on dark bg levels */
-  --btn-primary-top: color-mix(in srgb, var(--bg-raised) 90%, var(--accent-primary) 10%);
-  --btn-primary-mid: color-mix(in srgb, var(--bg-surface) 95%, var(--accent-primary) 5%);
-  --btn-primary-bot: color-mix(in srgb, var(--bg-deepest) 95%, var(--accent-primary) 5%);
-
-  /* Primary button hover — more accent tint */
-  --btn-primary-top-hover: color-mix(in srgb, var(--bg-raised) 80%, var(--accent-primary) 20%);
-  --btn-primary-mid-hover: color-mix(in srgb, var(--bg-surface) 85%, var(--accent-primary) 15%);
-  --btn-primary-bot-hover: color-mix(in srgb, var(--bg-deepest) 90%, var(--accent-primary) 10%);
-
-  /* Primary button active (pressed) — inverted gradient, deeper */
-  --btn-primary-top-active: color-mix(in srgb, var(--bg-deep) 90%, var(--accent-primary) 10%);
-  --btn-primary-bot-active: color-mix(in srgb, var(--bg-surface) 88%, var(--accent-primary) 12%);
-
-  /* Primary button border-top tint — semi-transparent accent */
-  --btn-primary-border-top: color-mix(in srgb, var(--accent-primary), transparent);
-
-  /* Secondary button gradients — desaturated via neutral gray mixing */
-  --btn-secondary-top: color-mix(in srgb, var(--bg-raised) 55%, #333 45%);
-  --btn-secondary-mid: color-mix(in srgb, var(--bg-deep) 60%, #333 40%);
-  --btn-secondary-bot: color-mix(in srgb, var(--bg-deepest) 75%, #333 25%);
-
-  /* Secondary button hover */
-  --btn-secondary-top-hover: color-mix(in srgb, var(--bg-elevated) 55%, #444 45%);
-  --btn-secondary-mid-hover: color-mix(in srgb, var(--bg-raised) 55%, #444 45%);
-  --btn-secondary-bot-hover: color-mix(in srgb, var(--bg-deep) 60%, #333 40%);
-
-  /* Step indicator backgrounds */
-  --step-bg-top: color-mix(in srgb, var(--bg-deep) 95%, var(--bg-surface) 5%);
-  --step-bg-mid: color-mix(in srgb, var(--bg-deep) 85%, var(--bg-deepest) 15%);
-  --step-bg-bot: color-mix(in srgb, var(--bg-deepest) 80%, var(--bg-deep) 20%);
-
-  /* Downbeat step indicator */
-  --step-bg-downbeat-top: color-mix(in srgb, var(--bg-surface) 80%, var(--bg-elevated) 20%);
-  --step-bg-downbeat-mid: color-mix(in srgb, var(--bg-surface) 60%, var(--bg-deep) 40%);
-  --step-bg-downbeat-bot: color-mix(in srgb, var(--bg-deep) 85%, var(--bg-surface) 15%);
-
-  /* Pattern item backgrounds */
-  --pattern-item-top: color-mix(in srgb, var(--bg-surface) 70%, var(--bg-raised) 30%);
-  --pattern-item-mid: color-mix(in srgb, var(--bg-surface) 80%, var(--bg-deep) 20%);
-  --pattern-item-bot: color-mix(in srgb, var(--bg-deep) 60%, var(--bg-surface) 40%);
-
-  /* Pattern item hover */
-  --pattern-item-top-hover: color-mix(in srgb, var(--bg-raised) 70%, var(--bg-elevated) 30%);
-  --pattern-item-mid-hover: color-mix(in srgb, var(--bg-raised) 80%, var(--bg-surface) 20%);
-  --pattern-item-bot-hover: color-mix(in srgb, var(--bg-surface) 60%, var(--bg-raised) 40%);
-
-  /* Playing state tints — accent tint decreasing with darkness */
-  --playing-tint-light: color-mix(in srgb, var(--bg-raised) 75%, var(--accent-primary) 25%);
-  --playing-tint-mid: color-mix(in srgb, var(--bg-deep) 82%, var(--accent-primary) 18%);
-  --playing-tint-dark: color-mix(in srgb, var(--bg-deepest) 88%, var(--accent-primary) 12%);
-
-  /* Playing state hover tints (slightly brighter) */
-  --playing-tint-light-hover: color-mix(in srgb, var(--bg-raised) 65%, var(--accent-primary) 35%);
-  --playing-tint-mid-hover: color-mix(in srgb, var(--bg-deep) 72%, var(--accent-primary) 28%);
-  --playing-tint-dark-hover: color-mix(in srgb, var(--bg-deepest) 80%, var(--accent-primary) 20%);
-
-  /* Keyboard hint backgrounds — desaturated neutral */
-  --kbd-bg-top: color-mix(in srgb, var(--bg-raised) 55%, #444 45%);
-  --kbd-bg-mid: color-mix(in srgb, var(--bg-deep) 55%, #333 45%);
-  --kbd-bg-bot: color-mix(in srgb, var(--bg-deepest) 55%, #333 45%);
-
-  /* Menu item hover */
-  --menu-item-hover: color-mix(in srgb, var(--accent-primary) 10%, transparent 90%);
-  --menu-item-focus: color-mix(in srgb, var(--accent-primary) 15%, transparent 85%);
-
-  /* Input focus glow */
-  --input-focus-glow: color-mix(in srgb, var(--accent-primary) 20%, transparent 80%);
-
-  /* Header text shadow */
-  --header-text-glow: color-mix(in srgb, var(--accent-primary) 30%, transparent 70%);
+  /* Derived colors — exact Bloom defaults, overridden per-theme by JS */
+  --btn-primary-top: #3c3250;
+  --btn-primary-mid: #2a2240;
+  --btn-primary-bot: #1a1525;
+  --btn-primary-top-hover: #463c5f;
+  --btn-primary-mid-hover: #342c4a;
+  --btn-primary-bot-hover: #241f2f;
+  --btn-primary-top-active: #231c32;
+  --btn-primary-bot-active: #2a2240;
+  --btn-primary-border-top: rgba(184,160,210,0.5);
+  --btn-secondary-top: #322d3c;
+  --btn-secondary-mid: #252030;
+  --btn-secondary-bot: #1a1520;
+  --btn-secondary-top-hover: #3c344b;
+  --btn-secondary-mid-hover: #302a40;
+  --btn-secondary-bot-hover: #252030;
+  --step-bg-top: #211b2c;
+  --step-bg-mid: #1c1726;
+  --step-bg-bot: #181320;
+  --step-bg-downbeat-top: #2a223a;
+  --step-bg-downbeat-mid: #231c30;
+  --step-bg-downbeat-bot: #1c1726;
+  --pattern-item-top: #282236;
+  --pattern-item-mid: #231d30;
+  --pattern-item-bot: #1e192a;
+  --pattern-item-top-hover: #302841;
+  --pattern-item-mid-hover: #2a2337;
+  --pattern-item-bot-hover: #241e30;
+  --playing-tint-light: #5a4a6a;
+  --playing-tint-mid: #3a2a4a;
+  --playing-tint-dark: #2a1a3a;
+  --playing-tint-light-hover: #6a5a7a;
+  --playing-tint-mid-hover: #4a3a5a;
+  --playing-tint-dark-hover: #3a2a4a;
+  --kbd-bg-top: #3c3746;
+  --kbd-bg-mid: #2d2837;
+  --kbd-bg-bot: #231e2d;
+  --menu-item-hover: rgba(184,160,210,0.1);
+  --menu-item-focus: rgba(184,160,210,0.15);
+  --input-focus-glow: rgba(232,224,240,0.08);
+  --header-text-glow: rgba(184,160,210,0.3);
 
   --panel-shadow:
     inset 0 1px 0 rgba(255,255,255,0.03),

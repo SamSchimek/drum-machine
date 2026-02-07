@@ -184,6 +184,121 @@ export function isValidThemeId(id: string): id is ThemeId {
   return THEME_IDS.includes(id as ThemeId);
 }
 
+// --- Derived color helpers ---
+
+function hexToRgb(hex: string): [number, number, number] {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return '#' + [r, g, b]
+    .map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function mix(c1: string, c2: string, p1: number): string {
+  const [r1, g1, b1] = hexToRgb(c1);
+  const [r2, g2, b2] = hexToRgb(c2);
+  const p2 = 1 - p1;
+  return rgbToHex(r1 * p1 + r2 * p2, g1 * p1 + g2 * p2, b1 * p1 + b2 * p2);
+}
+
+function withAlpha(hex: string, alpha: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+interface DerivedColors {
+  btnPrimaryTop: string; btnPrimaryMid: string; btnPrimaryBot: string;
+  btnPrimaryTopHover: string; btnPrimaryMidHover: string; btnPrimaryBotHover: string;
+  btnPrimaryTopActive: string; btnPrimaryBotActive: string;
+  btnPrimaryBorderTop: string;
+  btnSecondaryTop: string; btnSecondaryMid: string; btnSecondaryBot: string;
+  btnSecondaryTopHover: string; btnSecondaryMidHover: string; btnSecondaryBotHover: string;
+  stepBgTop: string; stepBgMid: string; stepBgBot: string;
+  stepBgDownbeatTop: string; stepBgDownbeatMid: string; stepBgDownbeatBot: string;
+  patternItemTop: string; patternItemMid: string; patternItemBot: string;
+  patternItemTopHover: string; patternItemMidHover: string; patternItemBotHover: string;
+  playingTintLight: string; playingTintMid: string; playingTintDark: string;
+  playingTintLightHover: string; playingTintMidHover: string; playingTintDarkHover: string;
+  kbdBgTop: string; kbdBgMid: string; kbdBgBot: string;
+  menuItemHover: string; menuItemFocus: string;
+  inputFocusGlow: string; headerTextGlow: string;
+}
+
+// Exact pre-theme hardcoded values for Bloom
+const BLOOM_DERIVED: DerivedColors = {
+  btnPrimaryTop: '#3c3250', btnPrimaryMid: '#2a2240', btnPrimaryBot: '#1a1525',
+  btnPrimaryTopHover: '#463c5f', btnPrimaryMidHover: '#342c4a', btnPrimaryBotHover: '#241f2f',
+  btnPrimaryTopActive: '#231c32', btnPrimaryBotActive: '#2a2240',
+  btnPrimaryBorderTop: 'rgba(184,160,210,0.5)',
+  btnSecondaryTop: '#322d3c', btnSecondaryMid: '#252030', btnSecondaryBot: '#1a1520',
+  btnSecondaryTopHover: '#3c344b', btnSecondaryMidHover: '#302a40', btnSecondaryBotHover: '#252030',
+  stepBgTop: '#211b2c', stepBgMid: '#1c1726', stepBgBot: '#181320',
+  stepBgDownbeatTop: '#2a223a', stepBgDownbeatMid: '#231c30', stepBgDownbeatBot: '#1c1726',
+  patternItemTop: '#282236', patternItemMid: '#231d30', patternItemBot: '#1e192a',
+  patternItemTopHover: '#302841', patternItemMidHover: '#2a2337', patternItemBotHover: '#241e30',
+  playingTintLight: '#5a4a6a', playingTintMid: '#3a2a4a', playingTintDark: '#2a1a3a',
+  playingTintLightHover: '#6a5a7a', playingTintMidHover: '#4a3a5a', playingTintDarkHover: '#3a2a4a',
+  kbdBgTop: '#3c3746', kbdBgMid: '#2d2837', kbdBgBot: '#231e2d',
+  menuItemHover: 'rgba(184,160,210,0.1)', menuItemFocus: 'rgba(184,160,210,0.15)',
+  inputFocusGlow: 'rgba(232,224,240,0.08)', headerTextGlow: 'rgba(184,160,210,0.3)',
+};
+
+function computeDerivedColors(theme: Theme): DerivedColors {
+  if (theme.id === 'bloom') return BLOOM_DERIVED;
+
+  const c = theme.colors;
+  const G3 = '#333333';
+  const G4 = '#444444';
+
+  return {
+    btnPrimaryTop: mix(c.bgRaised, c.accentPrimary, 0.90),
+    btnPrimaryMid: mix(c.bgSurface, c.accentPrimary, 0.95),
+    btnPrimaryBot: mix(c.bgDeepest, c.accentPrimary, 0.95),
+    btnPrimaryTopHover: mix(c.bgRaised, c.accentPrimary, 0.80),
+    btnPrimaryMidHover: mix(c.bgSurface, c.accentPrimary, 0.85),
+    btnPrimaryBotHover: mix(c.bgDeepest, c.accentPrimary, 0.90),
+    btnPrimaryTopActive: mix(c.bgDeep, c.accentPrimary, 0.90),
+    btnPrimaryBotActive: mix(c.bgSurface, c.accentPrimary, 0.88),
+    btnPrimaryBorderTop: withAlpha(c.accentPrimary, 0.5),
+    btnSecondaryTop: mix(c.bgRaised, G3, 0.55),
+    btnSecondaryMid: mix(c.bgDeep, G3, 0.60),
+    btnSecondaryBot: mix(c.bgDeepest, G3, 0.75),
+    btnSecondaryTopHover: mix(c.bgElevated, G4, 0.55),
+    btnSecondaryMidHover: mix(c.bgRaised, G4, 0.55),
+    btnSecondaryBotHover: mix(c.bgDeep, G3, 0.60),
+    stepBgTop: mix(c.bgDeep, c.bgSurface, 0.95),
+    stepBgMid: mix(c.bgDeep, c.bgDeepest, 0.85),
+    stepBgBot: mix(c.bgDeepest, c.bgDeep, 0.80),
+    stepBgDownbeatTop: mix(c.bgSurface, c.bgElevated, 0.80),
+    stepBgDownbeatMid: mix(c.bgSurface, c.bgDeep, 0.60),
+    stepBgDownbeatBot: mix(c.bgDeep, c.bgSurface, 0.85),
+    patternItemTop: mix(c.bgSurface, c.bgRaised, 0.70),
+    patternItemMid: mix(c.bgSurface, c.bgDeep, 0.80),
+    patternItemBot: mix(c.bgDeep, c.bgSurface, 0.60),
+    patternItemTopHover: mix(c.bgRaised, c.bgElevated, 0.70),
+    patternItemMidHover: mix(c.bgRaised, c.bgSurface, 0.80),
+    patternItemBotHover: mix(c.bgSurface, c.bgRaised, 0.60),
+    playingTintLight: mix(c.bgRaised, c.accentPrimary, 0.75),
+    playingTintMid: mix(c.bgDeep, c.accentPrimary, 0.82),
+    playingTintDark: mix(c.bgDeepest, c.accentPrimary, 0.88),
+    playingTintLightHover: mix(c.bgRaised, c.accentPrimary, 0.65),
+    playingTintMidHover: mix(c.bgDeep, c.accentPrimary, 0.72),
+    playingTintDarkHover: mix(c.bgDeepest, c.accentPrimary, 0.80),
+    kbdBgTop: mix(c.bgRaised, G4, 0.55),
+    kbdBgMid: mix(c.bgDeep, G3, 0.55),
+    kbdBgBot: mix(c.bgDeepest, G3, 0.55),
+    menuItemHover: withAlpha(c.accentPrimary, 0.1),
+    menuItemFocus: withAlpha(c.accentPrimary, 0.15),
+    inputFocusGlow: withAlpha(c.accentPrimary, 0.08),
+    headerTextGlow: withAlpha(c.accentPrimary, 0.3),
+  };
+}
+
+// --- DOM application ---
+
 interface ThemeContextType {
   theme: Theme;
   themeId: ThemeId;
@@ -196,6 +311,7 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function applyThemeToDOM(theme: Theme) {
   const root = document.documentElement;
+  // Core colors
   root.style.setProperty('--accent-primary', theme.colors.accentPrimary);
   root.style.setProperty('--accent-primary-hover', theme.colors.accentPrimaryHover);
   root.style.setProperty('--accent-primary-dim', theme.colors.accentPrimaryDim);
@@ -214,6 +330,49 @@ export function applyThemeToDOM(theme: Theme) {
   root.style.setProperty('--text-secondary', theme.colors.textSecondary);
   root.style.setProperty('--text-tertiary', theme.colors.textTertiary);
   root.style.setProperty('--text-muted', theme.colors.textMuted);
+
+  // Derived colors
+  const d = computeDerivedColors(theme);
+  root.style.setProperty('--btn-primary-top', d.btnPrimaryTop);
+  root.style.setProperty('--btn-primary-mid', d.btnPrimaryMid);
+  root.style.setProperty('--btn-primary-bot', d.btnPrimaryBot);
+  root.style.setProperty('--btn-primary-top-hover', d.btnPrimaryTopHover);
+  root.style.setProperty('--btn-primary-mid-hover', d.btnPrimaryMidHover);
+  root.style.setProperty('--btn-primary-bot-hover', d.btnPrimaryBotHover);
+  root.style.setProperty('--btn-primary-top-active', d.btnPrimaryTopActive);
+  root.style.setProperty('--btn-primary-bot-active', d.btnPrimaryBotActive);
+  root.style.setProperty('--btn-primary-border-top', d.btnPrimaryBorderTop);
+  root.style.setProperty('--btn-secondary-top', d.btnSecondaryTop);
+  root.style.setProperty('--btn-secondary-mid', d.btnSecondaryMid);
+  root.style.setProperty('--btn-secondary-bot', d.btnSecondaryBot);
+  root.style.setProperty('--btn-secondary-top-hover', d.btnSecondaryTopHover);
+  root.style.setProperty('--btn-secondary-mid-hover', d.btnSecondaryMidHover);
+  root.style.setProperty('--btn-secondary-bot-hover', d.btnSecondaryBotHover);
+  root.style.setProperty('--step-bg-top', d.stepBgTop);
+  root.style.setProperty('--step-bg-mid', d.stepBgMid);
+  root.style.setProperty('--step-bg-bot', d.stepBgBot);
+  root.style.setProperty('--step-bg-downbeat-top', d.stepBgDownbeatTop);
+  root.style.setProperty('--step-bg-downbeat-mid', d.stepBgDownbeatMid);
+  root.style.setProperty('--step-bg-downbeat-bot', d.stepBgDownbeatBot);
+  root.style.setProperty('--pattern-item-top', d.patternItemTop);
+  root.style.setProperty('--pattern-item-mid', d.patternItemMid);
+  root.style.setProperty('--pattern-item-bot', d.patternItemBot);
+  root.style.setProperty('--pattern-item-top-hover', d.patternItemTopHover);
+  root.style.setProperty('--pattern-item-mid-hover', d.patternItemMidHover);
+  root.style.setProperty('--pattern-item-bot-hover', d.patternItemBotHover);
+  root.style.setProperty('--playing-tint-light', d.playingTintLight);
+  root.style.setProperty('--playing-tint-mid', d.playingTintMid);
+  root.style.setProperty('--playing-tint-dark', d.playingTintDark);
+  root.style.setProperty('--playing-tint-light-hover', d.playingTintLightHover);
+  root.style.setProperty('--playing-tint-mid-hover', d.playingTintMidHover);
+  root.style.setProperty('--playing-tint-dark-hover', d.playingTintDarkHover);
+  root.style.setProperty('--kbd-bg-top', d.kbdBgTop);
+  root.style.setProperty('--kbd-bg-mid', d.kbdBgMid);
+  root.style.setProperty('--kbd-bg-bot', d.kbdBgBot);
+  root.style.setProperty('--menu-item-hover', d.menuItemHover);
+  root.style.setProperty('--menu-item-focus', d.menuItemFocus);
+  root.style.setProperty('--input-focus-glow', d.inputFocusGlow);
+  root.style.setProperty('--header-text-glow', d.headerTextGlow);
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

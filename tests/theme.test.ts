@@ -186,10 +186,11 @@ describe('Theme: Full-Feel Color System', () => {
     expect(bloom.textMuted).toBe('#685888');
   });
 
-  it('applyThemeToDOM sets all 18 CSS custom properties', () => {
+  it('applyThemeToDOM sets core and derived CSS custom properties', () => {
     const theme = THEMES.sunset;
     applyThemeToDOM(theme);
     const root = document.documentElement;
+    // Core properties
     expect(root.style.getPropertyValue('--accent-primary')).toBe(theme.colors.accentPrimary);
     expect(root.style.getPropertyValue('--accent-primary-hover')).toBe(theme.colors.accentPrimaryHover);
     expect(root.style.getPropertyValue('--accent-primary-dim')).toBe(theme.colors.accentPrimaryDim);
@@ -208,5 +209,21 @@ describe('Theme: Full-Feel Color System', () => {
     expect(root.style.getPropertyValue('--text-secondary')).toBe(theme.colors.textSecondary);
     expect(root.style.getPropertyValue('--text-tertiary')).toBe(theme.colors.textTertiary);
     expect(root.style.getPropertyValue('--text-muted')).toBe(theme.colors.textMuted);
+    // Derived properties (spot-check)
+    expect(root.style.getPropertyValue('--btn-primary-top')).toBeTruthy();
+    expect(root.style.getPropertyValue('--btn-secondary-top')).toBeTruthy();
+    expect(root.style.getPropertyValue('--step-bg-top')).toBeTruthy();
+    expect(root.style.getPropertyValue('--playing-tint-light')).toBeTruthy();
+    expect(root.style.getPropertyValue('--menu-item-hover')).toBeTruthy();
+  });
+
+  it('applyThemeToDOM for Bloom uses exact hardcoded values', () => {
+    applyThemeToDOM(THEMES.bloom);
+    const root = document.documentElement;
+    expect(root.style.getPropertyValue('--btn-primary-top')).toBe('#3c3250');
+    expect(root.style.getPropertyValue('--btn-primary-mid')).toBe('#2a2240');
+    expect(root.style.getPropertyValue('--btn-secondary-top')).toBe('#322d3c');
+    expect(root.style.getPropertyValue('--playing-tint-light')).toBe('#5a4a6a');
+    expect(root.style.getPropertyValue('--btn-primary-border-top')).toBe('rgba(184,160,210,0.5)');
   });
 });
